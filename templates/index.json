@@ -13,12 +13,12 @@
       "type": "hero",
       "settings": {
         "image": "shopify://shop_images/Banner_Promocao_De_Doces_Confeitaria_Rosa.png",
-        "tagline": "Nova Coleção",
+        "tagline": "",
         "title": "Muito Além do Básico",
         "subtitle": "Peças exclusivas para mulheres que não passam despercebidas",
         "cta_text": "Ver Coleção",
         "cta_link": "",
-        "cta2_text": "Comprar Agora",
+        "cta2_text": "Atacado",
         "cta2_link": ""
       }
     },
