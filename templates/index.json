@@ -36,6 +36,27 @@
     "products-carousel": {
       "type": "products-carousel",
       "blocks": {
+        "category_eJEyAn": {
+          "type": "category",
+          "settings": {
+            "label": "Categoria",
+            "collection_handle": "novidades"
+          }
+        },
+        "category_xmGQrp": {
+          "type": "category",
+          "settings": {
+            "label": "Categoria",
+            "collection_handle": "novidades"
+          }
+        },
+        "category_BrNbjR": {
+          "type": "category",
+          "settings": {
+            "label": "Categoria",
+            "collection_handle": "novidades"
+          }
+        },
         "category_7wDF7e": {
           "type": "category",
           "settings": {
@@ -45,10 +66,13 @@
         }
       },
       "block_order": [
+        "category_eJEyAn",
+        "category_xmGQrp",
+        "category_BrNbjR",
         "category_7wDF7e"
       ],
       "settings": {
-        "title": "Nossa Coleção"
+        "title": "Macação"
       }
     },
     "about": {
