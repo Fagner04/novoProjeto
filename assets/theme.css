@@ -107,8 +107,8 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 
 /* ===== HERO ===== */
 .hero-section { width: 100%; padding: 1.5rem 2rem; margin-top: 56px; background: var(--background); }
-@media (min-width: 768px) { .hero-section { margin-top: 60px; padding: 2rem 8rem; } }
-@media (min-width: 1280px) { .hero-section { padding: 2rem 14rem; } }
+@media (min-width: 768px) { .hero-section { margin-top: 60px; padding: 2rem 4rem; } }
+@media (min-width: 1280px) { .hero-section { padding: 2rem 8rem; } }
 .hero-section .container-elegant { position: relative; height: 300px; border-radius: 1.25rem; overflow: hidden; }
 @media (min-width: 768px) { .hero-section .container-elegant { height: 340px; } }
 @media (min-width: 1024px) { .hero-section .container-elegant { height: 380px; } }
