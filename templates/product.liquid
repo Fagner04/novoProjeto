@@ -1,58 +1,85 @@
 <div class="product-page">
   <div class="container-elegant">
 
-    <a href="{{ collection.url | default: '/collections/all' }}" style="display:inline-flex;align-items:center;gap:0.5rem;color:var(--muted-foreground);margin-bottom:2rem;font-size:0.875rem;">
+    <a href="{{ collection.url | default: '/collections/all' }}" class="product-back-link">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Voltar
     </a>
 
-    <div class="product-layout">
+    <div class="product-layout-new">
 
-      <!-- Gallery -->
-      <div>
-        <div class="product-gallery-main" id="main-image-wrap">
-          <img id="main-product-image"
-            src="{{ product.featured_image | image_url: width: 800 }}"
-            alt="{{ product.featured_image.alt | escape }}"
-            width="800" height="1067">
+      <!-- LEFT: Thumbnails vertical -->
+      <div class="product-thumbs-col" id="thumbs-col">
+        <button class="thumbs-scroll-btn" onclick="scrollThumbs(-1)" aria-label="Subir">&#8963;</button>
+        <div class="thumbs-list" id="thumbs-list">
+          {% for image in product.images %}
+            <img
+              src="{{ image | image_url: width: 200 }}"
+              alt="{{ image.alt | escape }}"
+              class="thumb-item {% if forloop.first %}active{% endif %}"
+              onclick="setMainImages({{ forloop.index0 }})"
+              loading="lazy" width="200" height="267">
+          {% endfor %}
         </div>
-        {% if product.images.size > 1 %}
-          <div class="product-gallery-thumbs">
-            {% for image in product.images %}
-              <img
-                src="{{ image | image_url: width: 200 }}"
-                alt="{{ image.alt | escape }}"
-                class="{% if forloop.first %}active{% endif %}"
-                onclick="setMainImage('{{ image | image_url: width: 800 }}', this)"
-                width="200" height="200">
-            {% endfor %}
-          </div>
-        {% endif %}
+        <button class="thumbs-scroll-btn" onclick="scrollThumbs(1)" aria-label="Descer">&#8964;</button>
       </div>
 
-      <!-- Info -->
-      <div class="product-info">
+      <!-- CENTER: 2 main images side by side -->
+      <div class="product-main-images">
+        <div class="main-images-grid" id="main-images-grid">
+          {% for image in product.images limit: 2 %}
+            <div class="main-image-slot {% if forloop.first %}has-badge{% endif %}">
+              {% if forloop.first %}
+                <span class="product-new-badge">Novidade</span>
+              {% endif %}
+              <img
+                src="{{ image | image_url: width: 900 }}"
+                alt="{{ image.alt | escape }}"
+                id="main-img-{{ forloop.index0 }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                width="900" height="1200">
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Description box below images -->
+        <div class="product-desc-box">
+          <h4>📋 DESCRIÇÃO DO PRODUTO</h4>
+          <p class="desc-size-guide">🏷️ Guia de Medidas</p>
+          <div class="product-desc-content" id="desc-content">
+            {{ product.description }}
+          </div>
+          <button class="desc-toggle-btn" id="desc-toggle" onclick="toggleDesc()">+ Ver mais</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Product info -->
+      <div class="product-info-col">
         {% if product.vendor != blank %}
           <p class="label-caps" style="margin-bottom:0.5rem;">{{ product.vendor }}</p>
         {% endif %}
 
-        <h1>{{ product.title }}</h1>
+        <h1 class="product-info-title">{{ product.title }}</h1>
 
-        <div id="product-price-wrap">
-          <p class="product-price">
-            <span id="selected-price">{{ product.selected_or_first_available_variant.price | money }}</span>
-          </p>
-          <p class="product-price-pix">
-            💚 {{ product.selected_or_first_available_variant.price | times: 0.95 | money }} no PIX (5% off)
-          </p>
-          <p style="font-size:0.8125rem;color:var(--muted-foreground);margin-bottom:1.5rem;">
-            ou 6x de {{ product.selected_or_first_available_variant.price | divided_by: 6 | money }} sem juros
-          </p>
+        <!-- Prices -->
+        <div class="product-prices-block">
+          <div class="price-pix-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#32bcad"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+            <span class="price-pix-value" id="price-pix">{{ product.selected_or_first_available_variant.price | times: 0.95 | money }}</span>
+            <span class="pix-badge">5%</span>
+          </div>
+          <div class="price-card-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span class="price-card-value" id="price-card">{{ product.selected_or_first_available_variant.price | money }}</span>
+            <span class="avista-badge">À VISTA</span>
+          </div>
+          <p class="price-installments" id="price-installments">ou 6x de {{ product.selected_or_first_available_variant.price | divided_by: 6 | money }} sem juros</p>
         </div>
 
         <form action="/cart/add" method="post" id="product-form">
           <input type="hidden" name="id" id="variant-id" value="{{ product.selected_or_first_available_variant.id }}">
 
+          <!-- Options -->
           {% for option in product.options_with_values %}
             <div class="product-options">
               <label>{{ option.name }}: <strong id="selected-{{ option.name | handleize }}">{{ option.selected_value }}</strong></label>
@@ -70,8 +97,9 @@
             </div>
           {% endfor %}
 
-          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
-            <div class="cart-qty" style="border:1px solid var(--border);border-radius:0.5rem;padding:0.25rem;">
+          <!-- Quantity -->
+          <div class="product-qty-row">
+            <div class="cart-qty">
               <button type="button" onclick="changeQty(-1)">−</button>
               <span id="qty-display">1</span>
               <button type="button" onclick="changeQty(1)">+</button>
@@ -88,24 +116,12 @@
           </button>
         </form>
 
-        <!-- Trust mini badges -->
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);">
-          <span style="font-size:0.75rem;color:var(--muted-foreground);display:flex;align-items:center;gap:0.25rem;">
-            🔒 Compra segura
-          </span>
-          <span style="font-size:0.75rem;color:var(--muted-foreground);display:flex;align-items:center;gap:0.25rem;">
-            🚚 Frete calculado no checkout
-          </span>
-          <span style="font-size:0.75rem;color:var(--muted-foreground);display:flex;align-items:center;gap:0.25rem;">
-            🔄 Troca fácil
-          </span>
+        <!-- Trust mini -->
+        <div class="product-trust-mini">
+          <span>🔒 Compra segura</span>
+          <span>🚚 Frete no checkout</span>
+          <span>🔄 Troca fácil</span>
         </div>
-
-        {% if product.description != blank %}
-          <div class="product-description">
-            {{ product.description }}
-          </div>
-        {% endif %}
       </div>
 
     </div>
@@ -129,53 +145,79 @@
 </div>
 
 <script>
-  // Variant selection
-  const productVariants = {{ product.variants | json }};
-  let selectedOptions = [
-    {% for option in product.options_with_values %}"{{ option.selected_value }}"{% unless forloop.last %},{% endunless %}{% endfor %}
-  ];
+  var productVariants = {{ product.variants | json }};
+  var selectedOptions = [{% for option in product.options_with_values %}"{{ option.selected_value }}"{% unless forloop.last %},{% endunless %}{% endfor %}];
+  var allImages = {{ product.images | map: 'src' | json }};
+  var currentPair = [0, 1];
 
+  // --- Variant selection ---
   function selectOption(btn, optionName) {
-    const index = parseInt(btn.dataset.optionIndex);
+    var index = parseInt(btn.dataset.optionIndex);
     selectedOptions[index] = btn.dataset.optionValue;
-
-    // Update active state for this option group
-    btn.closest('.option-buttons').querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+    btn.closest('.option-buttons').querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
-
-    // Update label
     document.getElementById('selected-' + optionName).textContent = btn.dataset.optionValue;
 
-    // Find matching variant
-    const variant = productVariants.find(v =>
-      v.options.every((opt, i) => opt === selectedOptions[i])
-    );
-
+    var variant = productVariants.find(function(v) {
+      return v.options.every(function(opt, i) { return opt === selectedOptions[i]; });
+    });
     if (variant) {
       document.getElementById('variant-id').value = variant.id;
-      document.getElementById('selected-price').textContent = formatMoney(variant.price);
-      const addBtn = document.getElementById('add-to-cart-btn');
-      addBtn.disabled = !variant.available;
-      addBtn.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Indisponível';
+      var price = variant.price;
+      document.getElementById('price-pix').textContent = formatMoney(Math.round(price * 0.95));
+      document.getElementById('price-card').textContent = formatMoney(price);
+      document.getElementById('price-installments').textContent = 'ou 6x de ' + formatMoney(Math.round(price / 6)) + ' sem juros';
+      var btn2 = document.getElementById('add-to-cart-btn');
+      btn2.disabled = !variant.available;
+      btn2.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Indisponível';
     }
   }
 
   function formatMoney(cents) {
-    return 'R$ ' + (cents / 100).toFixed(2).replace('.', ',');
+    return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
   }
 
-  // Quantity
-  let qty = 1;
+  // --- Quantity ---
+  var qty = 1;
   function changeQty(delta) {
     qty = Math.max(1, qty + delta);
     document.getElementById('qty-display').textContent = qty;
     document.getElementById('qty-input').value = qty;
   }
 
-  // Gallery
-  function setMainImage(url, thumb) {
-    document.getElementById('main-product-image').src = url;
-    document.querySelectorAll('.product-gallery-thumbs img').forEach(i => i.classList.remove('active'));
-    thumb.classList.add('active');
+  // --- Gallery: show pair of images ---
+  function setMainImages(index) {
+    // Update thumbs active
+    document.querySelectorAll('.thumb-item').forEach(function(t, i) {
+      t.classList.toggle('active', i === index);
+    });
+
+    // Show clicked image as first, next as second
+    var img0 = document.getElementById('main-img-0');
+    var img1 = document.getElementById('main-img-1');
+    if (!img0) return;
+
+    var src0 = allImages[index] ? allImages[index].replace(/\?.*/, '') + '?width=900' : '';
+    img0.src = src0;
+
+    if (img1) {
+      var nextIndex = (index + 1) < allImages.length ? index + 1 : 0;
+      var src1 = allImages[nextIndex] ? allImages[nextIndex].replace(/\?.*/, '') + '?width=900' : '';
+      img1.src = src1;
+    }
+  }
+
+  // --- Thumbs scroll ---
+  function scrollThumbs(dir) {
+    var list = document.getElementById('thumbs-list');
+    list.scrollBy({ top: dir * 120, behavior: 'smooth' });
+  }
+
+  // --- Description toggle ---
+  function toggleDesc() {
+    var content = document.getElementById('desc-content');
+    var btn = document.getElementById('desc-toggle');
+    var expanded = content.classList.toggle('expanded');
+    btn.textContent = expanded ? '− Ver menos' : '+ Ver mais';
   }
 </script>
