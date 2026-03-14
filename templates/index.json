@@ -43,6 +43,13 @@
             "collection_handle": "novidades"
           }
         },
+        "category_dj8iNb": {
+          "type": "category",
+          "settings": {
+            "label": "Categoria",
+            "collection_handle": "novidades"
+          }
+        },
         "category_xmGQrp": {
           "type": "category",
           "settings": {
@@ -57,32 +64,23 @@
             "collection_handle": "novidades"
           }
         },
-        "category_7wDF7e": {
+        "category_RbgXXH": {
           "type": "category",
           "settings": {
             "label": "Categoria",
-            "collection_handle": "novidades"
+            "collection_handle": "novidad"
           }
         }
       },
       "block_order": [
         "category_eJEyAn",
+        "category_dj8iNb",
         "category_xmGQrp",
         "category_BrNbjR",
-        "category_7wDF7e"
+        "category_RbgXXH"
       ],
       "settings": {
         "title": "Macação"
-      }
-    },
-    "about": {
-      "type": "about",
-      "settings": {
-        "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png",
-        "title": "Pouco De Nós",
-        "content": "<p> O MUSAS CLUB nasceu para mulheres que não passam despercebidas. Uma marca fitness que foge do óbvio, quebra padrões e transforma cada treino em uma experiência de poder e autoestima.</p><p>Aqui, cada peça é pensada para te lembrar da sua força, da sua beleza e do quanto você é capaz. Vestir MUSAS Club é olhar no espelho e sentir aquela confiança subir, aquela motivação bater e a vontade de ir além aparecer.</p><p>Porque treinar não é só sobre o corpo — é sobre amor-próprio, autoconfiança e a decisão diária de cuidar de você.</p>",
-        "cta_text": "Comprar agora!",
-        "cta_link": "shopify://collections"
       }
     },
     "trust": {
@@ -135,7 +133,6 @@
     "hero",
     "benefits",
     "products-carousel",
-    "about",
     "trust",
     "177353118617f156ac"
   ]
