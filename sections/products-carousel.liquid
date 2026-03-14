@@ -1,0 +1,147 @@
+<section class="products-carousel-section">
+  <div class="container-elegant">
+
+    <!-- Category Filter Tabs -->
+    <div class="carousel-tabs" id="carousel-tabs">
+      <button class="carousel-tab active" data-collection="all" onclick="filterCarousel(this, 'all')">Todos</button>
+      {% for block in section.blocks %}
+        <button
+          class="carousel-tab"
+          data-collection="{{ block.settings.collection_handle }}"
+          onclick="filterCarousel(this, '{{ block.settings.collection_handle }}')"
+        >{{ block.settings.label }}</button>
+      {% endfor %}
+    </div>
+
+    <!-- Carousel Wrapper -->
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow carousel-prev" onclick="slideCarousel(-1)" aria-label="Anterior">&#8592;</button>
+
+      <div class="carousel-track-outer">
+        <div class="carousel-track" id="carousel-track">
+          {% assign all_products = collections.all.products %}
+          {% for product in all_products limit: 20 %}
+            <div class="carousel-card" data-collections="{{ product.collections | map: 'handle' | join: ',' }}">
+              <div class="carousel-card-image">
+                {% if product.metafields.custom.is_new %}
+                  <span class="carousel-badge">Novidade</span>
+                {% else %}
+                  <span class="carousel-badge">Novidade</span>
+                {% endif %}
+                <button class="carousel-fav" aria-label="Favoritar">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+                <a href="{{ product.url }}">
+                  <img src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    loading="lazy" width="600" height="800">
+                </a>
+              </div>
+              <div class="carousel-card-info">
+                <h3>{{ product.title | upcase }}</h3>
+                <div class="carousel-price-row">
+                  <span class="carousel-price-pix">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#32bcad"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                    {{ product.price | times: 0.95 | money }}
+                  </span>
+                  <span class="carousel-pix-badge">5%</span>
+                </div>
+                <div class="carousel-price-row" style="margin-top:0.25rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  <span class="carousel-price-full">{{ product.price | money }}</span>
+                  <span class="carousel-avista-badge">À VISTA</span>
+                </div>
+                <p class="carousel-installments">ou 6x de {{ product.price | divided_by: 6 | money }} sem juros</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button class="carousel-arrow carousel-next" onclick="slideCarousel(1)" aria-label="Próximo">&#8594;</button>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  var carouselOffset = 0;
+  var cardWidth = 0;
+  var visibleCards = 4;
+
+  function getVisibleCards() {
+    return window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
+  }
+
+  function getVisibleCardElements() {
+    return Array.from(document.querySelectorAll('.carousel-card')).filter(c => c.style.display !== 'none');
+  }
+
+  function slideCarousel(dir) {
+    var cards = getVisibleCardElements();
+    var visible = getVisibleCards();
+    var maxOffset = Math.max(0, cards.length - visible);
+    carouselOffset = Math.min(Math.max(carouselOffset + dir, 0), maxOffset);
+    updateCarouselPosition();
+  }
+
+  function updateCarouselPosition() {
+    var track = document.getElementById('carousel-track');
+    var cards = getVisibleCardElements();
+    if (!cards.length) return;
+    var w = cards[0].offsetWidth + 16; // gap
+    track.style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
+  }
+
+  function filterCarousel(btn, handle) {
+    // Update active tab
+    document.querySelectorAll('.carousel-tab').forEach(function(t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+
+    // Show/hide cards
+    carouselOffset = 0;
+    document.querySelectorAll('.carousel-card').forEach(function(card) {
+      if (handle === 'all') {
+        card.style.display = '';
+      } else {
+        var cols = card.dataset.collections || '';
+        card.style.display = cols.split(',').indexOf(handle) > -1 ? '' : 'none';
+      }
+    });
+
+    document.getElementById('carousel-track').style.transform = 'translateX(0)';
+  }
+
+  window.addEventListener('resize', updateCarouselPosition);
+</script>
+
+{% schema %}
+{
+  "name": "Carrossel de Produtos",
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Categoria",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Nome da categoria", "default": "Categoria" },
+        { "type": "text", "id": "collection_handle", "label": "Handle da coleção", "default": "novidades" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "text", "id": "title", "label": "Título da seção", "default": "Nossa Coleção" }
+  ],
+  "presets": [
+    {
+      "name": "Carrossel de Produtos",
+      "blocks": [
+        { "type": "category", "settings": { "label": "Conjuntos", "collection_handle": "conjuntos" } },
+        { "type": "category", "settings": { "label": "Macacões", "collection_handle": "macacoes" } },
+        { "type": "category", "settings": { "label": "Acessórios", "collection_handle": "acessorios" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
