@@ -106,6 +106,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 
 /* ===== HERO ===== */
 .hero-section { position: relative; min-height: 100svh; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 56px; }
+@media (min-width: 768px) { .hero-section { margin-top: 100px; } }
 .hero-bg { position: absolute; inset: 0; }
 .hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 5%; }
 .hero-overlay { position: absolute; inset: 0; background: var(--gradient-overlay); }
@@ -286,3 +287,11 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .pagination a, .pagination span { padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.875rem; transition: all 0.2s; }
 .pagination a:hover { border-color: var(--brand-orange); color: var(--brand-orange); }
 .pagination .current { background: var(--brand-orange); color: #fff; border-color: var(--brand-orange); }
+
+/* ===== CATEGORY BAR ===== */
+.category-bar { display: none; background: #fff; border-bottom: 1px solid var(--border); }
+@media (min-width: 768px) { .category-bar { display: block; } }
+.category-bar-inner { display: flex; align-items: center; gap: 0; max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; overflow-x: auto; }
+.category-bar-link { display: inline-flex; align-items: center; padding: 0.75rem 1.25rem; font-size: 0.8125rem; font-weight: 500; color: var(--muted-foreground); white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; text-decoration: none; }
+.category-bar-link:hover { color: var(--brand-orange); border-bottom-color: var(--brand-orange); }
+.category-bar-link.active { color: var(--brand-orange); border-bottom-color: var(--brand-orange); font-weight: 600; }
