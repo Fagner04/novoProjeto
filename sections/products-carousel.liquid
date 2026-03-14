@@ -7,9 +7,9 @@
       {% for block in section.blocks %}
         <button
           class="carousel-tab"
-          data-collection="{{ block.settings.collection_handle }}"
-          onclick="filterCarousel(this, '{{ block.settings.collection_handle }}')"
-        >{{ block.settings.label }}</button>
+          data-collection="{{ block.settings.collection.handle }}"
+          onclick="filterCarousel(this, '{{ block.settings.collection.handle }}')"
+        >{{ block.settings.label | default: block.settings.collection.title }}</button>
       {% endfor %}
     </div>
 
@@ -125,8 +125,8 @@
       "type": "category",
       "name": "Categoria",
       "settings": [
-        { "type": "text", "id": "label", "label": "Nome da categoria", "default": "Categoria" },
-        { "type": "text", "id": "collection_handle", "label": "Handle da coleção", "default": "novidades" }
+        { "type": "text", "id": "label", "label": "Nome da aba", "default": "Categoria" },
+        { "type": "collection", "id": "collection", "label": "Coleção" }
       ]
     }
   ],
@@ -137,9 +137,9 @@
     {
       "name": "Carrossel de Produtos",
       "blocks": [
-        { "type": "category", "settings": { "label": "Conjuntos", "collection_handle": "conjuntos" } },
-        { "type": "category", "settings": { "label": "Macacões", "collection_handle": "macacoes" } },
-        { "type": "category", "settings": { "label": "Acessórios", "collection_handle": "acessorios" } }
+        { "type": "category", "settings": { "label": "Conjuntos" } },
+        { "type": "category", "settings": { "label": "Macacões" } },
+        { "type": "category", "settings": { "label": "Acessórios" } }
       ]
     }
   ]
