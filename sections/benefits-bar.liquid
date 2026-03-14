@@ -1,0 +1,52 @@
+<section class="benefits-bar">
+  <div class="container-elegant">
+    <div class="benefits-grid">
+
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+        </div>
+        <h3 class="benefit-title">{{ section.settings.benefit1_title | default: 'Parcelamento' }}</h3>
+        <p class="benefit-desc">{{ section.settings.benefit1_desc | default: '6x sem juros no cartão' }}</p>
+      </div>
+
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+          </svg>
+        </div>
+        <h3 class="benefit-title">{{ section.settings.benefit2_title | default: 'Produção Própria' }}</h3>
+        <p class="benefit-desc">{{ section.settings.benefit2_desc | default: 'Criação exclusiva, produção limitada' }}</p>
+      </div>
+
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+          </svg>
+        </div>
+        <h3 class="benefit-title">{{ section.settings.benefit3_title | default: 'Ganhe' }}</h3>
+        <p class="benefit-desc">{{ section.settings.benefit3_desc | default: '5% de desconto no PIX' }}</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Barra de Benefícios",
+  "settings": [
+    { "type": "text", "id": "benefit1_title", "label": "Benefício 1 - Título", "default": "Parcelamento" },
+    { "type": "text", "id": "benefit1_desc", "label": "Benefício 1 - Descrição", "default": "6x sem juros no cartão" },
+    { "type": "text", "id": "benefit2_title", "label": "Benefício 2 - Título", "default": "Produção Própria" },
+    { "type": "text", "id": "benefit2_desc", "label": "Benefício 2 - Descrição", "default": "Criação exclusiva, produção limitada" },
+    { "type": "text", "id": "benefit3_title", "label": "Benefício 3 - Título", "default": "Ganhe" },
+    { "type": "text", "id": "benefit3_desc", "label": "Benefício 3 - Descrição", "default": "5% de desconto no PIX" }
+  ],
+  "presets": [{ "name": "Barra de Benefícios" }]
+}
+{% endschema %}

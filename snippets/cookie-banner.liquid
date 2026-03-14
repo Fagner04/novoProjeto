@@ -1,0 +1,19 @@
+<div class="cookie-banner" id="cookie-banner" style="display:none;">
+  <p>
+    Usamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa
+    <a href="/pages/politica-de-privacidade">Política de Privacidade</a>.
+  </p>
+  <button class="cookie-accept-btn" onclick="acceptCookies()">Aceitar</button>
+</div>
+
+<script>
+  (function() {
+    if (!localStorage.getItem('cookies_accepted')) {
+      document.getElementById('cookie-banner').style.display = 'flex';
+    }
+  })();
+  function acceptCookies() {
+    localStorage.setItem('cookies_accepted', '1');
+    document.getElementById('cookie-banner').style.display = 'none';
+  }
+</script>

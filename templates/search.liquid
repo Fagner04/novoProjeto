@@ -1,0 +1,44 @@
+<div class="product-page">
+  <div class="container-elegant">
+
+    <div class="section-header" style="margin-bottom:2rem;">
+      <h1 class="heading-section">
+        {% if search.performed %}
+          Resultados para "{{ search.terms | escape }}"
+        {% else %}
+          Buscar Produtos
+        {% endif %}
+      </h1>
+    </div>
+
+    <form action="/search" method="get" style="max-width:36rem;margin:0 auto 3rem;">
+      <input type="hidden" name="type" value="product">
+      <div style="display:flex;gap:0.5rem;">
+        <input type="search" name="q" value="{{ search.terms | escape }}"
+          placeholder="Buscar produtos..."
+          style="flex:1;padding:0.75rem 1rem;border:1px solid var(--border);border-radius:9999px;font-size:1rem;outline:none;">
+        <button type="submit" class="btn-primary btn-musas" style="border-radius:9999px;padding:0.75rem 1.5rem;">
+          Buscar
+        </button>
+      </div>
+    </form>
+
+    {% if search.performed %}
+      {% if search.results_count == 0 %}
+        <div style="text-align:center;padding:4rem 0;color:var(--muted-foreground);">
+          <p>Nenhum resultado encontrado para "{{ search.terms | escape }}".</p>
+        </div>
+      {% else %}
+        <p class="label-caps" style="margin-bottom:1.5rem;">{{ search.results_count }} resultado{{ search.results_count | pluralize: '', 's' }}</p>
+        <div class="products-grid">
+          {% for item in search.results %}
+            {% if item.object_type == 'product' %}
+              {% render 'product-card', product: item %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+</div>

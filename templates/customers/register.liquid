@@ -1,0 +1,45 @@
+<div class="product-page">
+  <div class="container-elegant" style="max-width:28rem;">
+
+    <div class="section-header" style="margin-bottom:2rem;">
+      <h1 class="heading-section">Criar Conta</h1>
+    </div>
+
+    {% form 'create_customer' %}
+      {% if form.errors %}
+        <div style="background:#fee2e2;border:1px solid #fca5a5;padding:1rem;border-radius:0.5rem;margin-bottom:1rem;font-size:0.875rem;color:#dc2626;">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;">
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:0.5rem;">Nome</label>
+          <input type="text" name="customer[first_name]" autocomplete="given-name"
+            style="width:100%;padding:0.75rem 1rem;border:1px solid var(--border);border-radius:0.5rem;font-size:1rem;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:0.5rem;">E-mail</label>
+          <input type="email" name="customer[email]" autocomplete="email"
+            style="width:100%;padding:0.75rem 1rem;border:1px solid var(--border);border-radius:0.5rem;font-size:1rem;outline:none;"
+            required>
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:0.5rem;">Senha</label>
+          <input type="password" name="customer[password]" autocomplete="new-password"
+            style="width:100%;padding:0.75rem 1rem;border:1px solid var(--border);border-radius:0.5rem;font-size:1rem;outline:none;"
+            required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-musas" style="width:100%;border-radius:9999px;justify-content:center;">
+        Criar Conta
+      </button>
+
+      <p style="text-align:center;margin-top:1rem;font-size:0.875rem;color:var(--muted-foreground);">
+        Já tem conta? <a href="{{ routes.account_login_url }}" style="color:var(--brand-orange);">Entrar</a>
+      </p>
+    {% endform %}
+
+  </div>
+</div>

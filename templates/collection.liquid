@@ -1,0 +1,40 @@
+{% paginate collection.products by 24 %}
+
+<div class="product-page">
+  <div class="container-elegant">
+
+    <a href="/" style="display:inline-flex;align-items:center;gap:0.5rem;color:var(--muted-foreground);margin-bottom:2rem;font-size:0.875rem;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar
+    </a>
+
+    <div class="section-header">
+      <p class="label-caps" style="margin-bottom:1rem;">Coleção</p>
+      <h1 class="heading-section">{{ collection.title }}</h1>
+      {% if collection.description != blank %}
+        <p class="text-elegant" style="max-width:36rem;margin:1rem auto 0;">{{ collection.description }}</p>
+      {% endif %}
+    </div>
+
+    {% if collection.products.size > 0 %}
+      <div class="products-grid">
+        {% for product in collection.products %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+      </div>
+
+      {% if paginate.pages > 1 %}
+        <div class="pagination">
+          {{ paginate | default_pagination }}
+        </div>
+      {% endif %}
+    {% else %}
+      <div style="text-align:center;padding:5rem 0;color:var(--muted-foreground);">
+        <p>Nenhum produto encontrado nesta coleção.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endpaginate %}

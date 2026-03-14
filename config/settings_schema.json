@@ -1,0 +1,75 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Musas Club",
+    "theme_version": "1.0.0",
+    "theme_author": "Musas Club",
+    "theme_documentation_url": "",
+    "theme_support_url": ""
+  },
+  {
+    "name": "Cores",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Cor principal (laranja)",
+        "default": "#fe7e41"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Cor de fundo",
+        "default": "#f2f2f3"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bg",
+        "label": "Cor de fundo do rodapé",
+        "default": "#ffeda9"
+      }
+    ]
+  },
+  {
+    "name": "Tipografia",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Fonte dos títulos",
+        "default": "merriweather_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Fonte do corpo",
+        "default": "poppins_n4"
+      }
+    ]
+  },
+  {
+    "name": "Redes Sociais",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok"
+      },
+      {
+        "type": "url",
+        "id": "social_whatsapp",
+        "label": "WhatsApp"
+      }
+    ]
+  }
+]

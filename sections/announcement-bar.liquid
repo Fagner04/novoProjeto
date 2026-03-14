@@ -1,0 +1,19 @@
+{% if section.settings.text != blank %}
+  <div class="announcement-bar">
+    {{ section.settings.text }}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Barra de Anúncio",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Texto",
+      "default": "🚚 Frete grátis acima de R$299 | 💳 6x sem juros | 💚 5% no PIX"
+    }
+  ]
+}
+{% endschema %}

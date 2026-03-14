@@ -1,0 +1,51 @@
+<section class="about-section" id="about">
+  <div class="container-elegant">
+    <div class="about-inner">
+
+      {% if section.settings.image != blank %}
+        <div class="about-image">
+          <img src="{{ section.settings.image | image_url: width: 640 }}"
+            alt="{{ section.settings.title | escape }}"
+            width="320" height="320">
+        </div>
+      {% endif %}
+
+      <div class="about-content">
+        <h2>{{ section.settings.title | default: 'Pouco De Nós' }}</h2>
+
+        <div class="about-divider">
+          <span></span>
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+          <span></span>
+        </div>
+
+        <div style="font-size:1rem;line-height:1.75;color:rgba(24,24,27,0.8);">
+          {{ section.settings.content | default: 'O MUSAS CLUB nasceu para mulheres que não passam despercebidas.' }}
+        </div>
+
+        <a href="{{ section.settings.cta_link | default: '/collections/all' }}"
+          class="btn-primary btn-musas"
+          style="border-radius:9999px;margin-top:1.5rem;display:inline-flex;">
+          {{ section.settings.cta_text | default: 'Comprar agora!' }}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Sobre a Marca",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Foto" },
+    { "type": "text", "id": "title", "label": "Título", "default": "Pouco De Nós" },
+    { "type": "richtext", "id": "content", "label": "Texto" },
+    { "type": "text", "id": "cta_text", "label": "Texto do botão", "default": "Comprar agora!" },
+    { "type": "url", "id": "cta_link", "label": "Link do botão" }
+  ],
+  "presets": [{ "name": "Sobre a Marca" }]
+}
+{% endschema %}

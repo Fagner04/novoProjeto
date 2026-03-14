@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {}
+    },
+    "benefits": {
+      "type": "benefits-bar",
+      "settings": {}
+    },
+    "featured-products": {
+      "type": "featured-products",
+      "settings": {
+        "title": "Nossa Coleção",
+        "subtitle": "Peças exclusivas para o seu treino",
+        "products_count": 8
+      }
+    },
+    "about": {
+      "type": "about",
+      "settings": {}
+    },
+    "trust": {
+      "type": "trust-badges",
+      "settings": {}
+    }
+  },
+  "order": ["hero", "benefits", "featured-products", "about", "trust"]
+}

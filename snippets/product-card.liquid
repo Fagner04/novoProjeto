@@ -1,0 +1,32 @@
+{% assign card_product = product %}
+<a href="{{ card_product.url }}" class="product-card">
+  <div class="product-card-image image-hover">
+    {% if card_product.featured_image %}
+      <img
+        src="{{ card_product.featured_image | image_url: width: 600 }}"
+        alt="{{ card_product.featured_image.alt | escape }}"
+        loading="lazy"
+        width="600" height="800">
+    {% else %}
+      <div style="width:100%;height:100%;background:var(--muted);display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);font-size:0.75rem;">Sem imagem</div>
+    {% endif %}
+
+    {% unless card_product.available %}
+      <span class="product-card-badge">Esgotado</span>
+    {% endunless %}
+
+    <div class="product-card-overlay">
+      <span>Ver Detalhes</span>
+    </div>
+  </div>
+
+  <div class="product-card-info">
+    {% if card_product.type != blank %}
+      <p class="product-card-category">{{ card_product.type }}</p>
+    {% elsif card_product.vendor != blank %}
+      <p class="product-card-category">{{ card_product.vendor }}</p>
+    {% endif %}
+    <h3 class="product-card-title">{{ card_product.title }}</h3>
+    <p class="product-card-price">{{ card_product.price_min | money }}</p>
+  </div>
+</a>

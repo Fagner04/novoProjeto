@@ -1,0 +1,48 @@
+<section class="products-section" id="collection">
+  <div class="container-elegant">
+
+    <div class="section-header">
+      <p class="label-caps" style="margin-bottom:1rem;">{{ section.settings.label | default: 'Destaques' }}</p>
+      <h2 class="heading-section">{{ section.settings.title | default: 'Nossa Coleção' }}</h2>
+      {% if section.settings.subtitle != blank %}
+        <p class="text-elegant" style="max-width:36rem;margin:1rem auto 0;">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    {% assign featured_collection = collections[section.settings.collection] %}
+    {% if featured_collection != blank %}
+      <div class="products-grid" style="margin-top:2.5rem;">
+        {% for product in featured_collection.products limit: section.settings.products_count %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="products-grid" style="margin-top:2.5rem;">
+        {% for product in collections.all.products limit: section.settings.products_count %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div style="text-align:center;margin-top:3rem;">
+      <a href="/collections/all" class="btn-primary btn-musas" style="border-radius:9999px;">
+        Ver Todos os Produtos
+      </a>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Produtos em Destaque",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label acima do título", "default": "Destaques" },
+    { "type": "text", "id": "title", "label": "Título", "default": "Nossa Coleção" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtítulo" },
+    { "type": "collection", "id": "collection", "label": "Coleção" },
+    { "type": "range", "id": "products_count", "label": "Quantidade de produtos", "min": 4, "max": 24, "step": 4, "default": 8 }
+  ],
+  "presets": [{ "name": "Produtos em Destaque" }]
+}
+{% endschema %}

@@ -1,0 +1,88 @@
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+
+    <!-- Mobile menu toggle -->
+    <button class="header-icon-btn" onclick="toggleMobileMenu()" aria-label="Menu" style="display:flex;" id="menu-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+    <!-- Logo -->
+    <a href="/" class="header-logo" style="display:flex;align-items:center;">
+      {% if section.settings.logo != blank %}
+        <img src="{{ section.settings.logo | image_url: width: 160 }}" alt="{{ shop.name }}" height="40">
+      {% else %}
+        <span>{{ shop.name | upcase }}</span>
+      {% endif %}
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="header-nav">
+      <a href="/collections/all">Produtos</a>
+      <a href="/pages/sobre">Sobre</a>
+      <a href="/pages/entrega">Entrega</a>
+      <a href="/pages/troca-e-devolucao">Trocas</a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="header-actions">
+      <button class="header-icon-btn" onclick="toggleSearch()" aria-label="Buscar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <a href="/account" class="header-icon-btn" aria-label="Minha conta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+
+      <button class="header-icon-btn" onclick="openCart()" aria-label="Carrinho">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span class="cart-badge" id="cart-count" style="display:none;">0</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar" id="search-bar">
+    <form action="/search" method="get">
+      <input type="hidden" name="type" value="product">
+      <input type="search" name="q" placeholder="Buscar produtos..." autofocus>
+    </form>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Fechar menu">✕</button>
+  <a href="/" onclick="toggleMobileMenu()">Início</a>
+  <a href="/collections/all" onclick="toggleMobileMenu()">Todos os Produtos</a>
+  <a href="/pages/sobre" onclick="toggleMobileMenu()">Sobre</a>
+  <a href="/pages/entrega" onclick="toggleMobileMenu()">Entrega</a>
+  <a href="/pages/troca-e-devolucao" onclick="toggleMobileMenu()">Trocas e Devoluções</a>
+  <a href="/pages/pagamento" onclick="toggleMobileMenu()">Formas de Pagamento</a>
+  <a href="/account" onclick="toggleMobileMenu()">Minha Conta</a>
+  <a href="https://wa.me/5562994319090" target="_blank" rel="noopener" style="color:var(--brand-orange);">
+    💬 WhatsApp
+  </a>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    }
+  ]
+}
+{% endschema %}
