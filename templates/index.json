@@ -11,29 +11,107 @@
   "sections": {
     "hero": {
       "type": "hero",
-      "settings": {}
+      "settings": {
+        "image": "shopify://shop_images/Banner_Promocao_De_Doces_Confeitaria_Rosa.png",
+        "tagline": "Nova Coleção",
+        "title": "Muito Além do Básico",
+        "subtitle": "Peças exclusivas para mulheres que não passam despercebidas",
+        "cta_text": "Ver Coleção",
+        "cta_link": "",
+        "cta2_text": "Comprar Agora",
+        "cta2_link": ""
+      }
     },
     "benefits": {
       "type": "benefits-bar",
-      "settings": {}
+      "settings": {
+        "benefit1_title": "Parcelamento",
+        "benefit1_desc": "6x sem juros no cartão",
+        "benefit2_title": "Produção Própria",
+        "benefit2_desc": "Criação exclusiva, produção limitada",
+        "benefit3_title": "Ganhe",
+        "benefit3_desc": "5% de desconto no PIX"
+      }
     },
     "products-carousel": {
       "type": "products-carousel",
-      "settings": { "title": "Nossa Coleção" },
       "blocks": {
-        "cat1": { "type": "category", "settings": { "label": "Conjuntos", "collection_handle": "conjuntos" } },
-        "cat2": { "type": "category", "settings": { "label": "Macacões", "collection_handle": "macacoes" } },
-        "cat3": { "type": "category", "settings": { "label": "Acessórios", "collection_handle": "acessorios" } }
+        "category_7wDF7e": {
+          "type": "category",
+          "settings": {
+            "label": "Categoria",
+            "collection_handle": "novidades"
+          }
+        }
+      },
+      "block_order": [
+        "category_7wDF7e"
+      ],
+      "settings": {
+        "title": "Nossa Coleção"
       }
     },
     "about": {
       "type": "about",
-      "settings": {}
+      "settings": {
+        "title": "Pouco De Nós",
+        "content": "<p> </p>",
+        "cta_text": "Comprar agora!",
+        "cta_link": ""
+      }
     },
     "trust": {
       "type": "trust-badges",
       "settings": {}
+    },
+    "177353118617f156ac": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_09c23ea_dRmNJ7": {
+          "type": "ai_gen_block_09c23ea",
+          "settings": {
+            "featured_article": "",
+            "article_2": "",
+            "article_3": "",
+            "article_4": "",
+            "article_5": "",
+            "article_6": "",
+            "show_category": true,
+            "show_author": true,
+            "show_date": true,
+            "desktop_width_percent": 100,
+            "section_padding": 40,
+            "grid_gap": 20,
+            "card_padding": 20,
+            "card_border_radius": 8,
+            "title_font": "merriweather_n4",
+            "featured_title_size": 36,
+            "medium_title_size": 24,
+            "small_title_size": 18,
+            "text_size": 15,
+            "background_color": "#ffffff",
+            "card_background": "#ffffff",
+            "title_color": "#000000",
+            "text_color": "#666666",
+            "meta_color": "#999999",
+            "category_bg_color": "#fe7e41",
+            "category_text_color": "#ffffff"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_09c23ea_dRmNJ7"
+      ],
+      "settings": {}
     }
   },
-  "order": ["hero", "benefits", "products-carousel", "about", "trust"]
+  "order": [
+    "hero",
+    "benefits",
+    "products-carousel",
+    "about",
+    "trust",
+    "177353118617f156ac"
+  ]
 }
