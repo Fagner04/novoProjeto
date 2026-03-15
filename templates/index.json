@@ -63,7 +63,7 @@
       ],
       "settings": {
         "label": "DESTAQUES",
-        "title": "A Coleção",
+        "title": "",
         "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
       }
     },
@@ -143,8 +143,8 @@
       ],
       "name": "Carrossel de Coleções",
       "settings": {
-        "label": "NAVEGUE POR",
-        "title": "Nossas Coleções"
+        "label": "",
+        "title": "Ultimas coleções"
       }
     }
   },
