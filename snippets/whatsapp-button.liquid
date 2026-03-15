@@ -40,19 +40,18 @@
 /* FAB — standalone, always visible, never affected by bubble visibility */
 .wac-fab{
   width:62px;height:62px;border-radius:9999px;
-  background:transparent;border:none;cursor:pointer;
+  background:#25D366;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 24px rgba(37,211,102,.45);
-  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 6px 24px rgba(37,211,102,.5);
+  transition:transform .2s,box-shadow .2s,background .2s;
   flex-shrink:0;
-  /* Ensure always visible */
   opacity:1 !important;
   visibility:visible !important;
   pointer-events:auto !important;
 }
-.wac-fab:hover{transform:scale(1.1);}
-.wac-fab.is-open{background:#7c3aed;box-shadow:0 6px 24px rgba(124,58,237,.45);}
-.wac-fab svg{position:relative;z-index:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.15));}
+.wac-fab:hover{transform:scale(1.1);box-shadow:0 8px 28px rgba(37,211,102,.65);}
+.wac-fab.is-open{background:#7c3aed;box-shadow:0 6px 24px rgba(124,58,237,.5);}
+.wac-fab svg{position:relative;z-index:1;}
 
 /* Panel */
 .wac-panel{position:fixed;bottom:5.75rem;right:1.75rem;z-index:9998;width:345px;border-radius:1.25rem;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.18),0 4px 16px rgba(0,0,0,.08);background:#f0f2f5;opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity .3s ease,transform .3s cubic-bezier(.34,1.2,.64,1);}
