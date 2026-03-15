@@ -135,6 +135,27 @@
   }
 
   window.addEventListener('resize', updateCarouselPosition);
+
+  // Autoplay
+  var autoplayTimer;
+  function startAutoplay() {
+    autoplayTimer = setInterval(function() {
+      var cards = getVisibleCardElements();
+      var visible = getVisibleCards();
+      var maxOffset = Math.max(0, cards.length - visible);
+      carouselOffset = carouselOffset >= maxOffset ? 0 : carouselOffset + 1;
+      updateCarouselPosition();
+    }, 3000);
+  }
+  function stopAutoplay() { clearInterval(autoplayTimer); }
+
+  startAutoplay();
+
+  var wrapper = document.querySelector('.carousel-wrapper');
+  if (wrapper) {
+    wrapper.addEventListener('mouseenter', stopAutoplay);
+    wrapper.addEventListener('mouseleave', startAutoplay);
+  }
 </script>
 
 {% schema %}
