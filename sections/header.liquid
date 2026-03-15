@@ -19,10 +19,9 @@
 
     <!-- Desktop Nav -->
     <nav class="header-nav">
-      <a href="/collections/all">Produtos</a>
-      <a href="/pages/sobre">Sobre</a>
-      <a href="/pages/entrega">Entrega</a>
-      <a href="/pages/troca-e-devolucao">Trocas</a>
+      {% for link in linklists[section.settings.menu].links %}
+        <a href="{{ link.url }}">{{ link.title }}</a>
+      {% endfor %}
     </nav>
 
     <!-- Desktop Search inline -->
@@ -87,6 +86,12 @@
       "type": "image_picker",
       "id": "logo",
       "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu de navegação",
+      "default": "main-menu"
     }
   ]
 }
