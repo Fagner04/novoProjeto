@@ -62,12 +62,26 @@
         "category_yEqPTY"
       ],
       "settings": {
-        "title": "Macação"
+        "label": "DESTAQUES",
+        "title": "A Coleção",
+        "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
       }
     },
     "trust": {
       "type": "trust-badges",
       "settings": {}
+    },
+    "featured_products_3iVPUp": {
+      "type": "featured-products",
+      "disabled": true,
+      "name": "Produtos em Destaque",
+      "settings": {
+        "label": "Destaques",
+        "title": "Nossa Coleção",
+        "subtitle": "",
+        "collection": "",
+        "products_count": 8
+      }
     },
     "177353118617f156ac": {
       "type": "_blocks",
@@ -115,6 +129,7 @@
     "hero",
     "products-carousel",
     "trust",
+    "featured_products_3iVPUp",
     "177353118617f156ac"
   ]
 }
