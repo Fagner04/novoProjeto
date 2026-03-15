@@ -617,13 +617,28 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
   #scroll-top-btn { display: none; }
 }
 
-/* Protect WhatsApp widget from scroll reveal */
-.wac-root, .wac-root *, .wac-fab, #wac-fab, #scroll-top-btn {
+/* Protect WhatsApp FAB and scroll-top from scroll reveal effects */
+.wac-fab, #wac-fab, #scroll-top-btn {
   opacity: 1 !important;
-  transform: none !important;
   visibility: visible !important;
 }
-.wac-bubble-wrap { opacity: 0 !important; transform: translateX(12px) !important; visibility: hidden !important; }
-.wac-bubble-wrap.show { opacity: 1 !important; transform: translateX(0) !important; visibility: visible !important; }
-.wac-panel { opacity: 0 !important; transform: translateY(16px) scale(.96) !important; }
-.wac-panel.open { opacity: 1 !important; transform: translateY(0) scale(1) !important; }
+/* FAB must never have transform overridden (hover scale must still work) */
+.wac-fab:not(:hover):not(.is-open), #wac-fab:not(:hover):not(.is-open) {
+  transform: none !important;
+}
+/* Bubble: hidden by default, shown via .show class */
+.wac-bubble-wrap {
+  opacity: 0 !important;
+  transform: translateX(12px) !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.wac-bubble-wrap.show {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+/* Panel transitions */
+.wac-panel { opacity: 0 !important; transform: translateY(16px) scale(.96) !important; pointer-events: none !important; }
+.wac-panel.open { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: all !important; }
