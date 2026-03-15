@@ -47,20 +47,66 @@
       ],
       "settings": {}
     },
-    "collections-carousel": {
+    "collections_carousel_qrWhkd": {
       "type": "collections-carousel",
       "blocks": {
-        "col_1": { "type": "collection_item", "settings": { "label": "Conjuntos" } },
-        "col_2": { "type": "collection_item", "settings": { "label": "Macacões" } },
-        "col_3": { "type": "collection_item", "settings": { "label": "Tops" } },
-        "col_4": { "type": "collection_item", "settings": { "label": "Leggings" } },
-        "col_5": { "type": "collection_item", "settings": { "label": "Acessórios" } },
-        "col_6": { "type": "collection_item", "settings": { "label": "Novidades" } }
+        "collection_item_RJBU4G": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "blusa",
+            "label": "Conjuntos",
+            "image": "shopify://shop_images/IMG_4275.webp"
+          }
+        },
+        "collection_item_6WHtpL": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "macacao",
+            "label": "Macacões",
+            "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png"
+          }
+        },
+        "collection_item_7dWE8H": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "",
+            "label": "Tops"
+          }
+        },
+        "collection_item_amCGyW": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "",
+            "label": "Leggings"
+          }
+        },
+        "collection_item_9xe3i4": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "",
+            "label": "Acessórios"
+          }
+        },
+        "collection_item_6WHMgw": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "",
+            "label": "Novidades"
+          }
+        }
       },
-      "block_order": ["col_1","col_2","col_3","col_4","col_5","col_6"],
+      "block_order": [
+        "collection_item_RJBU4G",
+        "collection_item_6WHtpL",
+        "collection_item_7dWE8H",
+        "collection_item_amCGyW",
+        "collection_item_9xe3i4",
+        "collection_item_6WHMgw"
+      ],
+      "name": "Carrossel de Coleções",
       "settings": {
-        "label": "NAVEGUE POR",
-        "title": "Nossas Coleções"
+        "label": "",
+        "title": "Ultimas coleções"
       }
     },
     "products-carousel": {
@@ -79,7 +125,7 @@
       ],
       "settings": {
         "label": "DESTAQUES",
-        "title": "A Coleção",
+        "title": "",
         "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
       }
     },
@@ -101,49 +147,12 @@
     },
     "177353118617f156ac": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_09c23ea_dRmNJ7": {
-          "type": "ai_gen_block_09c23ea",
-          "settings": {
-            "featured_article": "",
-            "article_2": "",
-            "article_3": "",
-            "article_4": "",
-            "article_5": "",
-            "article_6": "",
-            "show_category": true,
-            "show_author": true,
-            "show_date": true,
-            "desktop_width_percent": 100,
-            "section_padding": 40,
-            "grid_gap": 20,
-            "card_padding": 20,
-            "card_border_radius": 8,
-            "title_font": "merriweather_n4",
-            "featured_title_size": 36,
-            "medium_title_size": 24,
-            "small_title_size": 18,
-            "text_size": 15,
-            "background_color": "#ffffff",
-            "card_background": "#ffffff",
-            "title_color": "#000000",
-            "text_color": "#666666",
-            "meta_color": "#999999",
-            "category_bg_color": "#fe7e41",
-            "category_text_color": "#ffffff"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_09c23ea_dRmNJ7"
-      ],
       "settings": {}
     }
   },
   "order": [
     "hero",
-    "collections-carousel",
+    "collections_carousel_qrWhkd",
     "products-carousel",
     "trust",
     "featured_products_3iVPUp",
