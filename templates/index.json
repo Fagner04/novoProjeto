@@ -139,26 +139,6 @@
         "title": ""
       }
     },
-    "products-carousel": {
-      "type": "products-carousel",
-      "blocks": {
-        "category_9Vfrkd": {
-          "type": "category",
-          "settings": {
-            "label": "Conjunto",
-            "collection": "conjunto-fitness"
-          }
-        }
-      },
-      "block_order": [
-        "category_9Vfrkd"
-      ],
-      "settings": {
-        "label": "DESTAQUES",
-        "title": "",
-        "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
-      }
-    },
     "trust": {
       "type": "trust-badges",
       "settings": {}
@@ -178,14 +158,52 @@
     "177353118617f156ac": {
       "type": "_blocks",
       "settings": {}
+    },
+    "products_carousel_Lfhr8p": {
+      "type": "products-carousel",
+      "blocks": {
+        "category_YAQ7Jj": {
+          "type": "category",
+          "settings": {
+            "label": "MACAÇÃO",
+            "collection": "macacao"
+          }
+        },
+        "category_JNcFAp": {
+          "type": "category",
+          "settings": {
+            "label": "Conjuntos",
+            "collection": ""
+          }
+        },
+        "category_ykUirR": {
+          "type": "category",
+          "settings": {
+            "label": "Macacoes",
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_YAQ7Jj",
+        "category_JNcFAp",
+        "category_ykUirR"
+      ],
+      "name": "Carrossel de Produtos",
+      "settings": {
+        "all_collection": "ultimas-novidades",
+        "label": "DESTAQUES",
+        "title": "A Colecao",
+        "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
+      }
     }
   },
   "order": [
     "hero",
     "collections_carousel_qrWhkd",
-    "products-carousel",
     "trust",
     "featured_products_3iVPUp",
-    "177353118617f156ac"
+    "177353118617f156ac",
+    "products_carousel_Lfhr8p"
   ]
 }
