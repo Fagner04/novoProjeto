@@ -1,7 +1,6 @@
 <section class="products-carousel-section">
   <div class="container-elegant">
 
-    <!-- Section Header -->
     {% if section.settings.title != blank or section.settings.subtitle != blank %}
       <div class="section-header" style="margin-bottom:2rem;">
         {% if section.settings.label != blank %}
@@ -21,141 +20,157 @@
       </div>
     {% endif %}
 
-    <!-- Category Filter Tabs -->
     <div class="carousel-tabs" id="carousel-tabs">
-      <button class="carousel-tab active" data-collection="all" onclick="filterCarousel(this, 'all')">Todos</button>
+      <button class="carousel-tab active" onclick="filterCarousel(this,'all')">Todos</button>
       {% for block in section.blocks %}
-        <button
-          class="carousel-tab"
-          data-collection="{{ block.settings.collection.handle }}"
-          onclick="filterCarousel(this, '{{ block.settings.collection.handle }}')"
-        >{{ block.settings.label | default: block.settings.collection.title }}</button>
+        {% if block.settings.collection != blank %}
+          <button class="carousel-tab" onclick="filterCarousel(this,'{{ block.settings.collection.handle }}')">
+            {{ block.settings.label | default: block.settings.collection.title }}
+          </button>
+        {% endif %}
       {% endfor %}
     </div>
 
-    <!-- Carousel Wrapper -->
-    <div class="carousel-wrapper">
+    <div class="carousel-wrapper" id="carousel-wrapper">
       <button class="carousel-arrow carousel-prev" onclick="slideCarousel(-1)" aria-label="Anterior">&#8592;</button>
-
       <div class="carousel-track-outer">
         <div class="carousel-track" id="carousel-track">
-          {% assign all_products = collections.all.products %}
-          {% for product in all_products limit: 20 %}
-            <div class="carousel-card" data-collections="{{ product.collections | map: 'handle' | join: ',' }}">
-              <div class="carousel-card-image">
-                {% if product.metafields.custom.is_new %}
+
+          <div class="cg-group" data-group="all">
+s limit: 20 %}
+              <div class="carousel-card">
+                <div class="carousel-card-image">
                   <span class="carousel-badge">Novidade</span>
+                  <button class="carousel-fav" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+                  <a href="{{ product.url }}"><img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.featured_image.alt | escape }}" loading="lazy" width="600" height="800"></a>
+                </div>
+                <div class="carousel-card-info">
+                  <h3>{{ product.title | upcase }}</h3>
+                  <div class="carousel-price-row">
+                    <span class="carousel-price-pix">{% render 'pix-icon', size: '14' %}{{ product.price | times: 0.95 | money }}</span>
+                    <span class="carousel-pix-badge">5%</span>
+                  </div>
+                  <div class="carousel-price-row" style="margin-top:0.25rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <span class="carousel-price-full">{{ product.price | money }}</span>
+                    <span class="carousel-avista-b VISTA</span>
+                  </div>
+                  <p class="carousel-installments">ou 6x de {{ product.price | divided_by: 6 | money }} sem juros</p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% for block in section.blocks %}
+            {% if block.settings.collection != blank %}
+              {% assign col = block.settings.collection %}
+              <div class="cg-group" data-group="{{ col.handle }}" style="display:none;">
+                {% if coproducts_count > 0 %}
+                  {% for product in col.products limit: 20 %}
+                    <div class="carousel-card">
+                      <div class="carousel-card-image">
+                        <span class="carousel-badge">Novidade</span>
+                        <button class="carousel-fav" ar 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+                        <a href="{{ product.url }}"><img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.featured_image.alt | escape }}" loading="lazy" width="600" height="800"></a>
+                      </div>
+                      <div class="carousel-card-info">
+                        <h3>{{ product.title | upcase }}</h3>
+                        <div class="carousel-price-row">
+                          <span class="carousel-price-pix">{% render 'pix-icon', size: '14' %}{{ product.price | times: 0.95 | money }}</span>
+                          <span class="carousel-pix-badge">5%</span>
+                        </div>
+                        <div class="carousel-price-row" style="margin-top:0.25rem;">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                          <span class="carousel-price-full">{{ product.price | money }}</span>
+                          <span class="carousel-avista-badge">A VISTA</span>
+                        </div>
+                        <p class="carousel-installments">ou 6x de {{ product.price | divided_by: 6 | money }} sem juros</p>
+                      </div>
+                    </div>
+                  {% endfor %}
                 {% else %}
-                  <span class="carousel-badge">Novidade</span>
+                  <div style="padding:3rem 2rem;text-align:center;color:#888;font-size:.875rem;width:100%;">
+                    <p>Nenhum produto nesta colecao ainda.</p>
+                    <small style="color:#bbb;display:block;margin-top:.5rem;">Handle: "{{ col.handle }}" — {{ col.products_count }} produtos cadastrados</small>
+                  </div>
                 {% endif %}
-                <button class="carousel-fav" aria-label="Favoritar">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                  </svg>
-                </button>
-                <a href="{{ product.url }}">
-                  <img src="{{ product.featured_image | image_url: width: 600 }}"
-                    alt="{{ product.featured_image.alt | escape }}"
-                    loading="lazy" width="600" height="800">
-                </a>
               </div>
-              <div class="carousel-card-info">
-                <h3>{{ product.title | upcase }}</h3>
-                <div class="carousel-price-row">
-                  <span class="carousel-price-pix">
-                    {% render 'pix-icon', size: '14' %}
-                    {{ product.price | times: 0.95 | money }}
-                  </span>
-                  <span class="carousel-pix-badge">5%</span>
-                </div>
-                <div class="carousel-price-row" style="margin-top:0.25rem;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  <span class="carousel-price-full">{{ product.price | money }}</span>
-                  <span class="carousel-avista-badge">À VISTA</span>
-                </div>
-                <p class="carousel-installments">ou 6x de {{ product.price | divided_by: 6 | money }} sem juros</p>
-              </div>
-            </div>
+            {% endif %}
           {% endfor %}
+
         </div>
       </div>
-
-      <button class="carousel-arrow carousel-next" onclick="slideCarousel(1)" aria-label="Próximo">&#8594;</button>
+      <button class="cn>
     </div>
 
   </div>
 </section>
 
 <script>
-  var carouselOffset = 0;
-  var cardWidth = 0;
-  var visibleCards = 4;
+var carouselOffset = 0;
+var currentGroup = 'all';
 
-  function getVisibleCards() {
-    return window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
-  }
+function getVisibleCount() {
+  return window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
+}
 
-  function getVisibleCardElements() {
-    return Array.from(document.querySelectorAll('.carousel-card')).filter(c => c.style.display !== 'none');
-  }
+function getActiveGroup() {
+  return document.querySelector('.cg-group[data-group="' + currentGroup + '"]');
+}
 
-  function slideCarousel(dir) {
-    var cards = getVisibleCardElements();
-    var visible = getVisibleCards();
-    var maxOffset = Math.max(0, cards.length - visible);
-    carouselOffset = Math.min(Math.max(carouselOffset + dir, 0), maxOffset);
-    updateCarouselPosition();
-  }
+function getActiveCards() {
+  var g = getActiveGroup();
+  return g ? Array.from(g.querySelectorAll('.carousel-card')) : [];
+}
 
-  function updateCarouselPosition() {
-    var track = document.getElementById('carousel-track');
-    var cards = getVisibleCardElements();
-    if (!cards.length) return;
-    var w = cards[0].offsetWidth + 16; // gap
-    track.style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
-  }
+function updatePosition() {
+  var cards = getActiveCards();
+  if (!cards.length) return;
+  var w = cards[0].offsetWidth + 16;
+  var g = getActiveGroup();
+  if (g) g.style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
+}
 
-  function filterCarousel(btn, handle) {
-    // Update active tab
-    document.querySelectorAll('.carousel-tab').forEach(function(t) { t.classList.remove('active'); });
-    btn.classList.add('active');
+function slideCarousel(dir) {
+  var cards = getActiveCards();
+  var max = Math.max(0, cards.length - getVisibleCount());
+  carouselOffset = Math.min(Math.max(carouselOffset + dir, 0), max);
+  updatePosition();
+}
 
-    // Show/hide cards
-    carouselOffset = 0;
-    document.querySelectorAll('.carousel-card').forEach(function(card) {
-      if (handle === 'all') {
-        card.style.display = '';
-      } else {
-        var cols = card.dataset.collections || '';
-        card.style.display = cols.split(',').indexOf(handle) > -1 ? '' : 'none';
-      }
-    });
-
-    document.getElementById('carousel-track').style.transform = 'translateX(0)';
-  }
-
-  window.addEventListener('resize', updateCarouselPosition);
-
-  // Autoplay
-  var autoplayTimer;
-  function startAutoplay() {
-    autoplayTimer = setInterval(function() {
-      var cards = getVisibleCardElements();
-      var visible = getVisibleCards();
-      var maxOffset = Math.max(0, cards.length - visible);
-      carouselOffset = carouselOffset >= maxOffset ? 0 : carouselOffset + 1;
-      updateCarouselPosition();
-    }, 3000);
-  }
-  function stopAutoplay() { clearInterval(autoplayTimer); }
-
+function filterCarousel(btn, handle) {
+  document.querySelsList.remove('active'); });
+  btn.classList.add('active');
+  currentGroup = handle;
+  carouselOffset = 0;
+  document.querySelectorAll('.cg-group').forEach(function(g) {
+    var show = g.dataset.group === handle;
+    g.style.display = show ? 'flex' : 'none';
+    if (show) g.style.transform = 'translateX(0)';
+  });
+  stopAutoplay();
   startAutoplay();
+}
 
-  var wrapper = document.querySelector('.carousel-wrapper');
-  if (wrapper) {
-    wrapper.addEventListener('mouseenter', stopAutoplay);
-    wrapper.addEventListener('mouseleave', startAutoplay);
-  }
+window.addEventListener('resize', updatePosition);
+
+var autoT;
+function startAutoplay() {
+  autoT = setInterval(function() {
+    var ca
+    var max = Math.max(0, cards.length - getVisibleCount());
+    carouselOffset = carouselOffset >= max ? 0 : carouselOffset + 1;
+    updatePosition();
+  }, 3000);
+}
+function stopAutoplay() { clearInterval(autoT); }
+
+startAutoplay();
+var wr = document.getElementById('carousel-wrapper');
+if (wr) {
+  wr.addEventListener('mouseenter', stopAutoplay);
+  wr.addEventListener('mouseleave', startAutoplay);
+}
 </script>
 
 {% schema %}
@@ -167,22 +182,22 @@
       "name": "Categoria",
       "settings": [
         { "type": "text", "id": "label", "label": "Nome da aba", "default": "Categoria" },
-        { "type": "collection", "id": "collection", "label": "Coleção" }
+        { "type": "collection", "id": "collection", "label": "Colecao" }
       ]
     }
   ],
   "settings": [
-    { "type": "text", "id": "label", "label": "Label acima do título", "default": "DESTAQUES" },
-    { "type": "text", "id": "title", "label": "Título da seção", "default": "A Coleção" },
-    { "type": "textarea", "id": "subtitle", "label": "Subtítulo / descrição", "default": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real." }
+    { "type": "text", "id": "label", "label": "Label acima do titulo", "default": "DESTAQUES" },
+    { "type": "text", "id": "title", "label": "Titulo da secao", "default": "A Colecao" },
+    { "type": "ntensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real." }
   ],
   "presets": [
     {
       "name": "Carrossel de Produtos",
       "blocks": [
         { "type": "category", "settings": { "label": "Conjuntos" } },
-        { "type": "category", "settings": { "label": "Macacões" } },
-        { "type": "category", "settings": { "label": "Acessórios" } }
+        { "type": "category", "settings": { "label": "Macacoes" } },
+        { "type": "category", "settings": { "label": "Acessorios" } }
       ]
     }
   ]
