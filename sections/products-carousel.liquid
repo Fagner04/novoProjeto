@@ -36,15 +36,24 @@
       <div class="carousel-track-outer">
         <div class="carousel-track" id="carousel-track">
 
-          {% comment %}Grupo Todos — usa colecao configuravel{% endcomment %}
+          {% comment %}Grupo Todos{% endcomment %}
           {% assign all_col = section.settings.all_collection %}
+          {% if all_col == blank %}
+            {% for block in section.blocks %}
+              {% if block.settings.collection != blank and all_col == blank %}
+                {% assign all_col = block.settings.collection %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
           <div class="cg-group" data-group="all">
             {% if all_col != blank %}
               {% for product in all_col.products limit: 20 %}
                 {% render 'carousel-product-card', product: product %}
               {% endfor %}
             {% else %}
-              <p style="padding:2rem;color:#888;font-size:.875rem;">Selecione uma colecao em "Colecao Todos" nas configuracoes.</p>
+              {% for product in collections.all.products limit: 20 %}
+                {% render 'carousel-product-card', product: product %}
+              {% endfor %}
             {% endif %}
           </div>
 
