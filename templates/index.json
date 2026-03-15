@@ -11,16 +11,39 @@
   "sections": {
     "hero": {
       "type": "hero",
-      "settings": {
-        "image": "shopify://shop_images/Banner_Promocao_De_Doces_Confeitaria_Rosa.png",
-        "tagline": "",
-        "title": "Muito Além do Básico",
-        "subtitle": "Peças exclusivas para mulheres que não passam despercebidas",
-        "cta_text": "Ver Coleção",
-        "cta_link": "",
-        "cta2_text": "Atacado",
-        "cta2_link": ""
-      }
+      "blocks": {
+        "slide_enCz7M": {
+          "type": "slide",
+          "settings": {
+            "tagline": "",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "Ver Colecao",
+            "cta_link": "",
+            "cta2_text": "",
+            "cta2_link": ""
+          }
+        },
+        "slide_Awni3z": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Banner_Promocao_De_Doces_Confeitaria_Rosa.png",
+            "image_mobile": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png",
+            "tagline": "",
+            "title": "",
+            "subtitle": "",
+            "cta_text": "Ver Colecao",
+            "cta_link": "",
+            "cta2_text": "",
+            "cta2_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_enCz7M",
+        "slide_Awni3z"
+      ],
+      "settings": {}
     },
     "benefits": {
       "type": "benefits-bar",
