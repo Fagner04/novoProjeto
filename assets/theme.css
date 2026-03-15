@@ -438,3 +438,8 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 
 /* Qty row */
 .product-qty-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+
+/* ===== WHATSAPP FAB ===== */
+.whatsapp-fab { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999; display: flex; align-items: center; gap: 0.6rem; background: #25D366; color: #fff; border-radius: 9999px; padding: 0.75rem 1.25rem 0.75rem 0.875rem; box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none; font-family: 'Poppins', sans-serif; font-size: 0.875rem; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; }
+.whatsapp-fab:hover { transform: scale(1.06); box-shadow: 0 6px 28px rgba(37,211,102,0.55); }
+.whatsapp-fab-label { white-space: nowrap; }
