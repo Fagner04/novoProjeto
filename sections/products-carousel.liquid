@@ -1,6 +1,26 @@
 <section class="products-carousel-section">
   <div class="container-elegant">
 
+    <!-- Section Header -->
+    {% if section.settings.title != blank or section.settings.subtitle != blank %}
+      <div class="section-header" style="margin-bottom:2rem;">
+        {% if section.settings.label != blank %}
+          <p class="label-caps" style="margin-bottom:0.5rem;">{{ section.settings.label }}</p>
+        {% endif %}
+        {% if section.settings.title != blank %}
+          <h2 class="heading-section">{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.subtitle != blank %}
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin:0.75rem 0;">
+            <span style="width:3rem;height:1px;background:rgba(254,126,65,0.4);display:block;"></span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--brand-orange)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span style="width:3rem;height:1px;background:rgba(254,126,65,0.4);display:block;"></span>
+          </div>
+          <p class="text-elegant" style="max-width:42rem;margin:0 auto;text-align:center;">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
     <!-- Category Filter Tabs -->
     <div class="carousel-tabs" id="carousel-tabs">
       <button class="carousel-tab active" data-collection="all" onclick="filterCarousel(this, 'all')">Todos</button>
@@ -131,7 +151,9 @@
     }
   ],
   "settings": [
-    { "type": "text", "id": "title", "label": "Título da seção", "default": "Nossa Coleção" }
+    { "type": "text", "id": "label", "label": "Label acima do título", "default": "DESTAQUES" },
+    { "type": "text", "id": "title", "label": "Título da seção", "default": "A Coleção" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtítulo / descrição", "default": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real." }
   ],
   "presets": [
     {
