@@ -47,17 +47,6 @@
       ],
       "settings": {}
     },
-    "benefits": {
-      "type": "benefits-bar",
-      "settings": {
-        "benefit1_title": "Parcelamento",
-        "benefit1_desc": "6x sem juros no cartão",
-        "benefit2_title": "Produção Própria",
-        "benefit2_desc": "Criação exclusiva, produção limitada",
-        "benefit3_title": "Ganhe",
-        "benefit3_desc": "5% de desconto no PIX"
-      }
-    },
     "products-carousel": {
       "type": "products-carousel",
       "blocks": {
@@ -124,7 +113,6 @@
   },
   "order": [
     "hero",
-    "benefits",
     "products-carousel",
     "trust",
     "177353118617f156ac"
