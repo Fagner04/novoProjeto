@@ -83,6 +83,24 @@ async function renderCart() {
 }
 async function changeItemQty(id, qty) { await updateCartItem(id, qty); renderCart(); }
 
+// ===== FAVORITES =====
+function toggleFav(btn, handle) {
+  var favs = [];
+  try { favs = JSON.parse(localStorage.getItem('wac_favs') || '[]'); } catch(e) {}
+  var idx = favs.indexOf(handle);
+  var svg = btn.querySelector('svg');
+  if (idx > -1) {
+    favs.splice(idx, 1);
+    svg.style.fill = 'none'; svg.style.stroke = 'currentColor';
+  } else {
+    favs.push(handle);
+    svg.style.fill = '#ef4444'; svg.style.stroke = '#ef4444';
+  }
+  try { localStorage.setItem('wac_favs', JSON.stringify(favs)); } catch(e) {}
+  var badge = document.getElementById('fav-count');
+  if (badge) { badge.textContent = favs.length; badge.style.display = favs.length > 0 ? 'flex' : 'none'; }
+}
+
 // ===== SCROLL EFFECTS (desktop only) =====
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -91,6 +109,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const badge = document.getElementById('cart-count');
     if (badge && cart.item_count > 0) { badge.textContent = cart.item_count; badge.style.display = 'flex'; }
   });
+
+  // Init favorites badge
+  (function() {
+    var favs = [];
+    try { favs = JSON.parse(localStorage.getItem('wac_favs') || '[]'); } catch(e) {}
+    var badge = document.getElementById('fav-count');
+    if (badge && favs.length > 0) { badge.textContent = favs.length; badge.style.display = 'flex'; }
+
+    // Mark active fav buttons on page
+    document.querySelectorAll('.carousel-fav[data-handle]').forEach(function(btn) {
+      if (favs.indexOf(btn.dataset.handle) > -1) {
+        btn.querySelector('svg').style.fill = '#ef4444';
+        btn.querySelector('svg').style.stroke = '#ef4444';
+      }
+    });
+  })();
 
   // Add-to-cart AJAX
   const form = document.getElementById('product-form');
