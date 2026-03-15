@@ -137,9 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     lastScroll = y;
 
-    // Back to top button
-    var btn = document.getElementById('scroll-top-btn');
-    if (btn) btn.classList.toggle('show', y > 400);
+
   }, { passive: true });
 
   // ---- 2. Scroll reveal ----
@@ -193,12 +191,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-// ---- Back to top button (inject) ----
-(function() {
-  var btn = document.createElement('button');
-  btn.id = 'scroll-top-btn';
-  btn.setAttribute('aria-label', 'Voltar ao topo');
-  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>';
-  btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
-  document.body.appendChild(btn);
-})();
+
