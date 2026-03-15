@@ -16,6 +16,7 @@
     "font_body": "acme_n4",
     "social_instagram": "https://www.instagram.com/musasclubfit",
     "social_whatsapp": "https://wa.me/5562994319090",
+    "wa_repeat_after": 5,
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
