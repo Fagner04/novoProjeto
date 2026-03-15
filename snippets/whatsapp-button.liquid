@@ -7,6 +7,7 @@
 {%- assign wa_show_delay = settings.wa_show_delay | default: 3 -%}
 {%- assign wa_hide_after = settings.wa_hide_after | default: 6 -%}
 {%- assign wa_repeat_after = settings.wa_repeat_after | default: 30 -%}
+{% if settings.wa_enabled != false %}
 <style>
 .wac*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
 /* FAB area */
@@ -21,11 +22,13 @@
 .wac-bubble-dots span:nth-child(3){animation-delay:.36s;}
 @keyframes wacDot{0%,60%,100%{transform:translateY(0);opacity:.5;}30%{transform:translateY(-5px);opacity:1;}}
 /* FAB button */
-.wac-fab{width:62px;height:62px;border-radius:9999px;background:#7c3aed;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(124,58,237,.5);transition:transform .2s,box-shadow .2s;position:relative;flex-shrink:0;}
-.wac-fab:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(124,58,237,.65);}
-.wac-fab svg{position:relative;z-index:1;}
-.wac-pulse{position:absolute;inset:0;border-radius:9999px;background:rgba(124,58,237,.3);animation:wacPulse 2.2s ease-out infinite;}
+.wac-fab{width:62px;height:62px;border-radius:9999px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(37,211,102,.45);transition:transform .2s,box-shadow .2s,background .2s;position:relative;flex-shrink:0;}
+.wac-fab:hover{transform:scale(1.1);}
+.wac-fab.is-open{background:#7c3aed;box-shadow:0 6px 24px rgba(124,58,237,.45);}
+.wac-fab svg{position:relative;z-index:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.15));}
+.wac-pulse{position:absolute;inset:0;border-radius:9999px;background:rgba(37,211,102,.3);animation:wacPulse 2.2s ease-out infinite;}
 .wac-pulse2{animation-delay:.7s;}
+.wac-fab.is-open .wac-pulse{display:none;}
 @keyframes wacPulse{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.75);opacity:0;}}
 /* Panel */
 .wac-panel{position:fixed;bottom:5.75rem;right:1.75rem;z-index:9998;width:345px;border-radius:1.25rem;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.18),0 4px 16px rgba(0,0,0,.08);background:#f0f2f5;opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity .3s ease,transform .3s cubic-bezier(.34,1.2,.64,1);}
@@ -80,11 +83,18 @@
     <button class="wac-fab" id="wac-fab" onclick="wacToggle()" aria-label="Abrir chat WhatsApp">
       <div class="wac-pulse"></div>
       <div class="wac-pulse wac-pulse2"></div>
-      <!-- Official WhatsApp icon SVG -->
-      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 4C12.954 4 4 12.954 4 24c0 3.59.94 6.96 2.584 9.876L4 44l10.376-2.72A19.88 19.88 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" fill="#fff"/>
-        <path d="M34.507 29.13c-.448-.224-2.652-1.308-3.063-1.457-.41-.149-.708-.224-1.007.224-.298.448-1.156 1.457-1.417 1.755-.261.298-.522.336-.97.112-2.67-1.335-4.424-2.382-6.186-5.4-.467-.803.467-.746 1.335-2.484.149-.298.075-.559-.037-.783-.112-.224-1.007-2.428-1.38-3.323-.364-.87-.733-.75-1.007-.764-.261-.013-.559-.016-.857-.016-.298 0-.783.112-1.193.559-.41.448-1.566 1.53-1.566 3.73 0 2.2 1.604 4.327 1.828 4.625.224.298 3.157 4.82 7.65 6.762 2.843 1.228 3.957.944 4.671.783.97-.224 2.652-1.084 3.025-2.132.373-1.048.373-1.946.261-2.132-.112-.186-.41-.298-.857-.522z" fill="#7c3aed"/>
-      </svg>
+      <!-- WhatsApp official logo -->
+      <span id="wac-icon-wa">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M18 0C8.059 0 0 8.059 0 18c0 3.182.832 6.169 2.291 8.763L0 36l9.496-2.249A17.94 17.94 0 0 0 18 36c9.941 0 18-8.059 18-18S27.941 0 18 0z" fill="#fff"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M18 2.571C9.478 2.571 2.571 9.478 2.571 18c0 2.94.8 5.694 2.196 8.055L3 33l7.14-1.714A15.38 15.38 0 0 0 18 33.429c8.522 0 15.429-6.907 15.429-15.429S26.522 2.571 18 2.571z" fill="#25D366"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M13.64 10.714c-.343-.771-.7-.786-1.026-.8-.266-.011-.571-.01-.876-.01-.305 0-.8.114-1.219.572-.419.457-1.6 1.562-1.6 3.81 0 2.247 1.638 4.42 1.867 4.724.229.305 3.162 5.048 7.81 6.876 3.862 1.524 4.648 1.22 5.486 1.143.838-.076 2.705-1.105 3.086-2.172.381-1.067.381-1.981.267-2.172-.114-.19-.419-.305-.876-.533-.457-.229-2.705-1.334-3.124-1.486-.419-.152-.724-.229-1.029.229-.305.457-1.181 1.486-1.448 1.791-.267.305-.533.343-.99.114-.457-.229-1.929-.71-3.676-2.267-1.358-1.21-2.276-2.705-2.543-3.162-.267-.457-.029-.705.2-.933.205-.205.457-.533.686-.8.229-.267.305-.457.457-.762.152-.305.076-.572-.038-.8-.114-.229-1.01-2.486-1.414-3.382z" fill="#fff"/>
+        </svg>
+      </span>
+      <!-- Close icon (shown when panel is open) -->
+      <span id="wac-icon-close" style="display:none;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </span>
     </button>
   </div>
 
@@ -197,8 +207,9 @@
     var panel=document.getElementById('wac-panel');
     var fab=document.getElementById('wac-fab');
     var isOpen=panel.classList.toggle('open');
-    fab.style.opacity=isOpen?'0':'1';
-    fab.style.pointerEvents=isOpen?'none':'auto';
+    fab.classList.toggle('is-open', isOpen);
+    document.getElementById('wac-icon-wa').style.display=isOpen?'none':'block';
+    document.getElementById('wac-icon-close').style.display=isOpen?'block':'none';
     hideBubble();
     if(isOpen&&!opened){opened=true;showWelcome();}
   };
@@ -232,3 +243,4 @@
   };
 })();
 </script>
+{% endif %}

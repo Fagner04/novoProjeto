@@ -76,8 +76,10 @@
     "name": "Chat WhatsApp",
     "settings": [
       {
-        "type": "header",
-        "content": "Configurações gerais"
+        "type": "checkbox",
+        "id": "wa_enabled",
+        "label": "Ativar chat WhatsApp",
+        "default": true
       },
       {
         "type": "text",
