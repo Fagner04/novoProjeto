@@ -1,236 +1,234 @@
 {%- assign wa_number = settings.wa_number | default: '5562994319090' -%}
 {%- assign wa_agent = settings.wa_agent_name | default: 'Musas Atendimento' -%}
-{%- assign wa_status = settings.wa_status | default: 'Offline' -%}
+{%- assign wa_status = settings.wa_status | default: 'Online agora' -%}
 {%- assign wa_welcome = settings.wa_welcome | default: '👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?' -%}
 {%- assign wa_default_msg = settings.wa_default_msg | default: 'Olá! Vim pelo site e gostaria de mais informações.' -%}
 {%- assign wa_footer = settings.wa_footer | default: 'Resposta em até 2 horas durante horário comercial' -%}
 {%- assign wa_show_delay = settings.wa_show_delay | default: 3 -%}
-{%- assign wa_hide_after = settings.wa_hide_after | default: 5 -%}
+{%- assign wa_hide_after = settings.wa_hide_after | default: 6 -%}
 {%- assign wa_repeat_after = settings.wa_repeat_after | default: 30 -%}
-
-<!-- Google Fonts for widget -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-.wac-widget *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
-
-/* FAB */
-.wac-fab-area{position:fixed;bottom:1.75rem;right:1.75rem;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:.6rem;}
-.wac-bubble{background:#fff;color:#111;font-size:.875rem;font-weight:500;padding:.55rem 1rem;border-radius:1.25rem 1.25rem 0 1.25rem;box-shadow:0 4px 20px rgba(0,0,0,.13);max-width:220px;line-height:1.4;opacity:0;transform:translateY(8px) scale(.95);transition:opacity .35s ease,transform .35s ease;pointer-events:none;}
-.wac-bubble.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
-.wac-fab{width:60px;height:60px;border-radius:9999px;background:linear-gradient(135deg,#7c3aed,#9f5cf7);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(124,58,237,.45);transition:transform .2s ease,box-shadow .2s ease;position:relative;}
-.wac-fab:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(124,58,237,.6);}
-.wac-fab-pulse{position:absolute;inset:0;border-radius:9999px;background:rgba(124,58,237,.35);animation:wacPulse 2s ease-out infinite;}
-@keyframes wacPulse{0%{transform:scale(1);opacity:.7;}100%{transform:scale(1.7);opacity:0;}}
-
+.wac*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
+/* FAB area */
+.wac-root{position:fixed;bottom:1.75rem;right:1.75rem;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;}
+/* Bubble */
+.wac-bubble-wrap{display:flex;align-items:flex-end;gap:.6rem;opacity:0;transform:translateX(12px);transition:opacity .4s cubic-bezier(.34,1.56,.64,1),transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+.wac-bubble-wrap.show{opacity:1;transform:translateX(0);pointer-events:auto;}
+.wac-bubble-text{background:#fff;color:#111;font-size:.875rem;font-weight:500;padding:.6rem 1rem;border-radius:1.25rem 1.25rem 0 1.25rem;box-shadow:0 4px 20px rgba(0,0,0,.13);max-width:210px;line-height:1.45;position:relative;}
+.wac-bubble-dots{display:flex;align-items:center;gap:4px;padding:.55rem .75rem;background:#fff;border-radius:1.25rem 1.25rem 0 1.25rem;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+.wac-bubble-dots span{width:7px;height:7px;border-radius:9999px;background:#aaa;animation:wacDot 1.3s infinite;}
+.wac-bubble-dots span:nth-child(2){animation-delay:.18s;}
+.wac-bubble-dots span:nth-child(3){animation-delay:.36s;}
+@keyframes wacDot{0%,60%,100%{transform:translateY(0);opacity:.5;}30%{transform:translateY(-5px);opacity:1;}}
+/* FAB button */
+.wac-fab{width:62px;height:62px;border-radius:9999px;background:#7c3aed;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(124,58,237,.5);transition:transform .2s,box-shadow .2s;position:relative;flex-shrink:0;}
+.wac-fab:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(124,58,237,.65);}
+.wac-fab svg{position:relative;z-index:1;}
+.wac-pulse{position:absolute;inset:0;border-radius:9999px;background:rgba(124,58,237,.3);animation:wacPulse 2.2s ease-out infinite;}
+.wac-pulse2{animation-delay:.7s;}
+@keyframes wacPulse{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.75);opacity:0;}}
 /* Panel */
-.wac-panel{position:fixed;bottom:5.5rem;right:1.75rem;z-index:9998;width:340px;border-radius:1.25rem;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18),0 4px 16px rgba(0,0,0,.1);background:#f0f2f5;opacity:0;transform:translateY(20px) scale(.97);pointer-events:none;transition:opacity .3s ease,transform .3s ease;}
+.wac-panel{position:fixed;bottom:5.75rem;right:1.75rem;z-index:9998;width:345px;border-radius:1.25rem;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.18),0 4px 16px rgba(0,0,0,.08);background:#f0f2f5;opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity .3s ease,transform .3s cubic-bezier(.34,1.2,.64,1);}
 .wac-panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
-
 /* Header */
-.wac-header{background:linear-gradient(135deg,#6d28d9,#7c3aed);padding:1rem 1.1rem;display:flex;align-items:center;gap:.75rem;}
-.wac-avatar{width:46px;height:46px;border-radius:9999px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
-.wac-avatar-online{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:9999px;background:#4ade80;border:2px solid #7c3aed;}
-.wac-header-info{flex:1;}
-.wac-header-name{color:#fff;font-size:.9375rem;font-weight:700;line-height:1.2;}
-.wac-header-status{color:rgba(255,255,255,.75);font-size:.75rem;margin-top:.15rem;display:flex;align-items:center;gap:.3rem;}
-.wac-header-status::before{content:'';width:7px;height:7px;border-radius:9999px;background:#4ade80;display:inline-block;}
-.wac-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;}
-.wac-close:hover{background:rgba(255,255,255,.3);}
-
-/* Messages area */
-.wac-messages{padding:1rem;display:flex;flex-direction:column;gap:.75rem;max-height:220px;overflow-y:auto;background:#f0f2f5;}
-.wac-messages::-webkit-scrollbar{width:4px;}
-.wac-messages::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:9999px;}
-.wac-msg-in{background:#fff;border-radius:0 1rem 1rem 1rem;padding:.75rem .9rem;font-size:.875rem;line-height:1.5;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.07);max-width:90%;position:relative;}
-.wac-msg-in::before{content:'';position:absolute;top:0;left:-6px;border:6px solid transparent;border-right-color:#fff;border-top-color:#fff;}
-.wac-msg-time{font-size:.7rem;color:#999;text-align:right;margin-top:.35rem;}
-.wac-typing{display:flex;align-items:center;gap:.3rem;padding:.5rem .75rem;background:#fff;border-radius:0 1rem 1rem 1rem;width:fit-content;box-shadow:0 1px 4px rgba(0,0,0,.07);}
-.wac-typing span{width:7px;height:7px;border-radius:9999px;background:#aaa;animation:wacDot 1.2s infinite;}
-.wac-typing span:nth-child(2){animation-delay:.2s;}
-.wac-typing span:nth-child(3){animation-delay:.4s;}
-@keyframes wacDot{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-5px);}}
-
-/* Quick actions */
-.wac-quick{padding:.5rem 1rem 1rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;background:#f0f2f5;}
-.wac-quick-btn{background:#fff;border:1.5px solid #e5e7eb;border-radius:.875rem;padding:.7rem .75rem;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;transition:all .2s;text-align:left;}
-.wac-quick-btn:hover{border-color:#7c3aed;background:#faf5ff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,58,237,.12);}
-.wac-quick-icon{font-size:1.25rem;margin-bottom:.2rem;}
-.wac-quick-label{font-size:.8125rem;font-weight:700;color:#7c3aed;}
-.wac-quick-sub{font-size:.7rem;color:#6b7280;}
-
-/* Input area */
-.wac-input-area{background:#fff;padding:.75rem 1rem;border-top:1px solid #e5e7eb;display:flex;flex-direction:column;gap:.6rem;}
-.wac-textarea{width:100%;border:1.5px solid #e5e7eb;border-radius:.75rem;padding:.65rem .875rem;font-size:.875rem;color:#111;resize:none;outline:none;transition:border-color .2s;line-height:1.5;background:#fafafa;}
-.wac-textarea:focus{border-color:#7c3aed;background:#fff;}
-.wac-textarea::placeholder{color:#9ca3af;}
-.wac-send{width:100%;padding:.75rem;background:linear-gradient(135deg,#6d28d9,#7c3aed);color:#fff;border:none;border-radius:.875rem;font-size:.875rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:filter .2s,transform .15s;letter-spacing:.02em;}
-.wac-send:hover{filter:brightness(1.1);transform:translateY(-1px);}
-.wac-send:active{transform:translateY(0);}
-
-/* Footer */
-.wac-footer{background:#fff;text-align:center;padding:.6rem 1rem;font-size:.7rem;color:#9ca3af;border-top:1px solid #f3f4f6;}
+.wac-hdr{background:linear-gradient(135deg,#5b21b6 0%,#7c3aed 100%);padding:1rem 1.1rem;display:flex;align-items:center;gap:.75rem;}
+.wac-hdr-av{width:46px;height:46px;border-radius:9999px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.wac-hdr-dot{position:absolute;bottom:1px;right:1px;width:12px;height:12px;border-radius:9999px;background:#4ade80;border:2.5px solid #7c3aed;}
+.wac-hdr-info{flex:1;}
+.wac-hdr-name{color:#fff;font-size:.9375rem;font-weight:700;}
+.wac-hdr-status{color:rgba(255,255,255,.8);font-size:.75rem;margin-top:.1rem;display:flex;align-items:center;gap:.35rem;}
+.wac-hdr-status::before{content:'';width:7px;height:7px;border-radius:9999px;background:#4ade80;flex-shrink:0;}
+.wac-hdr-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:9999px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;}
+.wac-hdr-close:hover{background:rgba(255,255,255,.3);}
+/* Messages */
+.wac-msgs{padding:1rem;display:flex;flex-direction:column;gap:.6rem;min-height:80px;max-height:200px;overflow-y:auto;background:#f0f2f5;}
+.wac-msgs::-webkit-scrollbar{width:3px;}
+.wac-msgs::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:9999px;}
+.wac-msg{background:#fff;border-radius:0 1rem 1rem 1rem;padding:.7rem .9rem;font-size:.875rem;line-height:1.5;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.07);max-width:88%;opacity:0;transform:translateY(6px);animation:wacMsgIn .35s ease forwards;}
+@keyframes wacMsgIn{to{opacity:1;transform:translateY(0);}}
+.wac-msg-time{font-size:.68rem;color:#9ca3af;text-align:right;margin-top:.3rem;}
+.wac-typing-bubble{background:#fff;border-radius:0 1rem 1rem 1rem;padding:.6rem .8rem;width:fit-content;box-shadow:0 1px 3px rgba(0,0,0,.07);display:flex;gap:4px;align-items:center;}
+.wac-typing-bubble span{width:7px;height:7px;border-radius:9999px;background:#bbb;animation:wacDot 1.3s infinite;}
+.wac-typing-bubble span:nth-child(2){animation-delay:.18s;}
+.wac-typing-bubble span:nth-child(3){animation-delay:.36s;}
+/* Quick */
+.wac-quick{padding:.5rem 1rem .75rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;background:#f0f2f5;}
+.wac-qbtn{background:#fff;border:1.5px solid #e5e7eb;border-radius:.875rem;padding:.65rem .7rem;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;transition:all .2s;text-align:left;}
+.wac-qbtn:hover{border-color:#7c3aed;background:#faf5ff;transform:translateY(-2px);box-shadow:0 4px 14px rgba(124,58,237,.13);}
+.wac-qbtn:active{transform:translateY(0);}
+.wac-qi{font-size:1.2rem;margin-bottom:.15rem;}
+.wac-ql{font-size:.8rem;font-weight:700;color:#7c3aed;}
+.wac-qs{font-size:.7rem;color:#6b7280;}
+/* Input */
+.wac-inp{background:#fff;padding:.75rem 1rem;border-top:1px solid #e9ebee;display:flex;flex-direction:column;gap:.55rem;}
+.wac-ta{width:100%;border:1.5px solid #e5e7eb;border-radius:.75rem;padding:.6rem .875rem;font-size:.875rem;color:#111;resize:none;outline:none;transition:border-color .2s;line-height:1.5;background:#fafafa;font-family:inherit;}
+.wac-ta:focus{border-color:#7c3aed;background:#fff;}
+.wac-ta::placeholder{color:#9ca3af;}
+.wac-sbtn{width:100%;padding:.75rem;background:linear-gradient(135deg,#5b21b6,#7c3aed);color:#fff;border:none;border-radius:.875rem;font-size:.875rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:filter .2s,transform .15s;font-family:inherit;}
+.wac-sbtn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.wac-sbtn:active{transform:translateY(0);}
+.wac-ft{background:#fff;text-align:center;padding:.55rem 1rem;font-size:.7rem;color:#9ca3af;border-top:1px solid #f3f4f6;}
 </style>
 
-<div class="wac-widget">
-
-  <!-- FAB -->
-  <div class="wac-fab-area" id="wac-fab-area">
-    <div class="wac-bubble" id="wac-bubble"></div>
-    <button class="wac-fab" id="wac-fab" onclick="wacToggle()" aria-label="Abrir chat">
-      <div class="wac-fab-pulse"></div>
-      <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
-        <path d="M16 2C8.27 2 2 8.27 2 16c0 2.48.65 4.8 1.78 6.82L2 30l7.38-1.75A14 14 0 0 0 16 30c7.73 0 14-6.27 14-14S23.73 2 16 2z" fill="#fff"/>
-        <path d="M23.1 19.6c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.68-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#7c3aed"/>
+<div class="wac-root">
+  <!-- Bubble + FAB -->
+  <div class="wac-bubble-wrap" id="wac-bwrap">
+    <div id="wac-bdots" class="wac-bubble-dots" style="display:none;">
+      <span></span><span></span><span></span>
+    </div>
+    <div id="wac-btext" class="wac-bubble-text" style="display:none;"></div>
+    <button class="wac-fab" id="wac-fab" onclick="wacToggle()" aria-label="Abrir chat WhatsApp">
+      <div class="wac-pulse"></div>
+      <div class="wac-pulse wac-pulse2"></div>
+      <!-- Official WhatsApp icon SVG -->
+      <svg width="34" height="34" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 4C12.954 4 4 12.954 4 24c0 3.59.94 6.96 2.584 9.876L4 44l10.376-2.72A19.88 19.88 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" fill="#fff"/>
+        <path d="M34.507 29.13c-.448-.224-2.652-1.308-3.063-1.457-.41-.149-.708-.224-1.007.224-.298.448-1.156 1.457-1.417 1.755-.261.298-.522.336-.97.112-2.67-1.335-4.424-2.382-6.186-5.4-.467-.803.467-.746 1.335-2.484.149-.298.075-.559-.037-.783-.112-.224-1.007-2.428-1.38-3.323-.364-.87-.733-.75-1.007-.764-.261-.013-.559-.016-.857-.016-.298 0-.783.112-1.193.559-.41.448-1.566 1.53-1.566 3.73 0 2.2 1.604 4.327 1.828 4.625.224.298 3.157 4.82 7.65 6.762 2.843 1.228 3.957.944 4.671.783.97-.224 2.652-1.084 3.025-2.132.373-1.048.373-1.946.261-2.132-.112-.186-.41-.298-.857-.522z" fill="#7c3aed"/>
       </svg>
     </button>
   </div>
 
   <!-- Panel -->
   <div class="wac-panel" id="wac-panel">
-    <div class="wac-header">
-      <div class="wac-avatar">
-        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-          <path d="M16 2C8.27 2 2 8.27 2 16c0 2.48.65 4.8 1.78 6.82L2 30l7.38-1.75A14 14 0 0 0 16 30c7.73 0 14-6.27 14-14S23.73 2 16 2z" fill="#fff" fill-opacity=".3"/>
-          <path d="M23.1 19.6c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.68-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff"/>
+    <div class="wac-hdr">
+      <div class="wac-hdr-av">
+        <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
+          <path d="M24 4C12.954 4 4 12.954 4 24c0 3.59.94 6.96 2.584 9.876L4 44l10.376-2.72A19.88 19.88 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" fill="#fff" fill-opacity=".25"/>
+          <path d="M34.507 29.13c-.448-.224-2.652-1.308-3.063-1.457-.41-.149-.708-.224-1.007.224-.298.448-1.156 1.457-1.417 1.755-.261.298-.522.336-.97.112-2.67-1.335-4.424-2.382-6.186-5.4-.467-.803.467-.746 1.335-2.484.149-.298.075-.559-.037-.783-.112-.224-1.007-2.428-1.38-3.323-.364-.87-.733-.75-1.007-.764-.261-.013-.559-.016-.857-.016-.298 0-.783.112-1.193.559-.41.448-1.566 1.53-1.566 3.73 0 2.2 1.604 4.327 1.828 4.625.224.298 3.157 4.82 7.65 6.762 2.843 1.228 3.957.944 4.671.783.97-.224 2.652-1.084 3.025-2.132.373-1.048.373-1.946.261-2.132-.112-.186-.41-.298-.857-.522z" fill="#fff"/>
         </svg>
-        <div class="wac-avatar-online"></div>
+        <div class="wac-hdr-dot"></div>
       </div>
-      <div class="wac-header-info">
-        <div class="wac-header-name">{{ wa_agent }}</div>
-        <div class="wac-header-status">{{ wa_status }}</div>
+      <div class="wac-hdr-info">
+        <div class="wac-hdr-name">{{ wa_agent }}</div>
+        <div class="wac-hdr-status">{{ wa_status }}</div>
       </div>
-      <button class="wac-close" onclick="wacToggle()" aria-label="Fechar">
+      <button class="wac-hdr-close" onclick="wacToggle()" aria-label="Fechar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
-    <div class="wac-messages" id="wac-messages">
-      <div class="wac-typing" id="wac-typing">
-        <span></span><span></span><span></span>
-      </div>
-    </div>
+    <div class="wac-msgs" id="wac-msgs"></div>
 
     <div class="wac-quick">
-      <button class="wac-quick-btn" onclick="wacSend('Quero rastrear meu pedido')">
-        <span class="wac-quick-icon">📦</span>
-        <span class="wac-quick-label">Rastrear</span>
-        <span class="wac-quick-sub">Meu pedido</span>
-      </button>
-      <button class="wac-quick-btn" onclick="wacSend('Quero calcular o frete')">
-        <span class="wac-quick-icon">🚚</span>
-        <span class="wac-quick-label">Calcular</span>
-        <span class="wac-quick-sub">Frete</span>
-      </button>
-      <button class="wac-quick-btn" onclick="wacSend('Quero informações sobre trocas e devoluções')">
-        <span class="wac-quick-icon">🔄</span>
-        <span class="wac-quick-label">Trocas</span>
-        <span class="wac-quick-sub">e devoluções</span>
-      </button>
-      <button class="wac-quick-btn" onclick="wacSend('Quero ver os produtos disponíveis')">
-        <span class="wac-quick-icon">👗</span>
-        <span class="wac-quick-label">Produtos</span>
-        <span class="wac-quick-sub">Ver catálogo</span>
-      </button>
+      <button class="wac-qbtn" onclick="wacSend('Quero rastrear meu pedido')"><span class="wac-qi">📦</span><span class="wac-ql">Rastrear</span><span class="wac-qs">Meu pedido</span></button>
+      <button class="wac-qbtn" onclick="wacSend('Quero calcular o frete')"><span class="wac-qi">🚚</span><span class="wac-ql">Calcular</span><span class="wac-qs">Frete</span></button>
+      <button class="wac-qbtn" onclick="wacSend('Quero informações sobre trocas e devoluções')"><span class="wac-qi">🔄</span><span class="wac-ql">Trocas</span><span class="wac-qs">e devoluções</span></button>
+      <button class="wac-qbtn" onclick="wacSend('Quero ver os produtos disponíveis')"><span class="wac-qi">👗</span><span class="wac-ql">Produtos</span><span class="wac-qs">Ver catálogo</span></button>
     </div>
 
-    <div class="wac-input-area">
-      <textarea class="wac-textarea" id="wac-textarea" placeholder="Digite sua mensagem..." rows="2"></textarea>
-      <button class="wac-send" onclick="wacSendCustom()">
-        <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M16 2C8.27 2 2 8.27 2 16c0 2.48.65 4.8 1.78 6.82L2 30l7.38-1.75A14 14 0 0 0 16 30c7.73 0 14-6.27 14-14S23.73 2 16 2z" fill="#fff" fill-opacity=".2"/><path d="M23.1 19.6c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.68-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff"/></svg>
+    <div class="wac-inp">
+      <textarea class="wac-ta" id="wac-ta" placeholder="Digite sua mensagem..." rows="2"></textarea>
+      <button class="wac-sbtn" onclick="wacSendCustom()">
+        <svg width="18" height="18" viewBox="0 0 48 48" fill="none"><path d="M24 4C12.954 4 4 12.954 4 24c0 3.59.94 6.96 2.584 9.876L4 44l10.376-2.72A19.88 19.88 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" fill="#fff" fill-opacity=".2"/><path d="M34.507 29.13c-.448-.224-2.652-1.308-3.063-1.457-.41-.149-.708-.224-1.007.224-.298.448-1.156 1.457-1.417 1.755-.261.298-.522.336-.97.112-2.67-1.335-4.424-2.382-6.186-5.4-.467-.803.467-.746 1.335-2.484.149-.298.075-.559-.037-.783-.112-.224-1.007-2.428-1.38-3.323-.364-.87-.733-.75-1.007-.764-.261-.013-.559-.016-.857-.016-.298 0-.783.112-1.193.559-.41.448-1.566 1.53-1.566 3.73 0 2.2 1.604 4.327 1.828 4.625.224.298 3.157 4.82 7.65 6.762 2.843 1.228 3.957.944 4.671.783.97-.224 2.652-1.084 3.025-2.132.373-1.048.373-1.946.261-2.132-.112-.186-.41-.298-.857-.522z" fill="#fff"/></svg>
         Enviar no WhatsApp
       </button>
     </div>
-
-    <div class="wac-footer">{{ wa_footer }}</div>
+    <div class="wac-ft">{{ wa_footer }}</div>
   </div>
 </div>
 
 <script>
 (function(){
-  var NUM = '{{ wa_number }}';
-  var SHOW_DELAY = {{ wa_show_delay }} * 1000;
-  var HIDE_AFTER = {{ wa_hide_after }} * 1000;
-  var REPEAT_AFTER = {{ wa_repeat_after }} * 1000;
-  var WELCOME = '{{ wa_welcome | escape }}';
-  var DEFAULT_MSG = '{{ wa_default_msg | escape }}';
+  var NUM='{{ wa_number }}';
+  var SHOW_DELAY={{ wa_show_delay }}*1000;
+  var HIDE_AFTER={{ wa_hide_after }}*1000;
+  var REPEAT_AFTER={{ wa_repeat_after }}*1000;
+  var WELCOME='{{ wa_welcome | escape }}';
+  var DEFAULT_MSG='{{ wa_default_msg | escape }}';
+  var h=new Date().getHours();
+  var greeting=h>=5&&h<12?'Bom dia! ☀️':h>=12&&h<18?'Boa tarde! 👋':'Boa noite! 🌙';
 
-  var rawMsgs = {{ settings.wa_bubble_messages | default: 'Precisa rastrear seu pedido? 📦\nFrete grátis acima de R$299! 🚚\nTroca fácil em até 30 dias! 🔄' | newline_to_br | split: '<br />' | json }};
-  var cycleMessages = rawMsgs.map(function(m){ return m.replace(/\r?\n/g,'').trim(); }).filter(Boolean);
+  var rawMsgs={{ settings.wa_bubble_messages | default: 'Precisa rastrear seu pedido? 📦\nFrete grátis acima de R$299! 🚚\nTroca fácil em até 30 dias! 🔄' | newline_to_br | split: '<br />' | json }};
+  var msgs=rawMsgs.map(function(m){return m.replace(/\r?\n/g,'').trim();}).filter(Boolean);
 
-  // Time greeting
-  var h = new Date().getHours();
-  var greeting = h>=5&&h<12?'Bom dia! ☀️':h>=12&&h<18?'Boa tarde! 👋':'Boa noite! 🌙';
+  var KEY='wac_idx',idx=0;
+  try{var s=parseInt(localStorage.getItem(KEY),10);if(!isNaN(s)&&msgs.length>0)idx=(s+1)%msgs.length;}catch(e){}
 
-  // Persist index
-  var KEY = 'wac_idx';
-  var idx = 0;
-  try {
-    var s = parseInt(localStorage.getItem(KEY),10);
-    if(!isNaN(s) && cycleMessages.length>0) idx = (s+1)%cycleMessages.length;
-  } catch(e){}
+  var hideT,repeatT,opened=false;
 
-  // Show welcome message with typing animation
-  var opened = false;
-  window.wacToggle = function(){
-    var panel = document.getElementById('wac-panel');
-    var fab = document.getElementById('wac-fab-area');
-    var isOpen = panel.classList.toggle('open');
-    fab.style.display = isOpen ? 'none' : 'flex';
-    hideBubble();
-    if(isOpen && !opened){
-      opened = true;
-      showTypingThenMsg();
-    }
-  };
-
-  function showTypingThenMsg(){
-    var typing = document.getElementById('wac-typing');
-    var msgs = document.getElementById('wac-messages');
-    if(typing) typing.style.display = 'flex';
-    setTimeout(function(){
-      if(typing) typing.style.display = 'none';
-      var div = document.createElement('div');
-      div.className = 'wac-msg-in';
-      div.innerHTML = WELCOME + '<div class="wac-msg-time">' + greeting + '</div>';
-      if(msgs){ msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight; }
-    }, 1200);
-  }
-
-  // Bubble cycle
-  var hideTimer, repeatTimer;
+  /* --- Bubble cycle with typing effect --- */
   function showBubble(){
-    var el = document.getElementById('wac-bubble');
-    var panel = document.getElementById('wac-panel');
-    if(!el || panel.classList.contains('open')) return;
-    var msg = cycleMessages.length>0 ? cycleMessages[idx%cycleMessages.length] : greeting;
-    try{ localStorage.setItem(KEY, idx%(cycleMessages.length||1)); }catch(e){}
+    var panel=document.getElementById('wac-panel');
+    if(panel&&panel.classList.contains('open'))return;
+    var wrap=document.getElementById('wac-bwrap');
+    var dots=document.getElementById('wac-bdots');
+    var txt=document.getElementById('wac-btext');
+    if(!wrap||!dots||!txt)return;
+
+    var msg=msgs.length>0?msgs[idx%msgs.length]:greeting;
+    try{localStorage.setItem(KEY,idx%(msgs.length||1));}catch(e){}
     idx++;
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(function(){
-      el.classList.remove('show');
-      clearTimeout(repeatTimer);
-      repeatTimer = setTimeout(showBubble, REPEAT_AFTER);
-    }, HIDE_AFTER);
+
+    // Show wrap + typing dots
+    txt.style.display='none';
+    dots.style.display='flex';
+    wrap.classList.add('show');
+
+    // After 1.4s replace dots with actual message
+    clearTimeout(hideT);
+    hideT=setTimeout(function(){
+      dots.style.display='none';
+      txt.textContent=msg;
+      txt.style.display='block';
+
+      // Hide after HIDE_AFTER
+      hideT=setTimeout(function(){
+        wrap.classList.remove('show');
+        setTimeout(function(){
+          txt.style.display='none';
+          dots.style.display='none';
+        },400);
+        clearTimeout(repeatT);
+        repeatT=setTimeout(showBubble,REPEAT_AFTER);
+      },HIDE_AFTER);
+    },1400);
   }
 
   function hideBubble(){
-    var el = document.getElementById('wac-bubble');
-    if(el) el.classList.remove('show');
-    clearTimeout(hideTimer); clearTimeout(repeatTimer);
+    var wrap=document.getElementById('wac-bwrap');
+    if(wrap)wrap.classList.remove('show');
+    clearTimeout(hideT);clearTimeout(repeatT);
   }
 
-  setTimeout(showBubble, SHOW_DELAY);
+  setTimeout(showBubble,SHOW_DELAY);
 
-  window.wacSend = function(msg){
+  /* --- Panel toggle --- */
+  window.wacToggle=function(){
+    var panel=document.getElementById('wac-panel');
+    var fab=document.getElementById('wac-fab');
+    var isOpen=panel.classList.toggle('open');
+    fab.style.opacity=isOpen?'0':'1';
+    fab.style.pointerEvents=isOpen?'none':'auto';
+    hideBubble();
+    if(isOpen&&!opened){opened=true;showWelcome();}
+  };
+
+  function showWelcome(){
+    var msgs_el=document.getElementById('wac-msgs');
+    if(!msgs_el)return;
+    // Typing bubble
+    var typing=document.createElement('div');
+    typing.className='wac-typing-bubble';
+    typing.innerHTML='<span></span><span></span><span></span>';
+    msgs_el.appendChild(typing);
+    msgs_el.scrollTop=msgs_el.scrollHeight;
+
+    setTimeout(function(){
+      msgs_el.removeChild(typing);
+      var div=document.createElement('div');
+      div.className='wac-msg';
+      div.innerHTML=WELCOME+'<div class="wac-msg-time">'+greeting+'</div>';
+      msgs_el.appendChild(div);
+      msgs_el.scrollTop=msgs_el.scrollHeight;
+    },1500);
+  }
+
+  window.wacSend=function(msg){
     window.open('https://wa.me/'+NUM+'?text='+encodeURIComponent(msg),'_blank');
   };
-  window.wacSendCustom = function(){
-    var v = document.getElementById('wac-textarea').value.trim();
-    wacSend(v || DEFAULT_MSG);
+  window.wacSendCustom=function(){
+    var v=document.getElementById('wac-ta').value.trim();
+    wacSend(v||DEFAULT_MSG);
   };
 })();
 </script>
