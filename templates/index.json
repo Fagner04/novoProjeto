@@ -47,46 +47,6 @@
       ],
       "settings": {}
     },
-    "products-carousel": {
-      "type": "products-carousel",
-      "blocks": {
-        "category_yEqPTY": {
-          "type": "category",
-          "settings": {
-            "label": "Macação",
-            "collection": "macacao"
-          }
-        }
-      },
-      "block_order": [
-        "category_yEqPTY"
-      ],
-      "settings": {
-        "label": "DESTAQUES",
-        "title": "",
-        "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
-      }
-    },
-    "trust": {
-      "type": "trust-badges",
-      "settings": {}
-    },
-    "featured_products_3iVPUp": {
-      "type": "featured-products",
-      "disabled": true,
-      "name": "Produtos em Destaque",
-      "settings": {
-        "label": "Destaques",
-        "title": "Nossa Coleção",
-        "subtitle": "",
-        "collection": "",
-        "products_count": 8
-      }
-    },
-    "177353118617f156ac": {
-      "type": "_blocks",
-      "settings": {}
-    },
     "collections_carousel_qrWhkd": {
       "type": "collections-carousel",
       "blocks": {
@@ -146,14 +106,54 @@
         "label": "",
         "title": "Ultimas coleções"
       }
+    },
+    "products-carousel": {
+      "type": "products-carousel",
+      "blocks": {
+        "category_yEqPTY": {
+          "type": "category",
+          "settings": {
+            "label": "Macação",
+            "collection": "macacao"
+          }
+        }
+      },
+      "block_order": [
+        "category_yEqPTY"
+      ],
+      "settings": {
+        "label": "DESTAQUES",
+        "title": "",
+        "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
+      }
+    },
+    "trust": {
+      "type": "trust-badges",
+      "settings": {}
+    },
+    "featured_products_3iVPUp": {
+      "type": "featured-products",
+      "disabled": true,
+      "name": "Produtos em Destaque",
+      "settings": {
+        "label": "Destaques",
+        "title": "Nossa Coleção",
+        "subtitle": "",
+        "collection": "",
+        "products_count": 8
+      }
+    },
+    "177353118617f156ac": {
+      "type": "_blocks",
+      "settings": {}
     }
   },
   "order": [
     "hero",
+    "collections_carousel_qrWhkd",
     "products-carousel",
     "trust",
     "featured_products_3iVPUp",
-    "177353118617f156ac",
-    "collections_carousel_qrWhkd"
+    "177353118617f156ac"
   ]
 }
