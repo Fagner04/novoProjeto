@@ -102,9 +102,7 @@
                   </div>
                 {% endfor %}
                 {% else %}
-                  <div class="carousel-card" data-groups="{{ col.handle }}" style="display:none;background:#fff;border-radius:1rem;padding:2rem;min-width:200px;text-align:center;">
-                    <p style="color:#888;font-size:.8rem;">Colecao "{{ col.title }}" tem {{ col.products_count }} produtos.</p>
-                  </div>
+                  <div class="carousel-card" data-groups="{{ col.handle }}" style="display:none;"></div>
                 {% endif %}
               {% endunless %}
             {% endif %}
