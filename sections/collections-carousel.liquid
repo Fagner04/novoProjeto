@@ -1,0 +1,127 @@
+<section class="collections-carousel-section">
+  <div class="container-elegant">
+
+    {% if section.settings.title != blank %}
+      <div class="collections-carousel-header">
+        {% if section.settings.label != blank %}
+          <p class="label-caps">{{ section.settings.label }}</p>
+        {% endif %}
+        <h2 class="heading-section">{{ section.settings.title }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="collections-carousel-wrapper">
+      <button class="coll-arrow coll-arrow-prev" id="coll-prev" aria-label="Anterior">&#8592;</button>
+
+      <div class="coll-track-outer">
+        <div class="coll-track" id="coll-track">
+          {% for block in section.blocks %}
+            {% assign col = collections[block.settings.collection] %}
+            <a
+              href="{% if col != blank %}{{ col.url }}{% else %}/collections/all{% endif %}"
+              class="coll-item"
+              {{ block.shopify_attributes }}
+            >
+              <div class="coll-circle">
+                {% if block.settings.image != blank %}
+                  <img
+                    src="{{ block.settings.image | image_url: width: 300 }}"
+                    alt="{{ block.settings.label | default: col.title }}"
+                    loading="lazy" width="300" height="300">
+                {% elsif col != blank and col.image != blank %}
+                  <img
+                    src="{{ col.image | image_url: width: 300 }}"
+                    alt="{{ col.title }}"
+                    loading="lazy" width="300" height="300">
+                {% else %}
+                  <div class="coll-circle-placeholder">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                  </div>
+                {% endif %}
+                <div class="coll-circle-overlay"></div>
+              </div>
+              <span class="coll-label">{{ block.settings.label | default: col.title | default: 'Coleção' }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button class="coll-arrow coll-arrow-next" id="coll-next" aria-label="Próximo">&#8594;</button>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function() {
+  var track = document.getElementById('coll-track');
+  var prev = document.getElementById('coll-prev');
+  var next = document.getElementById('coll-next');
+  var offset = 0;
+
+  function getVisible() {
+    return window.innerWidth < 1280 ? 5 : 6;
+  }
+
+  function getItems() {
+    return track ? track.querySelectorAll('.coll-item') : [];
+  }
+
+  function getItemWidth() {
+    var items = getItems();
+    if (!items.length) return 0;
+    return items[0].offsetWidth + 24; // gap
+  }
+
+  function update() {
+    var items = getItems();
+    var visible = getVisible();
+    var max = Math.max(0, items.length - visible);
+    offset = Math.min(Math.max(offset, 0), max);
+    track.style.transform = 'translateX(-' + (offset * getItemWidth()) + 'px)';
+    prev.style.opacity = offset === 0 ? '0.3' : '1';
+    next.style.opacity = offset >= max ? '0.3' : '1';
+  }
+
+  if (prev) prev.addEventListener('click', function() { offset--; update(); });
+  if (next) next.addEventListener('click', function() { offset++; update(); });
+  window.addEventListener('resize', function() { offset = 0; update(); });
+  update();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Carrossel de Coleções",
+  "blocks": [
+    {
+      "type": "collection_item",
+      "name": "Coleção",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Coleção" },
+        { "type": "text", "id": "label", "label": "Nome exibido" },
+        { "type": "image_picker", "id": "image", "label": "Imagem personalizada (opcional)" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label acima do título", "default": "NAVEGUE POR" },
+    { "type": "text", "id": "title", "label": "Título", "default": "Nossas Coleções" }
+  ],
+  "presets": [
+    {
+      "name": "Carrossel de Coleções",
+      "blocks": [
+        { "type": "collection_item", "settings": { "label": "Conjuntos" } },
+        { "type": "collection_item", "settings": { "label": "Macacões" } },
+        { "type": "collection_item", "settings": { "label": "Tops" } },
+        { "type": "collection_item", "settings": { "label": "Leggings" } },
+        { "type": "collection_item", "settings": { "label": "Acessórios" } },
+        { "type": "collection_item", "settings": { "label": "Novidades" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

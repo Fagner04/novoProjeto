@@ -47,6 +47,22 @@
       ],
       "settings": {}
     },
+    "collections-carousel": {
+      "type": "collections-carousel",
+      "blocks": {
+        "col_1": { "type": "collection_item", "settings": { "label": "Conjuntos" } },
+        "col_2": { "type": "collection_item", "settings": { "label": "Macacões" } },
+        "col_3": { "type": "collection_item", "settings": { "label": "Tops" } },
+        "col_4": { "type": "collection_item", "settings": { "label": "Leggings" } },
+        "col_5": { "type": "collection_item", "settings": { "label": "Acessórios" } },
+        "col_6": { "type": "collection_item", "settings": { "label": "Novidades" } }
+      },
+      "block_order": ["col_1","col_2","col_3","col_4","col_5","col_6"],
+      "settings": {
+        "label": "NAVEGUE POR",
+        "title": "Nossas Coleções"
+      }
+    },
     "products-carousel": {
       "type": "products-carousel",
       "blocks": {
@@ -127,6 +143,7 @@
   },
   "order": [
     "hero",
+    "collections-carousel",
     "products-carousel",
     "trust",
     "featured_products_3iVPUp",
