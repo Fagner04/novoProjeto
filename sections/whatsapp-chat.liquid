@@ -1,0 +1,227 @@
+{% assign wa_number = section.settings.whatsapp_number | default: '5562994319090' %}
+{% assign show_delay = section.settings.show_delay | default: 3 %}
+{% assign hide_after = section.settings.hide_after | default: 5 %}
+{% assign repeat_after = section.settings.repeat_after | default: 30 %}
+
+<div class="wa-widget" id="wa-widget">
+
+  <!-- FAB + Bubble -->
+  <div class="wa-fab-wrap" id="wa-fab-wrap">
+    <div class="wa-greeting-bubble" id="wa-greeting" style="display:none;"></div>
+    <button class="wa-fab" id="wa-fab-btn" onclick="toggleWaChat()" aria-label="Abrir chat WhatsApp">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <path d="M16 2C8.268 2 2 8.268 2 16c0 2.478.648 4.805 1.782 6.82L2 30l7.38-1.754A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2z" fill="#fff"/>
+        <path d="M23.1 19.6c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.68-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#7c3aed"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Chat Panel -->
+  <div class="wa-panel" id="wa-panel">
+    <div class="wa-panel-header">
+      <div class="wa-panel-avatar">
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+          <path d="M16 2C8.268 2 2 8.268 2 16c0 2.478.648 4.805 1.782 6.82L2 30l7.38-1.754A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2z" fill="#fff" fill-opacity=".25"/>
+          <path d="M23.1 19.6c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.68-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="wa-panel-info">
+        <strong>{{ section.settings.agent_name | default: 'Musas Atendimento' }}</strong>
+        <span class="wa-status"><span class="wa-dot"></span> {{ section.settings.status_text | default: 'Offline' }}</span>
+      </div>
+      <button class="wa-close-btn" onclick="toggleWaChat()" aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="wa-panel-body">
+      <div class="wa-welcome-msg">
+        <p id="wa-welcome-text">{{ section.settings.welcome_message | default: '👋 Olá! Bem-vindo à <strong style="color:#7c3aed;">Musas</strong>! Como posso ajudar você hoje?' }}</p>
+        <span class="wa-time-label" id="wa-time-label"></span>
+      </div>
+
+      {% if section.blocks.size > 0 %}
+        <div class="wa-quick-actions">
+          {% for block in section.blocks %}
+            <button class="wa-quick-btn" onclick="sendWaMsg('{{ block.settings.message | escape }}')" {{ block.shopify_attributes }}>
+              <span class="wa-quick-icon">{{ block.settings.icon | default: '💬' }}</span>
+              <strong>{{ block.settings.label | default: 'Ação' }}</strong>
+              <small>{{ block.settings.sublabel }}</small>
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <textarea class="wa-textarea" id="wa-textarea" placeholder="{{ section.settings.textarea_placeholder | default: 'Digite sua mensagem...' }}" rows="3"></textarea>
+
+      <button class="wa-send-btn" onclick="sendWaCustom()">
+        <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M16 2C8.268 2 2 8.268 2 16c0 2.478.648 4.805 1.782 6.82L2 30l7.38-1.754A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2z" fill="#fff" fill-opacity=".25"/><path d="M23.1 19.6c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.78-1.68-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff"/></svg>
+        {{ section.settings.send_btn_text | default: 'Enviar no WhatsApp →' }}
+      </button>
+    </div>
+
+    <div class="wa-panel-footer">{{ section.settings.footer_text | default: 'Resposta em até 2 horas durante horário comercial' }}</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var WA_NUMBER = '{{ wa_number }}';
+  var SHOW_DELAY = {{ show_delay }} * 1000;
+  var HIDE_AFTER = {{ hide_after }} * 1000;
+  var REPEAT_AFTER = {{ repeat_after }} * 1000;
+
+  // Cycle messages from blocks
+  var cycleMessages = [
+    {% for block in section.blocks %}
+      {% if block.settings.bubble_message != blank %}
+        "{{ block.settings.bubble_message | escape }}"{% unless forloop.last %},{% endunless %}
+      {% endif %}
+    {% endfor %}
+  ].filter(Boolean);
+
+  // Fallback greeting by time
+  var h = new Date().getHours();
+  var timeGreeting = h >= 5 && h < 12 ? 'Bom dia! ☀️' : h >= 12 && h < 18 ? 'Boa tarde! 👋' : 'Boa noite! 🌙';
+
+  // Set time label in panel
+  var timeEl = document.getElementById('wa-time-label');
+  if (timeEl) timeEl.textContent = timeGreeting;
+
+  // Persist message index across page reloads via localStorage
+  var STORAGE_KEY = 'wa_msg_index';
+  var msgIndex = 0;
+  try {
+    var stored = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+    if (!isNaN(stored) && cycleMessages.length > 0) {
+      msgIndex = (stored + 1) % cycleMessages.length;
+    }
+  } catch(e) {}
+
+  var bubbleTimer, hideTimer, repeatTimer;
+
+  function showBubble() {
+    var el = document.getElementById('wa-greeting');
+    var panel = document.getElementById('wa-panel');
+    if (!el || panel.classList.contains('open')) return;
+
+    var msg = cycleMessages.length > 0 ? cycleMessages[msgIndex % cycleMessages.length] : timeGreeting;
+
+    // Save current index so next reload advances to the next message
+    try { localStorage.setItem(STORAGE_KEY, msgIndex % (cycleMessages.length || 1)); } catch(e) {}
+
+    msgIndex++;
+
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.style.opacity = '1';
+
+    // Hide after HIDE_AFTER ms
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(function() {
+      el.style.opacity = '0';
+      setTimeout(function() { el.style.display = 'none'; }, 400);
+    }, HIDE_AFTER);
+
+    // Schedule next cycle
+    clearTimeout(repeatTimer);
+    repeatTimer = setTimeout(showBubble, HIDE_AFTER + REPEAT_AFTER);
+  }
+
+  // Start cycle after SHOW_DELAY
+  bubbleTimer = setTimeout(showBubble, SHOW_DELAY);
+
+  // Expose globals
+  window._waNumber = WA_NUMBER;
+
+  window.toggleWaChat = function() {
+    var panel = document.getElementById('wa-panel');
+    var fabWrap = document.getElementById('wa-fab-wrap');
+    var open = panel.classList.toggle('open');
+    fabWrap.style.display = open ? 'none' : 'flex';
+    // Hide bubble when opening
+    var el = document.getElementById('wa-greeting');
+    if (el) { el.style.opacity = '0'; el.style.display = 'none'; }
+  };
+
+  window.sendWaMsg = function(msg) {
+    window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+  };
+
+  window.sendWaCustom = function() {
+    var msg = document.getElementById('wa-textarea').value.trim();
+    if (!msg) msg = '{{ section.settings.default_message | default: "Olá! Vim pelo site e gostaria de mais informações." | escape }}';
+    window.sendWaMsg(msg);
+  };
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Chat WhatsApp",
+  "settings": [
+    { "type": "header", "content": "Configurações gerais" },
+    { "type": "text", "id": "whatsapp_number", "label": "Número WhatsApp (com DDI)", "default": "5562994319090", "info": "Ex: 5562994319090 (sem + ou espaços)" },
+    { "type": "text", "id": "agent_name", "label": "Nome do atendente", "default": "Musas Atendimento" },
+    { "type": "text", "id": "status_text", "label": "Status", "default": "Offline" },
+    { "type": "header", "content": "Mensagens" },
+    { "type": "textarea", "id": "welcome_message", "label": "Mensagem de boas-vindas (painel)", "default": "👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?" },
+    { "type": "text", "id": "textarea_placeholder", "label": "Placeholder do campo de texto", "default": "Digite sua mensagem..." },
+    { "type": "text", "id": "default_message", "label": "Mensagem padrão (se campo vazio)", "default": "Olá! Vim pelo site e gostaria de mais informações." },
+    { "type": "text", "id": "send_btn_text", "label": "Texto do botão enviar", "default": "Enviar no WhatsApp →" },
+    { "type": "text", "id": "footer_text", "label": "Texto do rodapé", "default": "Resposta em até 2 horas durante horário comercial" },
+    { "type": "header", "content": "Ciclo da bolinha de mensagem" },
+    { "type": "range", "id": "show_delay", "label": "Aparecer após (segundos)", "min": 1, "max": 30, "step": 1, "default": 3 },
+    { "type": "range", "id": "hide_after", "label": "Sumir após (segundos)", "min": 2, "max": 20, "step": 1, "default": 5 },
+    { "type": "range", "id": "repeat_after", "label": "Repetir a cada (segundos)", "min": 5, "max": 120, "step": 5, "default": 30 }
+  ],
+  "blocks": [
+    {
+      "type": "quick_action",
+      "name": "Ação rápida",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Emoji ícone", "default": "💬" },
+        { "type": "text", "id": "label", "label": "Título do botão", "default": "Rastrear" },
+        { "type": "text", "id": "sublabel", "label": "Subtítulo", "default": "Meu pedido" },
+        { "type": "text", "id": "message", "label": "Mensagem enviada ao clicar", "default": "Quero rastrear meu pedido" },
+        { "type": "text", "id": "bubble_message", "label": "Mensagem na bolinha (ciclo)", "info": "Aparece na bolinha flutuante em ciclo. Deixe vazio para não usar.", "default": "" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Chat WhatsApp",
+      "blocks": [
+        {
+          "type": "quick_action",
+          "settings": {
+            "icon": "📦",
+            "label": "Rastrear",
+            "sublabel": "Meu pedido",
+            "message": "Quero rastrear meu pedido",
+            "bubble_message": "Precisa rastrear seu pedido? 📦"
+          }
+        },
+        {
+          "type": "quick_action",
+          "settings": {
+            "icon": "🧮",
+            "label": "Calcular",
+            "sublabel": "Frete",
+            "message": "Quero calcular o frete",
+            "bubble_message": "Frete grátis acima de R$299! 🚚"
+          }
+        },
+        {
+          "type": "quick_action",
+          "settings": {
+            "icon": "🔄",
+            "label": "Trocas",
+            "sublabel": "e devoluções",
+            "message": "Quero informações sobre trocas e devoluções",
+            "bubble_message": "Troca fácil em até 30 dias! 🔄"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
