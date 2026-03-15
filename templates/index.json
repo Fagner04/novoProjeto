@@ -66,25 +66,52 @@
             "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png"
           }
         },
+        "collection_item_zxJTgY": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "macacao",
+            "label": "Macacões",
+            "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png"
+          }
+        },
         "collection_item_7dWE8H": {
           "type": "collection_item",
           "settings": {
             "collection": "",
-            "label": "Tops"
+            "label": "Tops",
+            "image": "shopify://shop_images/Gemini_Generated_Image_t8c0tut8c0tut8c0.png"
           }
         },
         "collection_item_amCGyW": {
           "type": "collection_item",
           "settings": {
             "collection": "",
-            "label": "Leggings"
+            "label": "Leggings",
+            "image": "shopify://shop_images/IMG_7335.jpg"
           }
         },
-        "collection_item_9xe3i4": {
+        "collection_item_fqPbnM": {
           "type": "collection_item",
           "settings": {
             "collection": "",
-            "label": "Acessórios"
+            "label": "Leggings",
+            "image": "shopify://shop_images/IMG_7335.jpg"
+          }
+        },
+        "collection_item_J9UqpA": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "",
+            "label": "Leggings",
+            "image": "shopify://shop_images/IMG_7335.jpg"
+          }
+        },
+        "collection_item_EpWJhE": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "",
+            "label": "Leggings",
+            "image": "shopify://shop_images/IMG_7335.jpg"
           }
         },
         "collection_item_6WHMgw": {
@@ -98,9 +125,12 @@
       "block_order": [
         "collection_item_RJBU4G",
         "collection_item_6WHtpL",
+        "collection_item_zxJTgY",
         "collection_item_7dWE8H",
         "collection_item_amCGyW",
-        "collection_item_9xe3i4",
+        "collection_item_fqPbnM",
+        "collection_item_J9UqpA",
+        "collection_item_EpWJhE",
         "collection_item_6WHMgw"
       ],
       "name": "Carrossel de Coleções",
@@ -148,51 +178,6 @@
     "177353118617f156ac": {
       "type": "_blocks",
       "settings": {}
-    },
-    "whatsapp-chat": {
-      "type": "whatsapp-chat",
-      "blocks": {
-        "quick_1": {
-          "type": "quick_action",
-          "settings": {
-            "icon": "📦",
-            "label": "Rastrear",
-            "sublabel": "Meu pedido",
-            "message": "Quero rastrear meu pedido",
-            "bubble_message": "Precisa rastrear seu pedido? 📦"
-          }
-        },
-        "quick_2": {
-          "type": "quick_action",
-          "settings": {
-            "icon": "🧮",
-            "label": "Calcular",
-            "sublabel": "Frete",
-            "message": "Quero calcular o frete",
-            "bubble_message": "Frete grátis acima de R$299! 🚚"
-          }
-        },
-        "quick_3": {
-          "type": "quick_action",
-          "settings": {
-            "icon": "🔄",
-            "label": "Trocas",
-            "sublabel": "e devoluções",
-            "message": "Quero informações sobre trocas e devoluções",
-            "bubble_message": "Troca fácil em até 30 dias! 🔄"
-          }
-        }
-      },
-      "block_order": ["quick_1", "quick_2", "quick_3"],
-      "settings": {
-        "whatsapp_number": "5562994319090",
-        "agent_name": "Musas Atendimento",
-        "status_text": "Offline",
-        "welcome_message": "👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?",
-        "show_delay": 3,
-        "hide_after": 5,
-        "repeat_after": 30
-      }
     }
   },
   "order": [
@@ -201,7 +186,6 @@
     "products-carousel",
     "trust",
     "featured_products_3iVPUp",
-    "177353118617f156ac",
-    "whatsapp-chat"
+    "177353118617f156ac"
   ]
 }
