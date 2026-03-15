@@ -113,6 +113,14 @@
       <button class="carousel-arrow carousel-next" onclick="slideCarousel(1)" aria-label="Proximo">&#8594;</button>
     </div>
 
+    {% if section.settings.btn_label != blank %}
+      <div style="text-align:center;margin-top:2rem;">
+        <a href="{{ section.settings.btn_link | default: '/collections/all' }}" class="btn-musas btn-primary" style="display:inline-flex;">
+          {{ section.settings.btn_label }}
+        </a>
+      </div>
+    {% endif %}
+
   </div>
 </section>
 
@@ -195,7 +203,9 @@ if (wr) {
     { "type": "collection", "id": "all_collection", "label": "Colecao para aba Todos" },
     { "type": "text", "id": "label", "label": "Label acima do titulo", "default": "DESTAQUES" },
     { "type": "text", "id": "title", "label": "Titulo da secao", "default": "A Colecao" },
-    { "type": "textarea", "id": "subtitle", "label": "Subtitulo", "default": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real." }
+    { "type": "textarea", "id": "subtitle", "label": "Subtitulo", "default": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real." },
+    { "type": "text", "id": "btn_label", "label": "Texto do botao Ver Todos", "default": "Ver Todos os Produtos" },
+    { "type": "url", "id": "btn_link", "label": "Link do botao" }
   ],
   "presets": [
     {
