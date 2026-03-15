@@ -106,9 +106,9 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .search-bar input:focus { border-color: var(--brand-orange); }
 
 /* ===== HERO ===== */
-.hero-section { width: 100%; padding: 18px 2rem 1.5rem; margin-top: 0; background: var(--background); }
-@media (min-width: 768px) { .hero-section { padding: 18px 4rem 2rem; } }
-@media (min-width: 1280px) { .hero-section { padding: 18px 8rem 2rem; } }
+.hero-section { width: 100%; padding: 8px 2rem 1.5rem; margin-top: 0; background: var(--background); }
+@media (min-width: 768px) { .hero-section { padding: 8px 4rem 2rem; } }
+@media (min-width: 1280px) { .hero-section { padding: 8px 8rem 2rem; } }
 .hero-carousel-wrap { position: relative; border-radius: 1.25rem; overflow: hidden; height: 300px; }
 @media (min-width: 768px) { .hero-carousel-wrap { height: 340px; } }
 @media (min-width: 1024px) { .hero-carousel-wrap { height: 380px; } }
