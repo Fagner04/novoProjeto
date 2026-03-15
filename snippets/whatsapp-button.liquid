@@ -11,27 +11,46 @@
 <style>
 .wac*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
 
-/* Root container — FAB always visible */
+/* Root container — row layout: bubble à esquerda, FAB à direita */
 .wac-root{
   position:fixed;bottom:1.75rem;right:1.75rem;z-index:9999;
-  display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;
+  display:flex;flex-direction:row;align-items:center;gap:.75rem;
 }
 
-/* Bubble wrapper — only the bubble, NOT the FAB */
+/* Bubble wrapper — à esquerda do FAB, mesma linha */
 .wac-bubble-wrap{
-  display:flex;align-items:flex-end;gap:.6rem;
+  display:flex;align-items:center;
   visibility:hidden;
   opacity:0;
-  transform:translateX(12px);
-  transition:visibility 0s .4s, opacity .4s cubic-bezier(.34,1.56,.64,1), transform .4s cubic-bezier(.34,1.56,.64,1);
+  transform:translateX(16px);
+  transition:visibility 0s .4s, opacity .35s ease, transform .35s cubic-bezier(.34,1.4,.64,1);
   pointer-events:none;
+  flex-shrink:1;
 }
 .wac-bubble-wrap.show{
   visibility:visible;opacity:1;transform:translateX(0);
   transition-delay:0s;pointer-events:auto;
 }
-.wac-bubble-text{background:#fff;color:#111;font-size:.875rem;font-weight:500;padding:.6rem 1rem;border-radius:1.25rem 1.25rem 0 1.25rem;box-shadow:0 4px 20px rgba(0,0,0,.13);max-width:210px;line-height:1.45;}
-.wac-bubble-dots{display:flex;align-items:center;gap:4px;padding:.55rem .75rem;background:#fff;border-radius:1.25rem 1.25rem 0 1.25rem;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+/* Bolha estilo WhatsApp — bico apontando para a direita */
+.wac-bubble-text{
+  background:#fff;color:#111;font-size:.875rem;font-weight:500;
+  padding:.6rem 1rem;
+  border-radius:1.25rem 1.25rem 1.25rem 1.25rem;
+  box-shadow:0 4px 20px rgba(0,0,0,.13);
+  max-width:220px;line-height:1.45;
+  position:relative;white-space:nowrap;
+}
+/* Bico da bolha apontando para o FAB (direita) */
+.wac-bubble-text::after{
+  content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);
+  border:8px solid transparent;border-left:8px solid #fff;border-right:0;
+  filter:drop-shadow(2px 0 2px rgba(0,0,0,.06));
+}
+.wac-bubble-dots{
+  display:flex;align-items:center;gap:4px;padding:.55rem .85rem;
+  background:#fff;border-radius:9999px;
+  box-shadow:0 4px 20px rgba(0,0,0,.1);
+}
 .wac-bubble-dots span{width:7px;height:7px;border-radius:9999px;background:#aaa;animation:wacDot 1.3s infinite;}
 .wac-bubble-dots span:nth-child(2){animation-delay:.18s;}
 .wac-bubble-dots span:nth-child(3){animation-delay:.36s;}
