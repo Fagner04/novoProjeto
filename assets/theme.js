@@ -150,8 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
     { sel: '.coll-item',            delay: 60,  from: 'bottom' },
     { sel: '.trust-item',           delay: 100, from: 'bottom' },
     { sel: '.benefit-item',         delay: 80,  from: 'bottom' },
-    { sel: '.products-carousel-section', delay: 0, from: 'bottom' },
-    { sel: '.collections-carousel-section', delay: 0, from: 'bottom' },
     { sel: '.about-inner',          delay: 0,   from: 'left'   },
     { sel: '.section-header',       delay: 0,   from: 'bottom' },
     { sel: '.collections-carousel-header', delay: 0, from: 'bottom' },
@@ -166,6 +164,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var allReveal = [];
   revealTargets.forEach(function(t) {
     document.querySelectorAll(t.sel).forEach(function(el, i) {
+      // Never touch elements inside the WhatsApp widget
+      if (el.closest('.wac-root')) return;
       el.style.opacity = '0';
       el.style.transform = getTransform(t.from);
       el.style.transition = 'opacity .6s ease, transform .6s ease';

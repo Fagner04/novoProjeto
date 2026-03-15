@@ -616,3 +616,14 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 @media (max-width: 1023px) {
   #scroll-top-btn { display: none; }
 }
+
+/* Protect WhatsApp widget from scroll reveal */
+.wac-root, .wac-root *, .wac-fab, #wac-fab, #scroll-top-btn {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+.wac-bubble-wrap { opacity: 0 !important; transform: translateX(12px) !important; visibility: hidden !important; }
+.wac-bubble-wrap.show { opacity: 1 !important; transform: translateX(0) !important; visibility: visible !important; }
+.wac-panel { opacity: 0 !important; transform: translateY(16px) scale(.96) !important; }
+.wac-panel.open { opacity: 1 !important; transform: translateY(0) scale(1) !important; }
