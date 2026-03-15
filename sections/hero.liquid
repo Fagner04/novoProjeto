@@ -1,4 +1,4 @@
-﻿<section class="hero-section">
+<section class="hero-section">
   <div class="hero-carousel-wrap">
     <div class="hero-slides" id="hero-slides">
       {% for block in section.blocks %}
@@ -35,7 +35,7 @@
     </div>
     {% if section.blocks.size > 1 %}
       <button class="hero-arrow hero-arrow-prev" onclick="heroSlide(-1)" aria-label="Anterior">&#8592;</button>
-      <button class="hero-arrow hero-arrow-next" onclick="heroSlide(1)" aria-label="Proximo">&#8594;</button>
+      <button class="hero-arrow hero-arrow-next" onclick="heroSlide(1)" aria-label="Próximo">&#8594;</button>
       <div class="hero-dots" id="hero-dots">
         {% for block in section.blocks %}
           <button class="hero-dot {% if forloop.first %}active{% endif %}" onclick="heroGoTo({{ forloop.index0 }})" aria-label="Slide {{ forloop.index }}"></button>
@@ -64,12 +64,12 @@ document.addEventListener('DOMContentLoaded',function(){heroGoTo(0);resetHeroTim
         { "type": "image_picker", "id": "image", "label": "Imagem desktop" },
         { "type": "image_picker", "id": "image_mobile", "label": "Imagem mobile" },
         { "type": "text", "id": "tagline", "label": "Tagline" },
-        { "type": "text", "id": "title", "label": "Titulo" },
-        { "type": "textarea", "id": "subtitle", "label": "Subtitulo" },
-        { "type": "text", "id": "cta_text", "label": "Botao 1 - Texto", "default": "Ver Colecao" },
-        { "type": "url", "id": "cta_link", "label": "Botao 1 - Link" },
-        { "type": "text", "id": "cta2_text", "label": "Botao 2 - Texto" },
-        { "type": "url", "id": "cta2_link", "label": "Botao 2 - Link" }
+        { "type": "text", "id": "title", "label": "Título" },
+        { "type": "textarea", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "text", "id": "cta_text", "label": "Botão 1 - Texto", "default": "Ver Coleção" },
+        { "type": "url", "id": "cta_link", "label": "Botão 1 - Link" },
+        { "type": "text", "id": "cta2_text", "label": "Botão 2 - Texto" },
+        { "type": "url", "id": "cta2_link", "label": "Botão 2 - Link" }
       ]
     }
   ],
