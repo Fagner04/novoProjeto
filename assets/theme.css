@@ -328,7 +328,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .coll-item:hover .coll-circle { transform: scale(1.06); box-shadow: 0 8px 24px rgba(124,58,237,0.18); }
 .coll-item:hover .coll-label { color: var(--brand-orange); }
 
-.coll-circle { width: 110px; height: 110px; border-radius: 9999px; overflow: hidden; border: 3px solid #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.10); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; background: linear-gradient(135deg, #f3e8ff, #fce8e0); flex-shrink: 0; }
+.coll-circle { width: 110px; height: 110px; border-radius: 9999px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.10); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; background: linear-gradient(135deg, #f3e8ff, #fce8e0); flex-shrink: 0; }
 .coll-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .coll-circle-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--brand-purple); }
 .coll-circle-overlay { position: absolute; inset: 0; border-radius: 9999px; background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.18) 100%); }
