@@ -599,3 +599,20 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .acc-profile-btn { display: flex; align-items: center; gap: .75rem; background: #fff; border-radius: 1rem; padding: 1rem 1.25rem; font-size: .9375rem; font-weight: 500; color: var(--foreground); box-shadow: 0 2px 8px rgba(0,0,0,.05); transition: all .2s; }
 .acc-profile-btn:hover { color: var(--brand-purple); box-shadow: 0 4px 16px rgba(124,58,237,.12); transform: translateX(4px); }
 .acc-profile-btn svg { color: var(--brand-purple); }
+
+/* ===== SCROLL EFFECTS ===== */
+
+/* Header shrink */
+.site-header { transition: box-shadow .3s ease, padding .3s ease, transform .3s ease; }
+.site-header.header-scrolled { box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+.site-header.header-scrolled .header-inner { padding-top: .5rem; padding-bottom: .5rem; }
+.site-header.header-hidden { transform: translateY(-100%); }
+
+/* Back to top */
+#scroll-top-btn { position: fixed; bottom: 6rem; right: 1.75rem; z-index: 998; width: 42px; height: 42px; border-radius: 9999px; background: #fff; border: 1.5px solid var(--border); color: var(--foreground); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,.1); opacity: 0; transform: translateY(12px); transition: opacity .3s ease, transform .3s ease; pointer-events: none; }
+#scroll-top-btn.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+#scroll-top-btn:hover { background: var(--brand-purple); color: #fff; border-color: var(--brand-purple); transform: translateY(-2px); }
+
+@media (max-width: 1023px) {
+  #scroll-top-btn { display: none; }
+}
