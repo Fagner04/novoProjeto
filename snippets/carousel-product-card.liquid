@@ -1,0 +1,33 @@
+<div class="carousel-card">
+  <div class="carousel-card-image">
+    <span class="carousel-badge">Novidade</span>
+    <button class="carousel-fav" aria-label="Favoritar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+    <a href="{{ product.url }}">
+      <img src="{{ product.featured_image | image_url: width: 600 }}"
+        alt="{{ product.featured_image.alt | escape }}"
+        loading="lazy" width="600" height="800">
+    </a>
+  </div>
+  <div class="carousel-card-info">
+    <h3>{{ product.title | upcase }}</h3>
+    <div class="carousel-price-row">
+      <span class="carousel-price-pix">
+        {% render 'pix-icon', size: '14' %}
+        {{ product.price | times: 0.95 | money }}
+      </span>
+      <span class="carousel-pix-badge">5%</span>
+    </div>
+    <div class="carousel-price-row" style="margin-top:0.25rem;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
+        <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+      <span class="carousel-price-full">{{ product.price | money }}</span>
+      <span class="carousel-avista-badge">A VISTA</span>
+    </div>
+    <p class="carousel-installments">ou 6x de {{ product.price | divided_by: 6 | money }} sem juros</p>
+  </div>
+</div>
