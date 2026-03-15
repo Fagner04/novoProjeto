@@ -162,6 +162,13 @@
     "products_carousel_Lfhr8p": {
       "type": "products-carousel",
       "blocks": {
+        "category_YAQ7Jj": {
+          "type": "category",
+          "settings": {
+            "label": "MACAÇÃO",
+            "collection": "macacao"
+          }
+        },
         "category_HGHQbT": {
           "type": "category",
           "settings": {
@@ -169,17 +176,18 @@
             "collection": "conjunto-fitness"
           }
         },
-        "category_YAQ7Jj": {
+        "category_n7Eebx": {
           "type": "category",
           "settings": {
-            "label": "MACAÇÃO",
-            "collection": "macacao"
+            "label": "ACESSÓRIOS",
+            "collection": "acessorios"
           }
         }
       },
       "block_order": [
+        "category_YAQ7Jj",
         "category_HGHQbT",
-        "category_YAQ7Jj"
+        "category_n7Eebx"
       ],
       "name": "Carrossel de Produtos",
       "settings": {
