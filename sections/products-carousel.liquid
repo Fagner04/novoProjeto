@@ -91,21 +91,18 @@ function getVisibleCount() {
   return window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
 }
 
-function getActiveGroup() {
-  return document.querySelector('.cg-group[data-group="' + currentGroup + '"]');
-}
-
 function getActiveCards() {
-  var g = getActiveGroup();
-  return g ? Array.from(g.querySelectorAll('.carousel-card')) : [];
+  return Array.from(document.querySelectorAll('.cg-group[data-group="' + currentGroup + '"] .carousel-card'));
 }
 
 function updatePosition() {
   var cards = getActiveCards();
   if (!cards.length) return;
-  var w = cards[0].offsetWidth + 16;
-  var g = getActiveGroup();
-  if (g) g.style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
+  // Find the index offset of the first visible card in the track
+  var allCards = Array.from(document.querySelectorAll('#carousel-track .carousel-card:not([style*="display: none"])'));
+  if (!allCards.length) return;
+  var w = allCards[0].offsetWidth + 16;
+  document.getElementById('carousel-track').style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
 }
 
 function slideCarousel(dir) {
@@ -120,13 +117,29 @@ function filterCarousel(btn, handle) {
   btn.classList.add('active');
   currentGroup = handle;
   carouselOffset = 0;
+  document.getElementById('carousel-track').style.transform = 'translateX(0)';
+
+  // Show/hide cards per group
   document.querySelectorAll('.cg-group').forEach(function(g) {
     var show = g.dataset.group === handle;
-    g.style.display = show ? 'flex' : 'none';
-    if (show) g.style.transform = 'translateX(0)';
+    Array.from(g.querySelectorAll('.carousel-card')).forEach(function(c) {
+      c.style.display = show ? '' : 'none';
+    });
   });
+
   stopAutoplay(); startAutoplay();
 }
+
+// Init: hide all groups except 'all'
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.cg-group').forEach(function(g) {
+    if (g.dataset.group !== 'all') {
+      Array.from(g.querySelectorAll('.carousel-card')).forEach(function(c) {
+        c.style.display = 'none';
+      });
+    }
+  });
+});
 
 window.addEventListener('resize', updatePosition);
 

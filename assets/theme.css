@@ -364,8 +364,9 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .products-carousel-section { padding: 3rem 0; background: #f5f5f5; }
 
 /* Groups: active group shows as flex row, hidden groups are none */
-.cg-group { display: flex; gap: 1rem; transition: transform 0.4s ease; flex-shrink: 0; }
-.cg-group[style*="display:none"], .cg-group[style*="display: none"] { display: none !important; }
+.cg-group { display: contents; }
+.cg-group[style*="display: none"] { display: none !important; }
+.cg-group[style*="display: none"] > * { display: none !important; }
 
 /* Tabs */
 .carousel-tabs { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap; }
