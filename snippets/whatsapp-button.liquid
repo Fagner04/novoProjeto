@@ -59,17 +59,17 @@
 /* FAB — standalone, always visible, never affected by bubble visibility */
 .wac-fab{
   width:62px;height:62px;border-radius:9999px;
-  background:#25D366;border:none;cursor:pointer;
+  background:transparent;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   box-shadow:none;
-  transition:transform .2s,background .2s;
+  transition:transform .2s;
   flex-shrink:0;
   opacity:1 !important;
   visibility:visible !important;
   pointer-events:auto !important;
 }
 .wac-fab:hover{transform:scale(1.08);}
-.wac-fab.is-open{background:#7c3aed;}
+.wac-fab.is-open{background:transparent;}
 .wac-fab svg{position:relative;z-index:1;}
 
 /* Panel */
@@ -131,14 +131,13 @@
   <!-- FAB — standalone, always visible -->
   <button class="wac-fab" id="wac-fab" onclick="wacToggle()" aria-label="Abrir chat WhatsApp">
     <span id="wac-icon-wa">
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M18 0C8.059 0 0 8.059 0 18c0 3.182.832 6.169 2.291 8.763L0 36l9.496-2.249A17.94 17.94 0 0 0 18 36c9.941 0 18-8.059 18-18S27.941 0 18 0z" fill="#fff"/>
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M18 2.571C9.478 2.571 2.571 9.478 2.571 18c0 2.94.8 5.694 2.196 8.055L3 33l7.14-1.714A15.38 15.38 0 0 0 18 33.429c8.522 0 15.429-6.907 15.429-15.429S26.522 2.571 18 2.571z" fill="#25D366"/>
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M13.64 10.714c-.343-.771-.7-.786-1.026-.8-.266-.011-.571-.01-.876-.01-.305 0-.8.114-1.219.572-.419.457-1.6 1.562-1.6 3.81 0 2.247 1.638 4.42 1.867 4.724.229.305 3.162 5.048 7.81 6.876 3.862 1.524 4.648 1.22 5.486 1.143.838-.076 2.705-1.105 3.086-2.172.381-1.067.381-1.981.267-2.172-.114-.19-.419-.305-.876-.533-.457-.229-2.705-1.334-3.124-1.486-.419-.152-.724-.229-1.029.229-.305.457-1.181 1.486-1.448 1.791-.267.305-.533.343-.99.114-.457-.229-1.929-.71-3.676-2.267-1.358-1.21-2.276-2.705-2.543-3.162-.267-.457-.029-.705.2-.933.205-.205.457-.533.686-.8.229-.267.305-.457.457-.762.152-.305.076-.572-.038-.8-.114-.229-1.01-2.486-1.414-3.382z" fill="#fff"/>
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M26 2C12.745 2 2 12.745 2 26c0 4.243 1.107 8.22 3.048 11.663L2 50l12.69-3.327A23.93 23.93 0 0 0 26 50c13.255 0 24-10.745 24-24S39.255 2 26 2z" fill="#25D366"/>
+        <path d="M19.11 14.5c-.457-1.028-.933-1.048-1.368-1.067-.354-.015-.76-.014-1.167-.014-.406 0-1.066.152-1.624.762-.558.61-2.132 2.083-2.132 5.08 0 2.996 2.183 5.893 2.488 6.299.305.406 4.213 6.73 10.413 9.165 5.15 2.031 6.2 1.627 7.315 1.524 1.116-.102 3.604-1.473 4.114-2.895.51-1.422.51-2.641.356-2.895-.152-.254-.558-.406-1.167-.71-.61-.305-3.604-1.778-4.163-1.98-.558-.203-.965-.305-1.37.305-.407.61-1.574 1.98-1.93 2.387-.355.406-.71.457-1.319.152-.61-.305-2.572-.948-4.9-3.022-1.812-1.614-3.034-3.607-3.39-4.217-.355-.61-.038-.94.267-1.244.274-.273.61-.711.914-1.066.305-.356.406-.61.61-1.015.203-.406.101-.762-.051-1.066-.152-.305-1.345-3.314-1.886-4.51z" fill="#fff"/>
       </svg>
     </span>
     <span id="wac-icon-close" style="display:none;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </span>
   </button>
 </div>
