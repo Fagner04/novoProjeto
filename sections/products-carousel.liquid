@@ -36,7 +36,9 @@
       <div class="carousel-track-outer">
         <div class="carousel-track" id="carousel-track">
 
-          {% comment %}Grupo Todos{% endcomment %}
+          {% comment %} Todos os produtos de todos os blocos, marcados com data-group {% endcomment %}
+
+          {% comment %} Aba Todos: usa all_collection ou primeiro bloco {% endcomment %}
           {% assign all_col = section.settings.all_collection %}
           {% if all_col == blank %}
             {% for block in section.blocks %}
@@ -45,33 +47,60 @@
               {% endif %}
             {% endfor %}
           {% endif %}
-          <div class="cg-group" data-group="all">
-            {% if all_col != blank %}
-              {% for product in all_col.products limit: 20 %}
-                {% render 'carousel-product-card', product: product %}
-              {% endfor %}
-            {% else %}
-              {% for product in collections.all.products limit: 20 %}
-                {% render 'carousel-product-card', product: product %}
-              {% endfor %}
-            {% endif %}
-          </div>
 
-          {% comment %}Grupos por aba{% endcomment %}
+          {% if all_col != blank %}
+            {% for product in all_col.products limit: 20 %}
+              <div class="carousel-card" data-groups="all {{ all_col.handle }}">
+                <div class="carousel-card-image">
+                  <span class="carousel-badge">Novidade</span>
+                  <button class="carousel-fav" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+                  <a href="{{ product.url }}"><img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.featured_image.alt | escape }}" loading="lazy" width="600" height="800"></a>
+                </div>
+                <div class="carousel-card-info">
+                  <h3>{{ product.title | upcase }}</h3>
+                  <div class="carousel-price-row">
+                    <span class="carousel-price-pix">{% render 'pix-icon', size: '14' %}{{ product.price | times: 0.95 | money }}</span>
+                    <span class="carousel-pix-badge">5%</span>
+                  </div>
+                  <div class="carousel-price-row" style="margin-top:0.25rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <span class="carousel-price-full">{{ product.price | money }}</span>
+                    <span class="carousel-avista-badge">A VISTA</span>
+                  </div>
+                  <p class="carousel-installments">ou 6x de {{ product.price | divided_by: 6 | money }} sem juros</p>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          {% comment %} Produtos de cada bloco de categoria (excluindo os que ja aparecem no all) {% endcomment %}
           {% for block in section.blocks %}
             {% if block.settings.collection != blank %}
               {% assign col = block.settings.collection %}
-              <div class="cg-group" data-group="{{ col.handle }}" style="display:none;">
-                {% if col.products_count > 0 %}
-                  {% for product in col.products limit: 20 %}
-                    {% render 'carousel-product-card', product: product %}
-                  {% endfor %}
-                {% else %}
-                  <p style="padding:2rem;color:#888;font-size:.875rem;width:100%;text-align:center;">
-                    Colecao "{{ col.title }}" sem produtos. Handle: {{ col.handle }}
-                  </p>
-                {% endif %}
-              </div>
+              {% unless col.handle == all_col.handle %}
+                {% for product in col.products limit: 20 %}
+                  <div class="carousel-card" data-groups="{{ col.handle }}" style="display:none;">
+                    <div class="carousel-card-image">
+                      <span class="carousel-badge">Novidade</span>
+                      <button class="carousel-fav" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+                      <a href="{{ product.url }}"><img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.featured_image.alt | escape }}" loading="lazy" width="600" height="800"></a>
+                    </div>
+                    <div class="carousel-card-info">
+                      <h3>{{ product.title | upcase }}</h3>
+                      <div class="carousel-price-row">
+                        <span class="carousel-price-pix">{% render 'pix-icon', size: '14' %}{{ product.price | times: 0.95 | money }}</span>
+                        <span class="carousel-pix-badge">5%</span>
+                      </div>
+                      <div class="carousel-price-row" style="margin-top:0.25rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        <span class="carousel-price-full">{{ product.price | money }}</span>
+                        <span class="carousel-avista-badge">A VISTA</span>
+                      </div>
+                      <p class="carousel-installments">ou 6x de {{ product.price | divided_by: 6 | money }} sem juros</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% endunless %}
             {% endif %}
           {% endfor %}
 
@@ -92,16 +121,15 @@ function getVisibleCount() {
 }
 
 function getActiveCards() {
-  return Array.from(document.querySelectorAll('.cg-group[data-group="' + currentGroup + '"] .carousel-card'));
+  return Array.from(document.querySelectorAll('#carousel-track .carousel-card')).filter(function(c) {
+    return c.style.display !== 'none';
+  });
 }
 
 function updatePosition() {
   var cards = getActiveCards();
   if (!cards.length) return;
-  // Find the index offset of the first visible card in the track
-  var allCards = Array.from(document.querySelectorAll('#carousel-track .carousel-card:not([style*="display: none"])'));
-  if (!allCards.length) return;
-  var w = allCards[0].offsetWidth + 16;
+  var w = cards[0].offsetWidth + 16;
   document.getElementById('carousel-track').style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
 }
 
@@ -118,28 +146,12 @@ function filterCarousel(btn, handle) {
   currentGroup = handle;
   carouselOffset = 0;
   document.getElementById('carousel-track').style.transform = 'translateX(0)';
-
-  // Show/hide cards per group
-  document.querySelectorAll('.cg-group').forEach(function(g) {
-    var show = g.dataset.group === handle;
-    Array.from(g.querySelectorAll('.carousel-card')).forEach(function(c) {
-      c.style.display = show ? '' : 'none';
-    });
+  document.querySelectorAll('#carousel-track .carousel-card').forEach(function(c) {
+    var groups = (c.dataset.groups || '').split(' ');
+    c.style.display = groups.indexOf(handle) > -1 ? '' : 'none';
   });
-
   stopAutoplay(); startAutoplay();
 }
-
-// Init: hide all groups except 'all'
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.cg-group').forEach(function(g) {
-    if (g.dataset.group !== 'all') {
-      Array.from(g.querySelectorAll('.carousel-card')).forEach(function(c) {
-        c.style.display = 'none';
-      });
-    }
-  });
-});
 
 window.addEventListener('resize', updatePosition);
 
