@@ -12,9 +12,11 @@
     "hero": {
       "type": "hero",
       "blocks": {
-        "slide_enCz7M": {
+        "slide_bLq7G3": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/Banner_acai_delivery_moderno_amarelo.png",
+            "image_mobile": "shopify://shop_images/Gemini_Generated_Image_t8c0tut8c0tut8c0.png",
             "tagline": "",
             "title": "",
             "subtitle": "",
@@ -40,7 +42,7 @@
         }
       },
       "block_order": [
-        "slide_enCz7M",
+        "slide_bLq7G3",
         "slide_Awni3z"
       ],
       "settings": {}
