@@ -36,47 +36,16 @@
     "products-carousel": {
       "type": "products-carousel",
       "blocks": {
-        "category_eJEyAn": {
+        "category_yEqPTY": {
           "type": "category",
           "settings": {
-            "label": "Categoria"
-          }
-        },
-        "category_dj8iNb": {
-          "type": "category",
-          "settings": {
-            "label": "Categoria",
-            "collection_handle": "novidades"
-          }
-        },
-        "category_xmGQrp": {
-          "type": "category",
-          "settings": {
-            "label": "Categoria",
-            "collection_handle": "novidades"
-          }
-        },
-        "category_BrNbjR": {
-          "type": "category",
-          "settings": {
-            "label": "Categoria",
-            "collection_handle": "novidades"
-          }
-        },
-        "category_RbgXXH": {
-          "type": "category",
-          "settings": {
-            "label": "Categoria",
-            "collection_handle": "novidad"
+            "label": "Macação",
+            "collection": "macacao"
           }
         }
       },
       "block_order": [
-        "category_eJEyAn",
-        "category_dj8iNb",
-        "category_xmGQrp",
-        "category_BrNbjR",
-        "category_RbgXXH"
+        "category_yEqPTY"
       ],
       "settings": {
         "title": "Macação"
