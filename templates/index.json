@@ -168,26 +168,10 @@
             "label": "MACAÇÃO",
             "collection": "macacao"
           }
-        },
-        "category_JNcFAp": {
-          "type": "category",
-          "settings": {
-            "label": "Conjuntos",
-            "collection": ""
-          }
-        },
-        "category_ykUirR": {
-          "type": "category",
-          "settings": {
-            "label": "Macacoes",
-            "collection": ""
-          }
         }
       },
       "block_order": [
-        "category_YAQ7Jj",
-        "category_JNcFAp",
-        "category_ykUirR"
+        "category_YAQ7Jj"
       ],
       "name": "Carrossel de Produtos",
       "settings": {
