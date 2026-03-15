@@ -53,15 +53,17 @@
         "collection_item_RJBU4G": {
           "type": "collection_item",
           "settings": {
-            "collection": "",
-            "label": "Conjuntos"
+            "collection": "blusa",
+            "label": "Conjuntos",
+            "image": "shopify://shop_images/IMG_4275.webp"
           }
         },
         "collection_item_6WHtpL": {
           "type": "collection_item",
           "settings": {
-            "collection": "",
-            "label": "Macacões"
+            "collection": "macacao",
+            "label": "Macacões",
+            "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png"
           }
         },
         "collection_item_7dWE8H": {
