@@ -142,7 +142,7 @@
     "products-carousel": {
       "type": "products-carousel",
       "blocks": {
-        "category_yEqPTY": {
+        "category_9Vfrkd": {
           "type": "category",
           "settings": {
             "label": "Macação",
@@ -151,7 +151,7 @@
         }
       },
       "block_order": [
-        "category_yEqPTY"
+        "category_9Vfrkd"
       ],
       "settings": {
         "label": "DESTAQUES",
