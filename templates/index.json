@@ -162,6 +162,13 @@
     "products_carousel_Lfhr8p": {
       "type": "products-carousel",
       "blocks": {
+        "category_HGHQbT": {
+          "type": "category",
+          "settings": {
+            "label": "CONJUNTOS",
+            "collection": "conjunto-fitness"
+          }
+        },
         "category_YAQ7Jj": {
           "type": "category",
           "settings": {
@@ -171,6 +178,7 @@
         }
       },
       "block_order": [
+        "category_HGHQbT",
         "category_YAQ7Jj"
       ],
       "name": "Carrossel de Produtos",
