@@ -19,6 +19,7 @@
       { "type": "header", "content": "Header" },
       { "type": "color", "id": "color_header_bg", "label": "Fundo do header", "default": "#f2f2f3" },
       { "type": "color", "id": "color_header_text", "label": "Texto do header", "default": "#18181b" },
+      { "type": "color", "id": "color_header_icons", "label": "Cor dos ícones do header", "default": "#18181b" },
       { "type": "header", "content": "Rodapé" },
       { "type": "color", "id": "color_footer_bg", "label": "Fundo do rodapé", "default": "#ffeda9" },
       { "type": "color", "id": "color_footer_text", "label": "Texto do rodapé", "default": "#18181b" },
