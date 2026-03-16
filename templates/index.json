@@ -265,10 +265,10 @@
         "btn_label": "Ver Todos os Produtos",
         "btn_link": "",
         "bg_type": "gradient",
-        "bg_color": "#ffffff",
-        "gradient_color1": "#d3c9e3",
-        "gradient_color2": "#ffb389",
-        "gradient_angle": 150
+        "bg_color": "#c2bbce",
+        "gradient_color1": "#e9ad90",
+        "gradient_color2": "#ffffff",
+        "gradient_angle": 180
       }
     }
   },
