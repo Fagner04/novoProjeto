@@ -1,3 +1,77 @@
+{% if page.handle == 'favoritos' %}
+
+<div style="padding-top:6rem;padding-bottom:4rem;min-height:60vh;">
+  <div class="container-elegant">
+
+    <div class="section-header" style="margin-bottom:2rem;">
+      <p class="label-caps" style="margin-bottom:0.5rem;">MINHA LISTA</p>
+      <h1 class="heading-section">Meus Favoritos</h1>
+    </div>
+
+    <div id="fav-empty" style="display:none;text-align:center;padding:4rem 1rem;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d4d4d8" stroke-width="1.5" style="margin:0 auto 1rem;display:block;">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      <p style="color:#888;font-size:1rem;margin-bottom:1.5rem;">Você ainda não tem favoritos salvos.</p>
+      <a href="/collections/all" class="btn-musas btn-primary">Ver Produtos</a>
+    </div>
+
+    <div id="fav-grid" class="products-grid" style="display:none;"></div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var favs = [];
+  try { favs = JSON.parse(localStorage.getItem('wac_favs') || '[]'); } catch(e) {}
+
+  var grid = document.getElementById('fav-grid');
+  var empty = document.getElementById('fav-empty');
+
+  if (!favs.length) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  grid.style.display = 'grid';
+
+  var loaded = 0;
+  favs.forEach(function(handle) {
+    fetch('/products/' + handle + '.js')
+      .then(function(r) { return r.json(); })
+      .then(function(p) {
+        var price = (p.price / 100).toFixed(2).replace('.', ',');
+        var pix = (p.price * 0.95 / 100).toFixed(2).replace('.', ',');
+        var img = p.featured_image || '';
+        var card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML =
+          '<a href="/products/' + p.handle + '" class="product-card-image image-hover" style="display:block;position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:.75rem;background:#f4f4f5;">' +
+            '<img src="' + img + '" alt="' + p.title + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;">' +
+            '<div class="product-card-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;"><span style="color:#fff;font-size:.875rem;font-weight:600;border:1.5px solid #fff;padding:.5rem 1.25rem;border-radius:9999px;">Ver Produto</span></div>' +
+          '</a>' +
+          '<div style="padding:.75rem 0;">' +
+            '<p style="font-size:.875rem;font-weight:600;color:var(--foreground);margin-bottom:.35rem;">' + p.title + '</p>' +
+            '<p style="color:#32bcad;font-weight:700;font-size:.9375rem;margin-bottom:.2rem;">R$ ' + pix + ' <span style="background:#32bcad;color:#fff;font-size:.6rem;padding:.15rem .4rem;border-radius:9999px;font-weight:700;">PIX 5%</span></p>' +
+            '<p style="color:#888;font-size:.8125rem;">R$ ' + price + ' à vista</p>' +
+          '</div>';
+        grid.appendChild(card);
+      })
+      .catch(function() {})
+      .finally(function() {
+        loaded++;
+        if (loaded === favs.length && grid.children.length === 0) {
+          grid.style.display = 'none';
+          empty.style.display = 'block';
+        }
+      });
+  });
+});
+</script>
+
+{% else %}
+
 <div class="product-page">
   <div class="container-elegant" style="max-width:48rem;">
     <h1 class="heading-section" style="margin-bottom:2rem;">{{ page.title }}</h1>
@@ -6,3 +80,5 @@
     </div>
   </div>
 </div>
+
+{% endif %}
