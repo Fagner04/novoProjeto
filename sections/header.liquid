@@ -1,3 +1,16 @@
+<style>
+  :root {
+    --header-nav-hover-color: {{ section.settings.nav_hover_color | default: '#fe7e41' }};
+    --header-nav-active-color: {{ section.settings.nav_active_color | default: '#fe7e41' }};
+    --header-nav-active-underline: {{ section.settings.nav_active_underline | default: '#fe7e41' }};
+  }
+  .header-nav-link:hover,
+  .header-nav a:hover { color: var(--header-nav-hover-color) !important; }
+  .header-nav-link::after { background: var(--header-nav-active-underline) !important; }
+  .header-nav-link.active { color: var(--header-nav-active-color) !important; }
+  .header-icon-btn:hover { color: var(--header-nav-hover-color) !important; }
+</style>
+
 <header class="site-header" id="site-header">
   <div class="header-inner">
 
@@ -178,6 +191,28 @@
       "id": "menu",
       "label": "Menu de navegação",
       "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Cores do menu"
+    },
+    {
+      "type": "color",
+      "id": "nav_hover_color",
+      "label": "Cor ao passar o mouse (hover)",
+      "default": "#fe7e41"
+    },
+    {
+      "type": "color",
+      "id": "nav_active_color",
+      "label": "Cor do link ativo",
+      "default": "#fe7e41"
+    },
+    {
+      "type": "color",
+      "id": "nav_active_underline",
+      "label": "Cor do sublinhado ao passar o mouse",
+      "default": "#fe7e41"
     }
   ]
 }
