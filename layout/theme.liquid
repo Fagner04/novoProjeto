@@ -42,6 +42,70 @@
   </style>
 </head>
 <body>
+
+<!-- THEME ACTIVATION GATE -->
+<div id="_ag" style="display:none;position:fixed;inset:0;background:#f4f4f5;z-index:99999;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;">
+  <div style="background:#fff;border-radius:1.25rem;padding:2.5rem 2rem;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.12);text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:1rem;">🔑</div>
+    <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem;color:#18181b;">Theme Activation Required</h2>
+    <p style="color:#52525b;font-size:.875rem;margin-bottom:1.5rem;">Enter your activation token to unlock this theme.</p>
+    <input id="_at" type="text" placeholder="Paste your activation token..." autocomplete="off" spellcheck="false"
+      style="width:100%;padding:.8rem 1rem;border:2px solid #d4d4d8;border-radius:.75rem;font-size:.9rem;outline:none;text-align:center;box-sizing:border-box;margin-bottom:.75rem;">
+    <button id="_ab" onclick="_av()"
+      style="width:100%;padding:.85rem;background:#fe7e41;color:#fff;border:none;border-radius:9999px;font-size:.9rem;font-weight:600;cursor:pointer;">
+      Activate Theme
+    </button>
+    <p id="_ae" style="display:none;margin-top:.75rem;color:#ef4444;font-size:.8rem;background:#fef2f2;border-radius:.5rem;padding:.5rem .75rem;"></p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='_theme_activated';
+  var API='https://SEU_PROJETO.vercel.app/api/activate';
+
+  // Já ativado — libera direto
+  if(localStorage.getItem(KEY)==='1'){return;}
+
+  // Mostra o bloqueio
+  var gate=document.getElementById('_ag');
+  gate.style.display='flex';
+  document.body.style.overflow='hidden';
+
+  window._av=async function(){
+    var t=document.getElementById('_at').value.trim();
+    var b=document.getElementById('_ab');
+    var e=document.getElementById('_ae');
+    if(!t){_ae('Please enter your activation token.');return;}
+    b.disabled=true;b.textContent='Activating...';e.style.display='none';
+    try{
+      var r=await fetch(API,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token:t,domain:location.hostname})
+      });
+      var d=await r.json();
+      if(!r.ok){_ae(d.error||'Invalid token.');return;}
+      localStorage.setItem(KEY,'1');
+      gate.style.display='none';
+      document.body.style.overflow='';
+    }catch(x){_ae('Connection error. Please try again.');}
+    finally{b.disabled=false;b.textContent='Activate Theme';}
+  };
+
+  function _ae(m){
+    var e=document.getElementById('_ae');
+    e.textContent=m;e.style.display='block';
+    document.getElementById('_ab').disabled=false;
+    document.getElementById('_ab').textContent='Activate Theme';
+  }
+
+  document.getElementById('_at').addEventListener('keydown',function(e){
+    if(e.key==='Enter')_av();
+  });
+})();
+</script>
+<!-- END ACTIVATION GATE -->
   {% section 'announcement-bar' %}
   {% section 'header' %}
 
