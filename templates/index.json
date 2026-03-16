@@ -266,7 +266,8 @@
         "btn_link": "",
         "bg_type": "gradient",
         "bg_color": "#c2bbce",
-        "gradient_color1": "#e9ad90",
+        "bg_opacity": 40,
+        "gradient_color1": "#fe7e41",
         "gradient_color2": "#ffffff",
         "gradient_angle": 180
       }
