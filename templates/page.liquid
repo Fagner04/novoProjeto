@@ -44,17 +44,17 @@ document.addEventListener('DOMContentLoaded', function() {
         var price = (p.price / 100).toFixed(2).replace('.', ',');
         var pix = (p.price * 0.95 / 100).toFixed(2).replace('.', ',');
         var img = p.featured_image || '';
-        var card = document.createElement('div');
+        var card = document.createElement('a');
+        card.href = '/products/' + p.handle;
         card.className = 'product-card';
         card.innerHTML =
-          '<a href="/products/' + p.handle + '" class="product-card-image image-hover" style="display:block;position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:.75rem;background:#f4f4f5;">' +
-            '<img src="' + img + '" alt="' + p.title + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;">' +
-            '<div class="product-card-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;"><span style="color:#fff;font-size:.875rem;font-weight:600;border:1.5px solid #fff;padding:.5rem 1.25rem;border-radius:9999px;">Ver Produto</span></div>' +
-          '</a>' +
-          '<div style="padding:.75rem 0;">' +
-            '<p style="font-size:.875rem;font-weight:600;color:var(--foreground);margin-bottom:.35rem;">' + p.title + '</p>' +
-            '<p style="color:#32bcad;font-weight:700;font-size:.9375rem;margin-bottom:.2rem;">R$ ' + pix + ' <span style="background:#32bcad;color:#fff;font-size:.6rem;padding:.15rem .4rem;border-radius:9999px;font-weight:700;">PIX 5%</span></p>' +
-            '<p style="color:#888;font-size:.8125rem;">R$ ' + price + ' à vista</p>' +
+          '<div class="product-card-image image-hover">' +
+            '<img src="' + img + '" alt="' + p.title + '" loading="lazy" width="600" height="800">' +
+            '<div class="product-card-overlay"><span>Ver Detalhes</span></div>' +
+          '</div>' +
+          '<div class="product-card-info">' +
+            '<h3 class="product-card-title">' + p.title + '</h3>' +
+            '<p class="product-card-price">R$ ' + price + '</p>' +
           '</div>';
         grid.appendChild(card);
       })
