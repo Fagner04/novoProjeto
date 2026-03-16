@@ -82,7 +82,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ===== HEADER ===== */
-.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: color-mix(in srgb, var(--header-bg, var(--background)) 95%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); color: var(--header-text, var(--foreground)); }
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: color-mix(in srgb, var(--header-bg, var(--background)) 95%, transparent); backdrop-filter: blur(8px); color: var(--header-text, var(--foreground)); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; max-width: 1280px; margin: 0 auto; gap: 1rem; }
 .header-logo img { height: 40px; width: auto; }
 .header-logo span { font-family: 'Merriweather', serif; font-size: 1.5rem; font-weight: 700; }
