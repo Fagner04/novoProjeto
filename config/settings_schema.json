@@ -10,155 +10,61 @@
   {
     "name": "Cores",
     "settings": [
-      {
-        "type": "color",
-        "id": "color_primary",
-        "label": "Cor principal (laranja)",
-        "default": "#fe7e41"
-      },
-      {
-        "type": "color",
-        "id": "color_background",
-        "label": "Cor de fundo",
-        "default": "#f2f2f3"
-      },
-      {
-        "type": "color",
-        "id": "color_footer_bg",
-        "label": "Cor de fundo do rodapé",
-        "default": "#ffeda9"
-      }
+      { "type": "header", "content": "Cores principais" },
+      { "type": "color", "id": "color_primary", "label": "Cor principal (botões, destaques)", "default": "#fe7e41" },
+      { "type": "color", "id": "color_secondary", "label": "Cor secundária (roxo)", "default": "#7c3aed" },
+      { "type": "header", "content": "Fundo e texto" },
+      { "type": "color", "id": "color_background", "label": "Fundo da página", "default": "#f2f2f3" },
+      { "type": "color", "id": "color_foreground", "label": "Cor do texto", "default": "#18181b" },
+      { "type": "header", "content": "Header" },
+      { "type": "color", "id": "color_header_bg", "label": "Fundo do header", "default": "#f2f2f3" },
+      { "type": "color", "id": "color_header_text", "label": "Texto do header", "default": "#18181b" },
+      { "type": "header", "content": "Rodapé" },
+      { "type": "color", "id": "color_footer_bg", "label": "Fundo do rodapé", "default": "#ffeda9" },
+      { "type": "color", "id": "color_footer_text", "label": "Texto do rodapé", "default": "#18181b" },
+      { "type": "header", "content": "Botões" },
+      { "type": "color", "id": "color_btn_bg", "label": "Fundo do botão primário", "default": "#fe7e41" },
+      { "type": "color", "id": "color_btn_text", "label": "Texto do botão primário", "default": "#ffffff" },
+      { "type": "header", "content": "Carrossel de produtos" },
+      { "type": "color", "id": "color_tab_active", "label": "Aba ativa (fundo)", "default": "#fe7e41" },
+      { "type": "color", "id": "color_tab_active_text", "label": "Aba ativa (texto)", "default": "#ffffff" },
+      { "type": "header", "content": "Preços" },
+      { "type": "color", "id": "color_pix", "label": "Cor do preço Pix", "default": "#32bcad" },
+      { "type": "color", "id": "color_badge_bg", "label": "Fundo do badge de novidade", "default": "#fe7e41" }
     ]
   },
   {
     "name": "Tipografia",
     "settings": [
-      {
-        "type": "font_picker",
-        "id": "font_heading",
-        "label": "Fonte dos títulos",
-        "default": "merriweather_n4"
-      },
-      {
-        "type": "font_picker",
-        "id": "font_body",
-        "label": "Fonte do corpo",
-        "default": "poppins_n4"
-      }
+      { "type": "font_picker", "id": "font_heading", "label": "Fonte dos títulos", "default": "merriweather_n4" },
+      { "type": "font_picker", "id": "font_body", "label": "Fonte do corpo", "default": "poppins_n4" }
     ]
   },
   {
     "name": "Redes Sociais",
     "settings": [
-      {
-        "type": "url",
-        "id": "social_instagram",
-        "label": "Instagram"
-      },
-      {
-        "type": "url",
-        "id": "social_facebook",
-        "label": "Facebook"
-      },
-      {
-        "type": "url",
-        "id": "social_tiktok",
-        "label": "TikTok"
-      },
-      {
-        "type": "url",
-        "id": "social_whatsapp",
-        "label": "WhatsApp"
-      }
+      { "type": "url", "id": "social_instagram", "label": "Instagram" },
+      { "type": "url", "id": "social_facebook", "label": "Facebook" },
+      { "type": "url", "id": "social_tiktok", "label": "TikTok" },
+      { "type": "url", "id": "social_whatsapp", "label": "WhatsApp" }
     ]
   },
   {
     "name": "Chat WhatsApp",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "wa_enabled",
-        "label": "Ativar chat WhatsApp",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "wa_number",
-        "label": "Número WhatsApp (com DDI)",
-        "default": "5562994319090",
-        "info": "Ex: 5562994319090 (sem + ou espaços)"
-      },
-      {
-        "type": "text",
-        "id": "wa_agent_name",
-        "label": "Nome do atendente",
-        "default": "Musas Atendimento"
-      },
-      {
-        "type": "text",
-        "id": "wa_status",
-        "label": "Status exibido",
-        "default": "Offline"
-      },
-      {
-        "type": "header",
-        "content": "Mensagens"
-      },
-      {
-        "type": "textarea",
-        "id": "wa_welcome",
-        "label": "Mensagem de boas-vindas",
-        "default": "👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?"
-      },
-      {
-        "type": "text",
-        "id": "wa_default_msg",
-        "label": "Mensagem padrão (campo vazio)",
-        "default": "Olá! Vim pelo site e gostaria de mais informações."
-      },
-      {
-        "type": "text",
-        "id": "wa_footer",
-        "label": "Texto do rodapé",
-        "default": "Resposta em até 2 horas durante horário comercial"
-      },
-      {
-        "type": "header",
-        "content": "Bolinha de mensagem (ciclo)"
-      },
-      {
-        "type": "textarea",
-        "id": "wa_bubble_messages",
-        "label": "Mensagens do ciclo (uma por linha)",
-        "default": "Precisa rastrear seu pedido? 📦\nFrete grátis acima de R$299! 🚚\nTroca fácil em até 30 dias! 🔄"
-      },
-      {
-        "type": "range",
-        "id": "wa_show_delay",
-        "label": "Aparecer após (segundos)",
-        "min": 1,
-        "max": 30,
-        "step": 1,
-        "default": 3
-      },
-      {
-        "type": "range",
-        "id": "wa_hide_after",
-        "label": "Sumir após (segundos)",
-        "min": 2,
-        "max": 20,
-        "step": 1,
-        "default": 5
-      },
-      {
-        "type": "range",
-        "id": "wa_repeat_after",
-        "label": "Repetir a cada (segundos)",
-        "min": 5,
-        "max": 120,
-        "step": 5,
-        "default": 30
-      }
+      { "type": "checkbox", "id": "wa_enabled", "label": "Ativar chat WhatsApp", "default": true },
+      { "type": "text", "id": "wa_number", "label": "Número WhatsApp (com DDI)", "default": "5562994319090", "info": "Ex: 5562994319090 (sem + ou espaços)" },
+      { "type": "text", "id": "wa_agent_name", "label": "Nome do atendente", "default": "Musas Atendimento" },
+      { "type": "text", "id": "wa_status", "label": "Status exibido", "default": "Offline" },
+      { "type": "header", "content": "Mensagens" },
+      { "type": "textarea", "id": "wa_welcome", "label": "Mensagem de boas-vindas", "default": "👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?" },
+      { "type": "text", "id": "wa_default_msg", "label": "Mensagem padrão (campo vazio)", "default": "Olá! Vim pelo site e gostaria de mais informações." },
+      { "type": "text", "id": "wa_footer", "label": "Texto do rodapé", "default": "Resposta em até 2 horas durante horário comercial" },
+      { "type": "header", "content": "Bolinha de mensagem (ciclo)" },
+      { "type": "textarea", "id": "wa_bubble_messages", "label": "Mensagens do ciclo (uma por linha)", "default": "Precisa rastrear seu pedido? 📦\nFrete grátis acima de R$299! 🚚\nTroca fácil em até 30 dias! 🔄" },
+      { "type": "range", "id": "wa_show_delay", "label": "Aparecer após (segundos)", "min": 1, "max": 30, "step": 1, "default": 3 },
+      { "type": "range", "id": "wa_hide_after", "label": "Sumir após (segundos)", "min": 2, "max": 20, "step": 1, "default": 5 },
+      { "type": "range", "id": "wa_repeat_after", "label": "Repetir a cada (segundos)", "min": 5, "max": 120, "step": 5, "default": 30 }
     ]
   }
 ]

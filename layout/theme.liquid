@@ -14,6 +14,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   {{ 'theme.css' | asset_url | stylesheet_tag }}
+  <style>
+    :root {
+      --brand-orange: {{ settings.color_primary }};
+      --brand-purple: {{ settings.color_secondary }};
+      --background: {{ settings.color_background }};
+      --foreground: {{ settings.color_foreground }};
+      --header-bg: {{ settings.color_header_bg }};
+      --header-text: {{ settings.color_header_text }};
+      --footer-bg: {{ settings.color_footer_bg }};
+      --footer-text: {{ settings.color_footer_text }};
+      --btn-bg: {{ settings.color_btn_bg }};
+      --btn-text: {{ settings.color_btn_text }};
+      --tab-active-bg: {{ settings.color_tab_active }};
+      --tab-active-text: {{ settings.color_tab_active_text }};
+      --pix-color: {{ settings.color_pix }};
+      --badge-bg: {{ settings.color_badge_bg }};
+    }
+  </style>
 </head>
 <body>
   {% section 'announcement-bar' %}

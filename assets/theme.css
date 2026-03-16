@@ -57,7 +57,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 
 /* Buttons */
 .btn-musas { display: inline-flex; align-items: center; justify-content: center; padding: 1rem 2rem; font-family: 'Poppins', sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s ease; cursor: pointer; border: none; }
-.btn-primary { background-color: var(--brand-orange); color: #fff; border-radius: 9999px; }
+.btn-primary { background-color: var(--btn-bg, var(--brand-orange)); color: var(--btn-text, #fff); border-radius: 9999px; }
 .btn-primary:hover { filter: brightness(1.1); transform: scale(1.03); }
 .btn-outline { background: transparent; border: 1px solid rgba(24,24,27,0.2); color: var(--foreground); border-radius: 9999px; }
 .btn-outline:hover { background: var(--foreground); color: #fff; }
@@ -82,7 +82,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ===== HEADER ===== */
-.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(242,242,243,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: color-mix(in srgb, var(--header-bg, var(--background)) 95%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); color: var(--header-text, var(--foreground)); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; max-width: 1280px; margin: 0 auto; gap: 1rem; }
 .header-logo img { height: 40px; width: auto; }
 .header-logo span { font-family: 'Merriweather', serif; font-size: 1.5rem; font-weight: 700; }
@@ -253,7 +253,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .trust-item p { font-size: 0.8125rem; color: var(--muted-foreground); line-height: 1.5; max-width: 160px; }
 
 /* ===== FOOTER ===== */
-.site-footer { background: var(--brand-yellow); color: var(--foreground); }
+.site-footer { background: var(--footer-bg, var(--brand-yellow)); color: var(--footer-text, var(--foreground)); }
 .footer-inner { padding: 3rem 1.5rem 1.5rem; max-width: 1280px; margin: 0 auto; }
 .footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; }
 @media (min-width: 768px) { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -388,7 +388,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .carousel-tabs { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap; }
 .carousel-tab { padding: 0.6rem 1.5rem; border-radius: 9999px; border: 1.5px solid var(--border); background: #fff; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; color: var(--foreground); }
 .carousel-tab:hover { border-color: var(--brand-orange); color: var(--brand-orange); }
-.carousel-tab.active { background: var(--brand-orange); border-color: var(--brand-orange); color: #fff; font-weight: 600; }
+.carousel-tab.active { background: var(--tab-active-bg, var(--brand-orange)); border-color: var(--tab-active-bg, var(--brand-orange)); color: var(--tab-active-text, #fff); font-weight: 600; }
 
 /* Carousel layout */
 .carousel-wrapper { position: relative; display: flex; align-items: center; gap: 0.5rem; }
