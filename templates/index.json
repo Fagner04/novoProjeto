@@ -142,50 +142,10 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
-        "badge_QpinR7": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_JxGLPd": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_YpKE4C": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_JEGhqV": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_pbfYia": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
         "badge_RnPBL3": {
           "type": "badge",
           "settings": {
-            "icon": "shield",
+            "icon": "chat",
             "title": "Título do selo",
             "text": "Descrição do selo"
           }
@@ -193,7 +153,15 @@
         "badge_CDMyc8": {
           "type": "badge",
           "settings": {
-            "icon": "shield",
+            "icon": "refresh",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        },
+        "badge_GPWWW6": {
+          "type": "badge",
+          "settings": {
+            "icon": "star",
             "title": "Título do selo",
             "text": "Descrição do selo"
           }
@@ -201,7 +169,7 @@
         "badge_YjcbiL": {
           "type": "badge",
           "settings": {
-            "icon": "shield",
+            "icon": "heart",
             "title": "Título do selo",
             "text": "Descrição do selo"
           }
@@ -225,20 +193,16 @@
         "badge_qkdpUt": {
           "type": "badge",
           "settings": {
-            "icon": "shield",
+            "icon": "lock",
             "title": "Título do selo",
             "text": "Descrição do selo"
           }
         }
       },
       "block_order": [
-        "badge_QpinR7",
-        "badge_JxGLPd",
-        "badge_YpKE4C",
-        "badge_JEGhqV",
-        "badge_pbfYia",
         "badge_RnPBL3",
         "badge_CDMyc8",
+        "badge_GPWWW6",
         "badge_YjcbiL",
         "badge_3tBTtV",
         "badge_mmCQrr",
