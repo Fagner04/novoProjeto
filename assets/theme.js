@@ -91,10 +91,12 @@ function toggleFav(btn, handle) {
   var svg = btn.querySelector('svg');
   if (idx > -1) {
     favs.splice(idx, 1);
-    svg.style.fill = 'none'; svg.style.stroke = 'currentColor';
+    if (svg) { svg.style.fill = 'none'; svg.style.stroke = 'currentColor'; }
+    btn.style.borderColor = '';
   } else {
     favs.push(handle);
-    svg.style.fill = '#ef4444'; svg.style.stroke = '#ef4444';
+    if (svg) { svg.style.fill = '#ef4444'; svg.style.stroke = '#ef4444'; }
+    btn.style.borderColor = '#ef4444';
   }
   try { localStorage.setItem('wac_favs', JSON.stringify(favs)); } catch(e) {}
   var badge = document.getElementById('fav-count');
@@ -117,11 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var badge = document.getElementById('fav-count');
     if (badge && favs.length > 0) { badge.textContent = favs.length; badge.style.display = 'flex'; }
 
-    // Mark active fav buttons on page
-    document.querySelectorAll('.carousel-fav[data-handle]').forEach(function(btn) {
+    // Mark active fav buttons on page (carousel + product page)
+    document.querySelectorAll('.carousel-fav[data-handle], .product-fav-btn[data-handle]').forEach(function(btn) {
       if (favs.indexOf(btn.dataset.handle) > -1) {
-        btn.querySelector('svg').style.fill = '#ef4444';
-        btn.querySelector('svg').style.stroke = '#ef4444';
+        var svg = btn.querySelector('svg');
+        if (svg) { svg.style.fill = '#ef4444'; svg.style.stroke = '#ef4444'; }
+        btn.style.borderColor = '#ef4444';
       }
     });
   })();
