@@ -142,6 +142,30 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
+        "badge_RnPBL3": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        },
+        "badge_CDMyc8": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        },
+        "badge_YjcbiL": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        },
         "badge_3tBTtV": {
           "type": "badge",
           "settings": {
@@ -168,6 +192,9 @@
         }
       },
       "block_order": [
+        "badge_RnPBL3",
+        "badge_CDMyc8",
+        "badge_YjcbiL",
         "badge_3tBTtV",
         "badge_mmCQrr",
         "badge_qkdpUt"
