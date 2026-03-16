@@ -141,6 +141,55 @@
     },
     "trust": {
       "type": "trust-badges",
+      "blocks": {
+        "badge_mmCQrr": {
+          "type": "badge",
+          "settings": {
+            "icon": "truck",
+            "title": "Primeira troca grátis",
+            "text": "Descrição do selo"
+          }
+        },
+        "badge_qkdpUt": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        },
+        "badge_kRmnBX": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        },
+        "badge_GQweid": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        },
+        "badge_nHhdte": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "title": "Título do selo",
+            "text": "Descrição do selo"
+          }
+        }
+      },
+      "block_order": [
+        "badge_mmCQrr",
+        "badge_qkdpUt",
+        "badge_kRmnBX",
+        "badge_GQweid",
+        "badge_nHhdte"
+      ],
       "settings": {}
     },
     "featured_products_3iVPUp": {
@@ -194,7 +243,9 @@
         "all_collection": "ultimas-novidades",
         "label": "DESTAQUES",
         "title": "A Colecao",
-        "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real."
+        "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real.",
+        "btn_label": "Ver Todos os Produtos",
+        "btn_link": ""
       }
     }
   },
