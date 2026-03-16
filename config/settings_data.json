@@ -12,12 +12,10 @@
     "color_primary": "#71449b",
     "color_secondary": "#a884e7",
     "color_background": "#ffffff",
-    "color_header_bg": "#71449b",
-    "header_opacity": 90,
+    "color_header_bg": "#80609e",
+    "header_opacity": 100,
     "color_header_text": "#f6f6f6",
     "color_header_icons": "#ffffff",
-    "color_header_icon_bg": "#c1434300",
-    "color_header_icon_border": "#a0181800",
     "color_footer_bg": "#ffffff",
     "color_footer_text": "#0e0c0c",
     "color_btn_text": "#ffffff",
@@ -30,6 +28,8 @@
     "social_whatsapp": "https://wa.me/5562994319090",
     "wa_bubble_messages": "Precisa rastrear seu pedido?  \nFrete grátis acima de R$299!  \nTroca fácil em até 30 dias!  \nCupom EMPORIO10",
     "wa_repeat_after": 120,
+    "color_header_icon_bg": "#c1434300",
+    "color_header_icon_border": "#a0181800",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
