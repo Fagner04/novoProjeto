@@ -225,8 +225,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .about-content p { color: rgba(24,24,27,0.8); font-size: 1rem; line-height: 1.75; margin-bottom: 1rem; }
 
 /* ===== TRUST BADGES ===== */
-.trust-section { padding: 4rem 0; background: #fff; }
-.trust-section { padding: 0; background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
+.trust-section { padding: 0; background: transparent; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
 .trust-ticker-wrap { overflow: hidden; position: relative; }
 .trust-ticker-wrap::before, .trust-ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none; }
 .trust-ticker-wrap::before { left: 0; background: linear-gradient(to right, #fff, transparent); }
