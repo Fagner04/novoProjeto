@@ -1,4 +1,4 @@
-<section class="products-carousel-section">
+<section class="products-carousel-section" style="{% if section.settings.bg_type == 'gradient' %}background: linear-gradient({{ section.settings.gradient_angle }}deg, {{ section.settings.gradient_color1 }}, {{ section.settings.gradient_color2 }});{% elsif section.settings.bg_type == 'solid' %}background: {{ section.settings.bg_color }};{% endif %}">
   <div class="container-elegant">
 
     {% if section.settings.title != blank or section.settings.subtitle != blank %}
@@ -205,7 +205,32 @@ if (wr) {
     { "type": "text", "id": "title", "label": "Titulo da secao", "default": "A Colecao" },
     { "type": "textarea", "id": "subtitle", "label": "Subtitulo", "default": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real." },
     { "type": "text", "id": "btn_label", "label": "Texto do botao Ver Todos", "default": "Ver Todos os Produtos" },
-    { "type": "url", "id": "btn_link", "label": "Link do botao" }
+    { "type": "url", "id": "btn_link", "label": "Link do botao" },
+    { "type": "header", "content": "Fundo da seção" },
+    {
+      "type": "select",
+      "id": "bg_type",
+      "label": "Tipo de fundo",
+      "options": [
+        { "value": "default", "label": "Padrão (sem fundo)" },
+        { "value": "solid", "label": "Cor sólida" },
+        { "value": "gradient", "label": "Gradiente" }
+      ],
+      "default": "default"
+    },
+    { "type": "color", "id": "bg_color", "label": "Cor sólida", "default": "#f9f0ff" },
+    { "type": "color", "id": "gradient_color1", "label": "Gradiente - cor inicial", "default": "#f9f0ff" },
+    { "type": "color", "id": "gradient_color2", "label": "Gradiente - cor final", "default": "#fce8e0" },
+    {
+      "type": "range",
+      "id": "gradient_angle",
+      "label": "Ângulo do gradiente",
+      "min": 0,
+      "max": 360,
+      "step": 15,
+      "default": 135,
+      "unit": "°"
+    }
   ],
   "presets": [
     {
