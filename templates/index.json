@@ -157,38 +157,11 @@
             "title": "Título do selo",
             "text": "Descrição do selo"
           }
-        },
-        "badge_kRmnBX": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_GQweid": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_nHhdte": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
         }
       },
       "block_order": [
         "badge_mmCQrr",
-        "badge_qkdpUt",
-        "badge_kRmnBX",
-        "badge_GQweid",
-        "badge_nHhdte"
+        "badge_qkdpUt"
       ],
       "settings": {}
     },
