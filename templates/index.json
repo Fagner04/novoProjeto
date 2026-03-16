@@ -263,7 +263,12 @@
         "title": "A Colecao",
         "subtitle": "Com cores intensas, cheias de personalidade, e modelos inovadores que valorizam o corpo real.",
         "btn_label": "Ver Todos os Produtos",
-        "btn_link": ""
+        "btn_link": "",
+        "bg_type": "gradient",
+        "bg_color": "#ffffff",
+        "gradient_color1": "#e7def0",
+        "gradient_color2": "#ffb793",
+        "gradient_angle": 135
       }
     }
   },
