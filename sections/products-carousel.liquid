@@ -1,4 +1,4 @@
-<section class="products-carousel-section" style="{% if section.settings.bg_type == 'gradient' %}background: linear-gradient({{ section.settings.gradient_angle }}deg, {{ section.settings.gradient_color1 }}, {{ section.settings.gradient_color2 }});{% elsif section.settings.bg_type == 'solid' %}background: {{ section.settings.bg_color }};{% endif %}">
+<section class="products-carousel-section" style="{% assign op = section.settings.bg_opacity | divided_by: 100.0 %}{% if section.settings.bg_type == 'gradient' %}background: linear-gradient({{ section.settings.gradient_angle }}deg, {{ section.settings.gradient_color1 | color_modify: 'alpha', op }}, {{ section.settings.gradient_color2 | color_modify: 'alpha', op }});{% elsif section.settings.bg_type == 'solid' %}background: {{ section.settings.bg_color | color_modify: 'alpha', op }};{% elsif section.settings.bg_type == 'transparent' %}background: transparent;{% endif %}">
   <div class="container-elegant">
 
     {% if section.settings.title != blank or section.settings.subtitle != blank %}
@@ -214,11 +214,22 @@ if (wr) {
       "options": [
         { "value": "default", "label": "Padrão (sem fundo)" },
         { "value": "solid", "label": "Cor sólida" },
-        { "value": "gradient", "label": "Gradiente" }
+        { "value": "gradient", "label": "Gradiente" },
+        { "value": "transparent", "label": "Transparente" }
       ],
       "default": "default"
     },
     { "type": "color", "id": "bg_color", "label": "Cor sólida", "default": "#f9f0ff" },
+    {
+      "type": "range",
+      "id": "bg_opacity",
+      "label": "Opacidade (%)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 100,
+      "info": "Funciona para cor sólida e gradiente"
+    },
     { "type": "color", "id": "gradient_color1", "label": "Gradiente - cor inicial", "default": "#f9f0ff" },
     { "type": "color", "id": "gradient_color2", "label": "Gradiente - cor final", "default": "#fce8e0" },
     {
