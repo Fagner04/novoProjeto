@@ -33,6 +33,23 @@
         </div>
       {% endfor %}
     </div>
+    {% if section.settings.promo_enabled %}
+      <div class="hero-promo-card" id="hero-promo-card" style="background:{{ section.settings.promo_bg }};color:{{ section.settings.promo_text_color }};">
+        <button class="hero-promo-close" onclick="document.getElementById('hero-promo-card').style.display='none'" aria-label="Fechar">✕</button>
+        {% if section.settings.promo_badge != blank %}
+          <p class="hero-promo-badge" style="color:{{ section.settings.promo_badge_color }};">{{ section.settings.promo_badge }}</p>
+        {% endif %}
+        {% if section.settings.promo_title != blank %}
+          <p class="hero-promo-title">{{ section.settings.promo_title }}</p>
+        {% endif %}
+        {% if section.settings.promo_text != blank %}
+          <p class="hero-promo-text">{{ section.settings.promo_text }}</p>
+        {% endif %}
+        {% if section.settings.promo_btn_text != blank %}
+          <a href="{{ section.settings.promo_btn_link | default: '/collections/all' }}" class="hero-promo-btn" style="background:{{ section.settings.promo_btn_bg }};color:{{ section.settings.promo_btn_color }};">{{ section.settings.promo_btn_text }}</a>
+        {% endif %}
+      </div>
+    {% endif %}
     {% if section.blocks.size > 1 %}
       <button class="hero-arrow hero-arrow-prev" onclick="heroSlide(-1)" aria-label="Anterior">&#8592;</button>
       <button class="hero-arrow hero-arrow-next" onclick="heroSlide(1)" aria-label="Próximo">&#8594;</button>
@@ -73,6 +90,20 @@ document.addEventListener('DOMContentLoaded',function(){heroGoTo(0);resetHeroTim
       ]
     }
   ],
-  "presets": [{ "name": "Hero Banner", "blocks": [{ "type": "slide" }] }]
+  "presets": [{ "name": "Hero Banner", "blocks": [{ "type": "slide" }] }],
+  "settings": [
+    { "type": "header", "content": "Card de Oferta" },
+    { "type": "checkbox", "id": "promo_enabled", "label": "Exibir card de oferta", "default": false },
+    { "type": "text", "id": "promo_badge", "label": "Badge (ex: ✨ OFERTA ESPECIAL ✨)", "default": "✨ OFERTA ESPECIAL ✨" },
+    { "type": "text", "id": "promo_title", "label": "Título do card", "default": "Feliz dia das mulheres 😍" },
+    { "type": "textarea", "id": "promo_text", "label": "Texto da oferta", "default": "Cada peça é um presente de força e beleza!" },
+    { "type": "text", "id": "promo_btn_text", "label": "Texto do botão", "default": "Ver Oferta" },
+    { "type": "url", "id": "promo_btn_link", "label": "Link do botão" },
+    { "type": "color", "id": "promo_bg", "label": "Fundo do card", "default": "#ffffff" },
+    { "type": "color", "id": "promo_text_color", "label": "Cor do texto", "default": "#18181b" },
+    { "type": "color", "id": "promo_badge_color", "label": "Cor do badge", "default": "#7c3aed" },
+    { "type": "color", "id": "promo_btn_bg", "label": "Fundo do botão", "default": "#fe7e41" },
+    { "type": "color", "id": "promo_btn_color", "label": "Cor do texto do botão", "default": "#ffffff" }
+  ]
 }
 {% endschema %}

@@ -163,6 +163,16 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .hero-dots { position: absolute; bottom: 0.75rem; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; gap: 0.4rem; }
 .hero-dot { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: rgba(255,255,255,0.5); border: none; cursor: pointer; transition: all 0.2s; padding: 0; }
 .hero-dot.active { background: #fff; width: 1.25rem; }
+
+/* Hero Promo Card */
+.hero-promo-card { position: absolute; bottom: 2rem; left: 1.5rem; z-index: 20; width: 220px; border-radius: 1rem; padding: 1rem 1.1rem 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.18); backdrop-filter: blur(2px); }
+.hero-promo-close { position: absolute; top: 0.5rem; right: 0.6rem; background: none; border: none; cursor: pointer; font-size: 0.75rem; color: inherit; opacity: 0.6; line-height: 1; padding: 0; }
+.hero-promo-close:hover { opacity: 1; }
+.hero-promo-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.3rem; }
+.hero-promo-title { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.4rem; line-height: 1.3; }
+.hero-promo-text { font-size: 0.75rem; line-height: 1.5; margin-bottom: 0.75rem; opacity: 0.85; }
+.hero-promo-btn { display: inline-block; padding: 0.45rem 1rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; transition: filter 0.2s; }
+.hero-promo-btn:hover { filter: brightness(1.1); }
 /* ===== BENEFITS BAR ===== */
 .benefits-bar { padding: 1.5rem 0; border-bottom: 1px solid var(--border); background: #fff; }
 .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
@@ -282,7 +292,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 /* ===== CART DRAWER ===== */
 .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
 .cart-overlay.open { opacity: 1; pointer-events: all; }
-.cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 28rem; background: var(--background); z-index: 201; transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; box-shadow: -8px 0 40px rgba(0,0,0,0.15); }
+.cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 28rem; background: var(--cart-bg, var(--background)); color: var(--cart-text, var(--foreground)); z-index: 201; transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; box-shadow: -8px 0 40px rgba(0,0,0,0.15); }
 .cart-drawer.open { transform: translateX(0); }
 .cart-drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
 .cart-drawer-header h2 { font-family: 'Merriweather', serif; font-size: 1.25rem; }
