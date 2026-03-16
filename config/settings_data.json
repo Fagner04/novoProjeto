@@ -11,7 +11,9 @@
   "current": {
     "color_primary": "#71449b",
     "color_background": "#ffffff",
+    "color_header_bg": "#ffffff",
     "color_footer_bg": "#4e4d47",
+    "color_tab_active": "#71449b",
     "font_heading": "acme_n4",
     "font_body": "acme_n4",
     "social_instagram": "https://www.instagram.com/musasclubfit",
