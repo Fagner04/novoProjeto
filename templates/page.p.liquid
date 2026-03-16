@@ -1,0 +1,99 @@
+{% assign fn = 'https://SEU_PROJETO.supabase.co/functions/v1/auth-check' %}
+
+<div class="tap">
+
+  <div id="s1">
+    <div class="tac">
+      <div class="tai">🔐</div>
+      <h1 class="tat">Members Only</h1>
+      <p class="tas">Enter your access code to continue.</p>
+      <div class="tiw">
+        <input type="text" id="ti" class="tti" placeholder="Paste your code here..." autocomplete="off" spellcheck="false">
+      </div>
+      <button id="vb" class="tbp" onclick="vt()">Continue</button>
+      <p id="ae" class="ter" style="display:none;"></p>
+    </div>
+  </div>
+
+  <div id="s2" style="display:none;">
+    <div class="tac tacs">
+      <div class="tai">✅</div>
+      <h1 class="tat">Access Granted!</h1>
+      <p class="tas">Your code is valid. Download your file below.</p>
+      <div class="tdb">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <div>
+          <p class="tdn">Exclusive file</p>
+          <p class="tdv">Latest version</p>
+        </div>
+      </div>
+      <a id="dl" href="#" class="tbp" download>Download file</a>
+      <p class="tan">⚠️ Single-use code — invalidated after download.</p>
+    </div>
+  </div>
+
+</div>
+
+<style>
+.tap{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
+.tac{background:#fff;border-radius:1.25rem;padding:2.5rem 2rem;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.10);text-align:center}
+.tacs{border-top:4px solid #22c55e}
+.tai{font-size:3rem;margin-bottom:1rem}
+.tat{font-family:'Merriweather',serif;font-size:1.5rem;margin-bottom:.5rem}
+.tas{color:#52525b;font-size:.9375rem;margin-bottom:1.75rem}
+.tiw{margin-bottom:1rem}
+.tti{width:100%;padding:.875rem 1rem;border:2px solid #d4d4d8;border-radius:.75rem;font-size:.9375rem;font-family:'Poppins',sans-serif;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.05em}
+.tti:focus{border-color:var(--brand-orange,#fe7e41)}
+.tbp{display:inline-block;width:100%;padding:.875rem 1.5rem;background:var(--brand-orange,#fe7e41);color:#fff;border:none;border-radius:9999px;font-size:.9375rem;font-weight:600;cursor:pointer;transition:filter .2s,transform .2s;text-decoration:none;margin-top:.25rem}
+.tbp:hover{filter:brightness(1.08);transform:scale(1.02)}
+.tbp:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.ter{margin-top:1rem;color:#ef4444;font-size:.875rem;background:#fef2f2;border-radius:.5rem;padding:.6rem 1rem}
+.tdb{display:flex;align-items:center;gap:1rem;background:#f4f4f5;border-radius:.75rem;padding:1rem 1.25rem;margin-bottom:1.25rem;text-align:left}
+.tdb svg{color:var(--brand-orange,#fe7e41);flex-shrink:0}
+.tdn{font-weight:600;font-size:.9375rem}
+.tdv{font-size:.8125rem;color:#71717a}
+.tan{margin-top:1rem;font-size:.8125rem;color:#71717a}
+</style>
+
+<script>
+(function(){
+  var SB='{{ sb }}',SK='{{ sk }}';
+  window.vt=async function(){
+    var i=document.getElementById('ti'),b=document.getElementById('vb'),
+        e=document.getElementById('ae'),t=i.value.trim();
+    if(!t){se('Please enter your access code.');return;}
+    b.disabled=true;b.textContent='Checking...';e.style.display='none';
+    try{
+      var r=await fetch(SB+'/rest/v1/tokens?token=eq.'+encodeURIComponent(t)+'&select=*',{
+        headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json'}
+      });
+      var d=await r.json();
+      if(!d||d.length===0){se('Invalid code. Please try again.');return;}
+      var rec=d[0];
+      if(rec.used){se('This code has already been used.');return;}
+      if(rec.expires_at&&new Date(rec.expires_at)<new Date()){se('This code has expired.');return;}
+      await fetch(SB+'/rest/v1/tokens?token=eq.'+encodeURIComponent(t),{
+        method:'PATCH',
+        headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify({used:true,used_at:new Date().toISOString()})
+      });
+      document.getElementById('s1').style.display='none';
+      var g=document.getElementById('s2');
+      g.style.display='flex';g.style.justifyContent='center';
+      document.getElementById('dl').href=rec.download_url||'#';
+    }catch(x){se('Verification error. Please try again.');}
+    finally{b.disabled=false;b.textContent='Continue';}
+  };
+  function se(m){
+    var e=document.getElementById('ae');
+    e.textContent=m;e.style.display='block';
+    document.getElementById('vb').disabled=false;
+    document.getElementById('vb').textContent='Continue';
+  }
+  document.getElementById('ti').addEventListener('keydown',function(e){if(e.key==='Enter')vt();});
+})();
+</script>
