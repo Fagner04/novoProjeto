@@ -1,3 +1,27 @@
+<style>
+  .footer-payment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .payment-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    background: #f4f4f5;
+    border: 1px solid #e4e4e7;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.65rem;
+    color: #52525b;
+    font-weight: 600;
+    min-width: 52px;
+  }
+  .payment-badge svg { color: #71449b; }
+</style>
+
 <footer class="site-footer" id="contact">
   <div class="footer-inner">
     <div class="footer-grid">
@@ -69,8 +93,41 @@
           </form>
         </div>
 
+        {% elsif block.type == 'payment' %}
+        <div class="footer-col" {{ block.shopify_attributes }}>
+          <h4>{{ block.settings.title | default: 'Pagamento' }}</h4>
+          <div class="footer-payment-icons">
+            {% if block.settings.show_pix %}
+              <span class="payment-badge" title="Pix">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M11.354 2.646a.9.9 0 0 1 1.292 0l2.122 2.122a3.1 3.1 0 0 0 2.19.908h.793a.9.9 0 0 1 .9.9v.793a3.1 3.1 0 0 0 .908 2.19l2.122 2.122a.9.9 0 0 1 0 1.292l-2.122 2.122a3.1 3.1 0 0 0-.908 2.19v.793a.9.9 0 0 1-.9.9h-.793a3.1 3.1 0 0 0-2.19.908l-2.122 2.122a.9.9 0 0 1-1.292 0l-2.122-2.122a3.1 3.1 0 0 0-2.19-.908h-.793a.9.9 0 0 1-.9-.9v-.793a3.1 3.1 0 0 0-.908-2.19L2.319 13.27a.9.9 0 0 1 0-1.292l2.122-2.122a3.1 3.1 0 0 0 .908-2.19v-.793a.9.9 0 0 1 .9-.9h.793a3.1 3.1 0 0 0 2.19-.908l2.122-2.122zM9 12l1.5 1.5L15 9"/></svg>
+                <span>Pix</span>
+              </span>
+            {% endif %}
+            {% if block.settings.show_credit %}
+              <span class="payment-badge" title="Cartão de Crédito">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <span>Crédito</span>
+              </span>
+            {% endif %}
+            {% if block.settings.show_debit %}
+              <span class="payment-badge" title="Cartão de Débito">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><line x1="5" y1="15" x2="9" y2="15"/></svg>
+                <span>Débito</span>
+              </span>
+            {% endif %}
+            {% if block.settings.show_boleto %}
+              <span class="payment-badge" title="Boleto">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="16"/><line x1="9" y1="8" x2="9" y2="16"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="15" y1="8" x2="15" y2="16"/><line x1="18" y1="8" x2="18" y2="16"/></svg>
+                <span>Boleto</span>
+              </span>
+            {% endif %}
+          </div>
+          {% if block.settings.installments != blank %}
+            <p style="font-size:0.75rem;color:rgba(24,24,27,0.6);margin-top:0.75rem;">{{ block.settings.installments }}</p>
+          {% endif %}
+        </div>
+
         {% endif %}
-      {% endfor %}
 
     </div>
 
@@ -115,7 +172,18 @@
       ]
     },
     {
-      "type": "newsletter",
+      "type": "payment",
+      "name": "Formas de Pagamento",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Pagamento" },
+        { "type": "checkbox", "id": "show_pix", "label": "Mostrar Pix", "default": true },
+        { "type": "checkbox", "id": "show_credit", "label": "Mostrar Cartão de Crédito", "default": true },
+        { "type": "checkbox", "id": "show_debit", "label": "Mostrar Cartão de Débito", "default": true },
+        { "type": "checkbox", "id": "show_boleto", "label": "Mostrar Boleto", "default": true },
+        { "type": "text", "id": "installments", "label": "Texto de parcelamento", "default": "Em até 6x sem juros no cartão" }
+      ]
+    },
       "name": "Newsletter",
       "limit": 1,
       "settings": [
@@ -144,7 +212,8 @@
       },
       { "type": "menu", "settings": { "title": "Central de Atendimento" } },
       { "type": "menu", "settings": { "title": "Institucional" } },
-      { "type": "newsletter", "settings": {} }
+      { "type": "newsletter", "settings": {} },
+      { "type": "payment", "settings": { "title": "Pagamento", "show_pix": true, "show_credit": true, "show_debit": true, "show_boleto": true, "installments": "Em até 6x sem juros no cartão" } }
     ]
   }
 }
