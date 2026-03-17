@@ -26,6 +26,8 @@
     "font_heading": "acme_n4",
     "font_body": "acme_n4",
     "social_instagram": "https://www.instagram.com/musasclubfit",
+    "social_facebook": "https://www.instagram.com/musasclubfit",
+    "social_tiktok": "https://www.instagram.com/musasclubfit",
     "social_whatsapp": "https://wa.me/5562994319090",
     "wa_bubble_messages": "Precisa rastrear seu pedido?  \nFrete grátis acima de R$299!  \nTroca fácil em até 30 dias!  \nCupom EMPORIO10",
     "wa_repeat_after": 120,
@@ -42,16 +44,16 @@
         "type": "header",
         "settings": {
           "logo": "shopify://shop_images/Musas_club_2.png",
-          "menu": "menu"
+          "menu": "menu",
+          "nav_hover_color": "#fe7e41",
+          "nav_active_color": "#fe7e41",
+          "nav_active_underline": "#fe7e41"
         }
       },
       "footer": {
         "type": "footer",
-        "settings": {
-          "cnpj": "CNPJ: 00.000.000/0001-00"
-        },
         "blocks": {
-          "brand-1": {
+          "brand_Dnhfk6": {
             "type": "brand",
             "settings": {
               "title": "MUSAS",
@@ -63,21 +65,21 @@
               "show_social": true
             }
           },
-          "menu-1": {
+          "menu_jRjkrU": {
             "type": "menu",
             "settings": {
               "title": "Central de Atendimento",
               "menu": "footer-atendimento"
             }
           },
-          "menu-2": {
+          "menu_BxDJxb": {
             "type": "menu",
             "settings": {
               "title": "Institucional",
               "menu": "footer-institucional"
             }
           },
-          "newsletter-1": {
+          "newsletter_4tdURg": {
             "type": "newsletter",
             "settings": {
               "title": "Newsletter",
@@ -86,7 +88,15 @@
             }
           }
         },
-        "block_order": ["brand-1", "menu-1", "menu-2", "newsletter-1"]
+        "block_order": [
+          "brand_Dnhfk6",
+          "menu_jRjkrU",
+          "menu_BxDJxb",
+          "newsletter_4tdURg"
+        ],
+        "settings": {
+          "cnpj": "CNPJ: 00.000.000/0001-00"
+        }
       }
     },
     "content_for_index": []
