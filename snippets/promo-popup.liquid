@@ -135,11 +135,9 @@
 (function(){
   var showDelay  = {{ settings.popup_delay   | default: 3 }} * 1000;
   var hideAfter  = {{ settings.popup_hide_after | default: 8 }} * 1000;
-  var KEY = '_pp_{{ settings.popup_title | md5 | slice: 0, 6 }}';
+  var repeatAfter = {{ settings.popup_repeat_after | default: 30 }} * 1000;
   var el  = document.getElementById('promo-popup');
-  var hideTimer;
-
-  if(sessionStorage.getItem(KEY)) return;
+  var hideTimer, cycleTimer;
 
   function ppShow(){
     el.classList.remove('pp-hide');
@@ -150,12 +148,15 @@
   function ppAutoHide(){
     el.classList.remove('pp-show');
     el.classList.add('pp-hide');
-    sessionStorage.setItem(KEY, '1');
+    cycleTimer = setTimeout(ppShow, repeatAfter);
   }
 
   window.ppClose = function(){
     clearTimeout(hideTimer);
-    ppAutoHide();
+    clearTimeout(cycleTimer);
+    el.classList.remove('pp-show');
+    el.classList.add('pp-hide');
+    cycleTimer = setTimeout(ppShow, repeatAfter);
   };
 
   setTimeout(ppShow, showDelay);
