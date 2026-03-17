@@ -50,7 +50,7 @@
         "settings": {
           "cnpj": "CNPJ: 00.000.000/0001-00",
           "menu1_title": "Central de Atendimento",
-          "menu1": "central-de-atendimento",
+          "menu1": "footer-atendimento",
           "menu2_title": "Institucional",
           "menu2": "footer-institucional"
         }
