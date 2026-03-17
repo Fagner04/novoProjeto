@@ -89,25 +89,13 @@
               "description": "Receba novidades e ofertas exclusivas",
               "btn_label": "Inscrever"
             }
-          },
-          "payment_3cTV3z": {
-            "type": "payment",
-            "settings": {
-              "title": "Pagamento",
-              "show_pix": true,
-              "show_credit": true,
-              "show_debit": true,
-              "show_boleto": true,
-              "installments": "Em até 6x sem juros no cartão"
-            }
           }
         },
         "block_order": [
           "brand_Dnhfk6",
           "menu_jRjkrU",
           "menu_BxDJxb",
-          "newsletter_4tdURg",
-          "payment_3cTV3z"
+          "newsletter_4tdURg"
         ],
         "settings": {
           "cnpj": "CNPJ: 00.000.000/0001-00"
