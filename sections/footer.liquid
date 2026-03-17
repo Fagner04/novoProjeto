@@ -32,22 +32,20 @@
 
       <!-- Links -->
       <div class="footer-col">
-        <h4>Central de Atendimento</h4>
+        <h4>{{ section.settings.menu1_title | default: 'Central de Atendimento' }}</h4>
         <ul>
-          <li><a href="/pages/entrega">Entrega e Prazos</a></li>
-          <li><a href="/pages/troca-e-devolucao">Troca e Devolução</a></li>
-          <li><a href="/pages/pagamento">Formas de Pagamento</a></li>
-          <li><a href="https://wa.me/5562994319090" target="_blank" rel="noopener">WhatsApp</a></li>
+          {% for link in linklists[section.settings.menu1].links %}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {% endfor %}
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4>Institucional</h4>
+        <h4>{{ section.settings.menu2_title | default: 'Institucional' }}</h4>
         <ul>
-          <li><a href="/pages/sobre">Sobre Nós</a></li>
-          <li><a href="/pages/politica-de-privacidade">Política de Privacidade</a></li>
-          <li><a href="/collections/all">Todos os Produtos</a></li>
-          <li><a href="/account">Minha Conta</a></li>
+          {% for link in linklists[section.settings.menu2].links %}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {% endfor %}
         </ul>
       </div>
 
@@ -78,7 +76,13 @@
 {
   "name": "Rodapé",
   "settings": [
-    { "type": "text", "id": "cnpj", "label": "CNPJ", "default": "CNPJ: 00.000.000/0001-00" }
+    { "type": "text", "id": "cnpj", "label": "CNPJ", "default": "CNPJ: 00.000.000/0001-00" },
+    { "type": "header", "content": "Menu 1" },
+    { "type": "text", "id": "menu1_title", "label": "Título do menu 1", "default": "Central de Atendimento" },
+    { "type": "link_list", "id": "menu1", "label": "Links do menu 1", "default": "footer-atendimento" },
+    { "type": "header", "content": "Menu 2" },
+    { "type": "text", "id": "menu2_title", "label": "Título do menu 2", "default": "Institucional" },
+    { "type": "link_list", "id": "menu2", "label": "Links do menu 2", "default": "footer-institucional" }
   ]
 }
 {% endschema %}
