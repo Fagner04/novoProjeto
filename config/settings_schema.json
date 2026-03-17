@@ -69,6 +69,19 @@
     ]
   },
   {
+    "name": "Popup Promocional",
+    "settings": [
+      { "type": "checkbox", "id": "popup_enabled", "label": "Ativar popup promocional", "default": false },
+      { "type": "text", "id": "popup_icon", "label": "Emoji do ícone", "default": "🎁" },
+      { "type": "text", "id": "popup_badge", "label": "Texto do badge", "default": "Oferta Especial" },
+      { "type": "text", "id": "popup_title", "label": "Título", "default": "Promoção exclusiva!" },
+      { "type": "textarea", "id": "popup_text", "label": "Texto da oferta", "default": "Aproveite nossas ofertas especiais com frete grátis acima de R$299." },
+      { "type": "text", "id": "popup_btn_label", "label": "Texto do botão", "default": "Ver ofertas" },
+      { "type": "url", "id": "popup_btn_url", "label": "Link do botão" },
+      { "type": "range", "id": "popup_delay", "label": "Aparecer após (segundos)", "min": 0, "max": 30, "step": 1, "default": 3 }
+    ]
+  },
+  {
     "name": "Chat WhatsApp",
     "settings": [
       { "type": "checkbox", "id": "wa_enabled", "label": "Ativar chat WhatsApp", "default": true },
