@@ -152,6 +152,6 @@
   <!-- WhatsApp Chat -->
   {% render 'whatsapp-button' %}
 
-  {{ 'theme.js' | asset_url | script_tag }}
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
 </body>
 </html>
