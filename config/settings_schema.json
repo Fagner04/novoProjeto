@@ -78,7 +78,8 @@
       { "type": "textarea", "id": "popup_text", "label": "Texto da oferta", "default": "Aproveite nossas ofertas especiais com frete grátis acima de R$299." },
       { "type": "text", "id": "popup_btn_label", "label": "Texto do botão", "default": "Ver ofertas" },
       { "type": "url", "id": "popup_btn_url", "label": "Link do botão" },
-      { "type": "range", "id": "popup_delay", "label": "Aparecer após (segundos)", "min": 0, "max": 30, "step": 1, "default": 3 }
+      { "type": "range", "id": "popup_delay", "label": "Aparecer após (segundos)", "min": 0, "max": 30, "step": 1, "default": 3 },
+      { "type": "range", "id": "popup_hide_after", "label": "Desaparecer após (segundos)", "min": 3, "max": 60, "step": 1, "default": 8 }
     ]
   },
   {
