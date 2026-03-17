@@ -133,13 +133,24 @@
 
 <script>
 (function(){
-  var showDelay  = {{ settings.popup_delay   | default: 3 }} * 1000;
-  var hideAfter  = {{ settings.popup_hide_after | default: 8 }} * 1000;
-  var repeatAfter = {{ settings.popup_repeat_after | default: 30 }} * 1000;
-  var el  = document.getElementById('promo-popup');
+  var showDelay   = {{ settings.popup_delay | default: 3 }} * 1000;
+  var hideAfter   = {{ settings.popup_hide_after | default: 8 }} * 1000;
+  var repeatMins  = {{ settings.popup_repeat_after | default: 5 }};
+  var repeatMs    = repeatMins * 60 * 1000;
+  var KEY         = '_pp_last_{{ settings.popup_title | md5 | slice: 0, 6 }}';
+  var el          = document.getElementById('promo-popup');
   var hideTimer, cycleTimer;
 
+  // Verifica se ainda está no intervalo de espera
+  var lastShown = parseInt(localStorage.getItem(KEY) || '0', 10);
+  var now = Date.now();
+  var elapsed = now - lastShown;
+
+  // Se ainda não passou o tempo configurado, aguarda o restante
+  var waitBeforeShow = lastShown > 0 ? Math.max(0, repeatMs - elapsed) : showDelay;
+
   function ppShow(){
+    localStorage.setItem(KEY, Date.now().toString());
     el.classList.remove('pp-hide');
     el.classList.add('pp-show');
     hideTimer = setTimeout(ppAutoHide, hideAfter);
@@ -148,7 +159,7 @@
   function ppAutoHide(){
     el.classList.remove('pp-show');
     el.classList.add('pp-hide');
-    cycleTimer = setTimeout(ppShow, repeatAfter);
+    cycleTimer = setTimeout(ppShow, repeatMs);
   }
 
   window.ppClose = function(){
@@ -156,10 +167,11 @@
     clearTimeout(cycleTimer);
     el.classList.remove('pp-show');
     el.classList.add('pp-hide');
-    cycleTimer = setTimeout(ppShow, repeatAfter);
+    localStorage.setItem(KEY, Date.now().toString());
+    cycleTimer = setTimeout(ppShow, repeatMs);
   };
 
-  setTimeout(ppShow, showDelay);
+  setTimeout(ppShow, waitBeforeShow);
 })();
 </script>
 
