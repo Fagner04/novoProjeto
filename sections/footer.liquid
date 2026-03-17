@@ -2,65 +2,75 @@
   <div class="footer-inner">
     <div class="footer-grid">
 
-      <!-- Brand -->
-      <div class="footer-brand">
-        <h3>MUSAS</h3>
-        <p><strong>Muito além do básico</strong><br>MUSAS Club não veste apenas o seu treino. MUSAS Club veste a sua melhor versão. 💖🔥</p>
-        <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;">Atendimento ao Cliente</p>
-        <div class="footer-contact">
-          <a href="mailto:musasclubfit@gmail.com">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            musasclubfit@gmail.com
-          </a>
-          <a href="https://wa.me/5562994319090" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            +55 62 99431-9090
-          </a>
+      {% for block in section.blocks %}
+
+        {% if block.type == 'brand' %}
+        <div class="footer-brand" {{ block.shopify_attributes }}>
+          <h3>{{ block.settings.title | default: shop.name }}</h3>
+          <p>{{ block.settings.description }}</p>
+          {% if block.settings.show_contact %}
+            <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;">Atendimento ao Cliente</p>
+            <div class="footer-contact">
+              {% if block.settings.email != blank %}
+                <a href="mailto:{{ block.settings.email }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  {{ block.settings.email }}
+                </a>
+              {% endif %}
+              {% if block.settings.whatsapp != blank %}
+                <a href="https://wa.me/{{ block.settings.whatsapp }}" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  {{ block.settings.whatsapp_label | default: block.settings.whatsapp }}
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if block.settings.show_social %}
+            <div class="footer-social">
+              {% if settings.social_instagram != blank %}
+                <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </a>
+              {% endif %}
+              {% if settings.social_facebook != blank %}
+                <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+              {% endif %}
+              {% if settings.social_tiktok != blank %}
+                <a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
         </div>
-        <div class="footer-social">
-          <a href="https://www.instagram.com/musasclubfit" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-          </a>
-          <a href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-          </a>
-          <a href="#" aria-label="TikTok">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
-          </a>
+
+        {% elsif block.type == 'menu' %}
+        <div class="footer-col" {{ block.shopify_attributes }}>
+          <h4>{{ block.settings.title }}</h4>
+          <ul>
+            {% for link in linklists[block.settings.menu].links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
         </div>
-      </div>
 
-      <!-- Links -->
-      <div class="footer-col">
-        <h4>{{ section.settings.menu1_title | default: 'Central de Atendimento' }}</h4>
-        <ul>
-          {% for link in linklists[section.settings.menu1].links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
+        {% elsif block.type == 'newsletter' %}
+        <div class="footer-col" {{ block.shopify_attributes }}>
+          <h4>{{ block.settings.title | default: 'Newsletter' }}</h4>
+          <p style="font-size:0.875rem;color:rgba(24,24,27,0.7);margin-bottom:1rem;">{{ block.settings.description | default: 'Receba novidades e ofertas exclusivas' }}</p>
+          <form class="footer-newsletter" action="/contact#newsletter" method="post" accept-charset="UTF-8">
+            <input type="hidden" name="form_type" value="customer">
+            <input type="hidden" name="utf8" value="✓">
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <input type="email" name="contact[email]" placeholder="Seu e-mail" required>
+            <button type="submit">{{ block.settings.btn_label | default: 'Inscrever' }}</button>
+          </form>
+        </div>
 
-      <div class="footer-col">
-        <h4>{{ section.settings.menu2_title | default: 'Institucional' }}</h4>
-        <ul>
-          {% for link in linklists[section.settings.menu2].links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-
-      <!-- Newsletter -->
-      <div class="footer-col">
-        <h4>Newsletter</h4>
-        <p style="font-size:0.875rem;color:rgba(24,24,27,0.7);margin-bottom:1rem;">Receba novidades e ofertas exclusivas</p>
-        <form class="footer-newsletter" action="/contact#newsletter" method="post" accept-charset="UTF-8">
-          <input type="hidden" name="form_type" value="customer">
-          <input type="hidden" name="utf8" value="✓">
-          <input type="hidden" name="contact[tags]" value="newsletter">
-          <input type="email" name="contact[email]" placeholder="Seu e-mail" required>
-          <button type="submit">Inscrever</button>
-        </form>
-      </div>
+        {% endif %}
+      {% endfor %}
 
     </div>
 
@@ -76,13 +86,59 @@
 {
   "name": "Rodapé",
   "settings": [
-    { "type": "text", "id": "cnpj", "label": "CNPJ", "default": "CNPJ: 00.000.000/0001-00" },
-    { "type": "header", "content": "Menu 1" },
-    { "type": "text", "id": "menu1_title", "label": "Título do menu 1", "default": "Central de Atendimento" },
-    { "type": "link_list", "id": "menu1", "label": "Links do menu 1", "default": "footer-atendimento" },
-    { "type": "header", "content": "Menu 2" },
-    { "type": "text", "id": "menu2_title", "label": "Título do menu 2", "default": "Institucional" },
-    { "type": "link_list", "id": "menu2", "label": "Links do menu 2", "default": "footer-institucional" }
+    { "type": "text", "id": "cnpj", "label": "CNPJ", "default": "CNPJ: 00.000.000/0001-00" }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Marca / Contato",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Nome da marca" },
+        { "type": "textarea", "id": "description", "label": "Descrição", "default": "Muito além do básico" },
+        { "type": "checkbox", "id": "show_contact", "label": "Mostrar contato", "default": true },
+        { "type": "text", "id": "email", "label": "E-mail", "default": "contato@sualoja.com" },
+        { "type": "text", "id": "whatsapp", "label": "WhatsApp (só números)", "default": "5562994319090" },
+        { "type": "text", "id": "whatsapp_label", "label": "Texto do WhatsApp", "default": "+55 62 99431-9090" },
+        { "type": "checkbox", "id": "show_social", "label": "Mostrar redes sociais", "default": true }
+      ]
+    },
+    {
+      "type": "menu",
+      "name": "Menu de links",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Links" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer-atendimento" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Newsletter" },
+        { "type": "text", "id": "description", "label": "Descrição", "default": "Receba novidades e ofertas exclusivas" },
+        { "type": "text", "id": "btn_label", "label": "Texto do botão", "default": "Inscrever" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rodapé",
+      "blocks": [
+        {
+          "type": "brand",
+          "settings": {
+            "email": "musasclubfit@gmail.com",
+            "whatsapp": "5562994319090",
+            "whatsapp_label": "+55 62 99431-9090"
+          }
+        },
+        { "type": "menu", "settings": { "title": "Central de Atendimento", "menu": "footer-atendimento" } },
+        { "type": "menu", "settings": { "title": "Institucional", "menu": "footer-institucional" } },
+        { "type": "newsletter" }
+      ]
+    }
   ]
 }
 {% endschema %}

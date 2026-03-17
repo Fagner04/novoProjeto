@@ -48,12 +48,45 @@
       "footer": {
         "type": "footer",
         "settings": {
-          "cnpj": "CNPJ: 00.000.000/0001-00",
-          "menu1_title": "Central de Atendimento",
-          "menu1": "footer-atendimento",
-          "menu2_title": "Institucional",
-          "menu2": "footer-institucional"
-        }
+          "cnpj": "CNPJ: 00.000.000/0001-00"
+        },
+        "blocks": {
+          "brand": {
+            "type": "brand",
+            "settings": {
+              "title": "MUSAS",
+              "description": "Muito além do básico\nMUSAS Club não veste apenas o seu treino. MUSAS Club veste a sua melhor versão. 💖🔥",
+              "show_contact": true,
+              "email": "musasclubfit@gmail.com",
+              "whatsapp": "5562994319090",
+              "whatsapp_label": "+55 62 99431-9090",
+              "show_social": true
+            }
+          },
+          "menu1": {
+            "type": "menu",
+            "settings": {
+              "title": "Central de Atendimento",
+              "menu": "footer-atendimento"
+            }
+          },
+          "menu2": {
+            "type": "menu",
+            "settings": {
+              "title": "Institucional",
+              "menu": "footer-institucional"
+            }
+          },
+          "newsletter": {
+            "type": "newsletter",
+            "settings": {
+              "title": "Newsletter",
+              "description": "Receba novidades e ofertas exclusivas",
+              "btn_label": "Inscrever"
+            }
+          }
+        },
+        "block_order": ["brand", "menu1", "menu2", "newsletter"]
       }
     },
     "content_for_index": []
