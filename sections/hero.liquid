@@ -5,9 +5,9 @@
         <div class="hero-slide" {{ block.shopify_attributes }}>
           <div class="hero-bg hero-bg-mobile">
             {% if block.settings.image_mobile != blank %}
-              <img src="{{ block.settings.image_mobile | image_url: width: 800 }}" alt="{{ block.settings.title | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+              <img src="{{ block.settings.image_mobile | image_url: width: 800 }}" alt="{{ block.settings.title | escape }}" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
             {% elsif block.settings.image != blank %}
-              <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.title | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+              <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.title | escape }}" width="800" height="1000" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
             {% else %}
               <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d1f38,#4a3659);"></div>
             {% endif %}
@@ -15,7 +15,7 @@
           </div>
           <div class="hero-bg hero-bg-desktop">
             {% if block.settings.image != blank %}
-              <img src="{{ block.settings.image | image_url: width: 1920 }}" alt="{{ block.settings.title | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}">
+              <img src="{{ block.settings.image | image_url: width: 1920 }}" alt="{{ block.settings.title | escape }}" width="1920" height="1080" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}">
             {% else %}
               <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d1f38,#4a3659);"></div>
             {% endif %}
