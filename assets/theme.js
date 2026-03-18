@@ -83,9 +83,12 @@ async function renderCart() {
 
 async function changeItemQty(id, qty) {
   _cartInteracting = true;
-  await updateCartItem(id, qty);
-  await renderCart();
-  _cartInteracting = false;
+  try {
+    await updateCartItem(id, qty);
+    await renderCart();
+  } finally {
+    _cartInteracting = false;
+  }
 }
 
 // ===== FAVORITES =====

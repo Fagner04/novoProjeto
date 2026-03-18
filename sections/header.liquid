@@ -272,9 +272,10 @@
     if (!btn || !drawer) return;
 
     var timer;
+    var locked = false; // trava enquanto o usuário interage
 
     function open()  { clearTimeout(timer); if (!drawer.classList.contains('open')) openCart(); }
-    function close() { clearTimeout(timer); timer = setTimeout(closeCart, 300); }
+    function close() { clearTimeout(timer); if (locked) return; timer = setTimeout(closeCart, 400); }
     function keep()  { clearTimeout(timer); }
 
     btn.addEventListener('mouseenter', open);
@@ -282,8 +283,15 @@
     drawer.addEventListener('mouseenter', keep);
     drawer.addEventListener('mouseleave', close);
 
-    // Impede fechar enquanto o usuário está clicando dentro do drawer
-    drawer.addEventListener('mousedown', function(){ clearTimeout(timer); });
+    // Trava o fechamento no mousedown e libera após o click (ou mouseup)
+    drawer.addEventListener('mousedown', function(){ locked = true; clearTimeout(timer); });
+    document.addEventListener('mouseup', function(){ locked = false; });
+    document.addEventListener('click', function(e){
+      // Fecha se clicou fora do drawer e fora do botão
+      if (!drawer.contains(e.target) && !btn.contains(e.target)) {
+        closeCart();
+      }
+    });
   });
 })();
 </script>
