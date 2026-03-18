@@ -305,7 +305,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
   max-height: calc(100vh - 80px);
   background: var(--cart-bg, #fff);
   color: var(--cart-text, var(--foreground));
-  z-index: 201;
+  z-index: 1000;
   border-radius: 1.25rem;
   box-shadow: 0 8px 48px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
   display: flex;
