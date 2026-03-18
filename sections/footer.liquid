@@ -23,9 +23,9 @@
     gap: 0.45rem;
   }
   .pay-chip {
-    width: 52px;
-    height: 33px;
-    border-radius: 6px;
+    width: 42px;
+    height: 27px;
+    border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(0,0,0,0.13);
     transition: transform 0.15s, box-shadow 0.15s;
@@ -166,13 +166,16 @@
             <div class="pay-chip" title="Elo" style="background:#fff;">
               <svg viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0h750v471H0z" fill="#fff"/>
-                <circle cx="220" cy="235" r="110" fill="none" stroke="#F8C000" stroke-width="40"/>
-                <path d="M220 125v90l78-45a110 110 0 0 0-78-45z" fill="#F8C000"/>
-                <path d="M220 125v90l78-45a110 110 0 0 0-78-45z" fill="#00A4E0"/>
-                <rect x="340" y="195" width="90" height="40" rx="8" fill="#231F20"/>
-                <path d="M340 235h90a90 90 0 0 1-90 80v-80z" fill="#EE4023"/>
-                <path d="M430 235h-90v-40a90 90 0 0 1 90 40z" fill="#231F20"/>
-                <text x="510" y="270" font-family="Arial" font-weight="900" font-size="120" fill="#231F20">elo</text>
+                <!-- círculo amarelo -->
+                <circle cx="210" cy="235" r="130" fill="none" stroke="#F8C000" stroke-width="50"/>
+                <!-- fatia azul no topo-direito -->
+                <path d="M210 105 A130 130 0 0 1 340 235 L210 235 Z" fill="#00A4E0"/>
+                <!-- bloco E -->
+                <rect x="355" y="175" width="110" height="45" rx="8" fill="#231F20"/>
+                <rect x="355" y="250" width="110" height="45" rx="8" fill="#EE4023"/>
+                <rect x="355" y="212" width="85" height="38" rx="0" fill="#231F20"/>
+                <!-- texto elo -->
+                <text x="510" y="278" font-family="Arial Black,Arial" font-weight="900" font-size="115" fill="#231F20">elo</text>
               </svg>
             </div>
             {% endif %}
@@ -181,7 +184,7 @@
             <div class="pay-chip" title="Hipercard" style="background:#B3131A;">
               <svg viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0h750v471H0z" fill="#B3131A"/>
-                <path d="M120 150h60v70h80v-70h60v171h-60v-65h-80v65h-60V150zm220 0h170v40H400v25h104v36H400v30h114v40H340V150zm200 0h60l50 80 50-80h60l-80 120 80 121h-60l-50-81-50 81h-60l80-121-80-120z" fill="#fff"/>
+                <text x="375" y="305" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="145" fill="#fff">Hiper</text>
               </svg>
             </div>
             {% endif %}
