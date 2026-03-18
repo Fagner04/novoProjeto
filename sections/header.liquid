@@ -271,58 +271,22 @@
     var drawer = document.getElementById('cart-drawer');
     if (!btn || !drawer) return;
 
-    var hoverTimer;
-    var pinned = false; // true = aberto por clique, não fecha no mouseleave
-
-    // Clique na sacola: abre/fecha e pina
+    // Só clique abre/fecha
     btn.addEventListener('click', function(e){
       e.stopPropagation();
-      clearTimeout(hoverTimer);
       if (drawer.classList.contains('open')) {
-        pinned = false;
         closeCart();
       } else {
-        pinned = true;
         openCart();
       }
-    });
-
-    // Hover (só desktop): abre sem pinar
-    btn.addEventListener('mouseenter', function(){
-      clearTimeout(hoverTimer);
-      hoverTimer = setTimeout(function(){
-        if (!drawer.classList.contains('open')) {
-          pinned = false;
-          openCart();
-        }
-      }, 300);
-    });
-
-    btn.addEventListener('mouseleave', function(e){
-      clearTimeout(hoverTimer);
-      if (pinned) return;
-      // só fecha se o mouse não foi para o drawer
-      if (e.relatedTarget && (drawer === e.relatedTarget || drawer.contains(e.relatedTarget))) return;
-      hoverTimer = setTimeout(function(){ if (!pinned) closeCart(); }, 400);
-    });
-
-    drawer.addEventListener('mouseleave', function(e){
-      if (pinned) return;
-      if (e.relatedTarget && (btn === e.relatedTarget || btn.contains(e.relatedTarget))) return;
-      hoverTimer = setTimeout(function(){ if (!pinned) closeCart(); }, 400);
-    });
-
-    drawer.addEventListener('mouseenter', function(){
-      clearTimeout(hoverTimer);
     });
 
     // Clique fora fecha
     document.addEventListener('click', function(e){
       if (!drawer.contains(e.target) && !btn.contains(e.target)) {
-        pinned = false;
         closeCart();
       }
-    }, true); // capture=true garante que roda antes dos onclick inline
+    }, true);
   });
 })();
 </script>
