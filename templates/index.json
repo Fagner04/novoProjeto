@@ -301,7 +301,7 @@
         "btn_bg": "#fe7e41",
         "btn_text": "#fffcfc",
         "padding_top": 0,
-        "padding_bottom": 0
+        "padding_bottom": 32
       }
     }
   },
