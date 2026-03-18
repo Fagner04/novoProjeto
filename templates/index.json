@@ -45,7 +45,19 @@
         "slide_bLq7G3",
         "slide_Awni3z"
       ],
-      "settings": {}
+      "settings": {
+        "promo_enabled": false,
+        "promo_badge": "✨ OFERTA ESPECIAL ✨",
+        "promo_title": "Feliz dia das mulheres 😍",
+        "promo_text": "Cada peça é um presente de força e beleza!",
+        "promo_btn_text": "Ver Oferta",
+        "promo_btn_link": "",
+        "promo_bg": "#ffffff",
+        "promo_text_color": "#18181b",
+        "promo_badge_color": "#7c3aed",
+        "promo_btn_bg": "#fe7e41",
+        "promo_btn_color": "#ffffff"
+      }
     },
     "collections_carousel_qrWhkd": {
       "type": "collections-carousel",
@@ -226,14 +238,6 @@
       "type": "_blocks",
       "settings": {}
     },
-    "about_section_main": {
-      "type": "about",
-      "settings": {
-        "title": "Pouco De Nós",
-        "cta_text": "Comprar agora!",
-        "cta_link": "/collections/all"
-      }
-    },
     "products_carousel_Lfhr8p": {
       "type": "products-carousel",
       "blocks": {
@@ -280,6 +284,16 @@
         "gradient_color1": "#80609e",
         "gradient_color2": "#ffffff",
         "gradient_angle": 180
+      }
+    },
+    "about_section_main": {
+      "type": "about",
+      "settings": {
+        "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png",
+        "title": "Pouco De Nós",
+        "content": "<h5>O MUSAS CLUB nasceu para mulheres que não passam despercebidas. Uma marca fitness que foge do óbvio, quebra padrões e transforma cada treino em uma experiência de poder e autoestima.<br/><br/>Aqui, cada peça é pensada para te lembrar da sua força, da sua beleza e do quanto você é capaz. Vestir MUSAS Club é olhar no espelho e sentir aquela confiança subir, aquela motivação bater e a vontade de ir além aparecer.<br/><br/>Porque treinar não é só sobre o corpo — é sobre amor-próprio, autoconfiança e a decisão diária de cuidar de você.</h5>",
+        "cta_text": "Comprar agora!",
+        "cta_link": "shopify://collections/all"
       }
     }
   },
