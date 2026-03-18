@@ -316,13 +316,13 @@
       clearTimeout(hoverTimer);
     });
 
-    // Clique fora fecha (só se não pinado por clique... na verdade fecha sempre)
+    // Clique fora fecha
     document.addEventListener('click', function(e){
       if (!drawer.contains(e.target) && !btn.contains(e.target)) {
         pinned = false;
         closeCart();
       }
-    });
+    }, true); // capture=true garante que roda antes dos onclick inline
   });
 })();
 </script>

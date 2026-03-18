@@ -59,21 +59,23 @@ async function renderCart() {
   }
   empty.style.display = 'none'; footer.style.display = 'block';
   list.querySelectorAll('.cart-item').forEach(i => i.remove());
-  cart.items.forEach(item => {
+  // usa índice de linha (1-based) para evitar conflito com variant_id duplicado
+  cart.items.forEach((item, index) => {
+    const lineIndex = index + 1;
     const el = document.createElement('div');
-    el.className = 'cart-item'; el.dataset.variantId = item.variant_id;
+    el.className = 'cart-item';
     el.innerHTML = `<img class="cart-item-image" src="${item.image}" alt="${item.title}">
       <div class="cart-item-info">
         <p class="cart-item-title">${item.product_title}</p>
         <p class="cart-item-variant">${item.variant_title !== 'Default Title' ? item.variant_title : ''}</p>
         <p class="cart-item-price">${formatMoney(item.final_price)}</p>
         <div class="cart-qty">
-          <button onclick="changeItemQty(${item.variant_id},${item.quantity-1})">−</button>
+          <button type="button" onclick="changeItemLine(${lineIndex},${item.quantity-1})">−</button>
           <span>${item.quantity}</span>
-          <button onclick="changeItemQty(${item.variant_id},${item.quantity+1})">+</button>
+          <button type="button" onclick="changeItemLine(${lineIndex},${item.quantity+1})">+</button>
         </div>
       </div>
-      <button class="cart-remove" onclick="changeItemQty(${item.variant_id},0)" aria-label="Remover">
+      <button type="button" class="cart-remove" onclick="changeItemLine(${lineIndex},0)" aria-label="Remover">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
       </button>`;
     list.insertBefore(el, empty);
@@ -81,6 +83,21 @@ async function renderCart() {
   document.getElementById('cart-total-price').textContent = formatMoney(cart.total_price);
 }
 
+async function changeItemLine(line, qty) {
+  _cartInteracting = true;
+  try {
+    await fetch('/cart/change.js', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ line: line, quantity: qty })
+    });
+    await renderCart();
+  } finally {
+    _cartInteracting = false;
+  }
+}
+
+// mantém compatibilidade
 async function changeItemQty(id, qty) {
   _cartInteracting = true;
   try {
