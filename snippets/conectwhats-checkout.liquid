@@ -1,0 +1,731 @@
+<!-- Checkout Customizado - Redirecionamento -->
+<script>
+(function() {
+  // ========== CONFIGURAÇÕES - EDITE AQUI ==========
+   var SCRIPT_VERSION = "cc-2026-02-01-2";
+  var CHECKOUT_URL = "https://conectwhats.com/c/musasclub";
+  var SKIP_CART = false; // true = redireciona direto do produto | false = passa pelo carrinho
+  var DEBUG = true; // true = mostra logs no console (desative em produção)
+  // ================================================
+
+  // Expor variáveis globalmente para debug
+   window.__CC__ = { url: CHECKOUT_URL, skip: SKIP_CART, debug: DEBUG, version: SCRIPT_VERSION };
+
+  function log() {
+    if (!DEBUG) return;
+    var args = ['[custom-checkout]'].concat(Array.prototype.slice.call(arguments));
+    try { console.log.apply(console, args); } catch (e) {}
+  }
+
+  // ===== Polyfills (compatibilidade com browsers/temas antigos) =====
+  try {
+    if (window.NodeList && !NodeList.prototype.forEach) {
+      NodeList.prototype.forEach = Array.prototype.forEach;
+    }
+  } catch (e) {}
+
+  try {
+    if (window.Element && !Element.prototype.matches) {
+      Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+    }
+    if (window.Element && !Element.prototype.closest) {
+      Element.prototype.closest = function(selector) {
+        var el = this;
+        while (el && el.nodeType === 1) {
+          if (el.matches && el.matches(selector)) return el;
+          el = el.parentElement || el.parentNode;
+        }
+        return null;
+      };
+    }
+  } catch (e) {}
+
+   log('✓ Script carregado v=' + SCRIPT_VERSION + ' | SKIP_CART=' + SKIP_CART);
+
+  function redirectTo(url) {
+    log('→ Redirecionando para:', url);
+    try { window.location.href = url; } catch (e) { window.location = url; }
+  }
+
+  // SELETORES SUPER AMPLIADOS para máxima compatibilidade
+  var CHECKOUT_SELECTORS = [
+    // Forms e inputs
+    '[name="checkout"]',
+    '[type="submit"][name="checkout"]',
+    'button[name="checkout"]',
+    'input[name="checkout"]',
+    
+    // Shopify padrão
+    '.shopify-payment-button',
+    '.shopify-payment-button__button',
+    '.shopify-payment-button button',
+    '[data-checkout-url]',
+    '[data-checkout]',
+    '[data-action="checkout"]',
+    '[data-cart-checkout]',
+    
+    // Classes comuns de checkout
+    '.cart__checkout-button',
+    '.cart__checkout',
+    '.cart-checkout-button',
+    '.checkout-button',
+    '.cart__submit',
+    '.cart-drawer__checkout',
+    '.cart__ctas button',
+    '.cart-drawer__cta button',
+    '.btn--checkout',
+    '.button--checkout',
+    '#checkout',
+    '#CartSubmit',
+    
+    // Forms de checkout
+    'form[action*="/checkout"] button',
+    'form[action*="/checkout"] input[type="submit"]',
+    'form[action*="/checkouts"] button',
+    'form[action*="/checkouts"] input[type="submit"]',
+    'form[action="/cart"] button[type="submit"]',
+    
+    // Links de checkout
+    '[href*="/checkout"]',
+    '[href*="/checkouts"]',
+    'a[href$="/checkout"]',
+    
+    // Dawn, Debut, Brooklyn themes
+    '.cart-notification__checkout',
+    '.cart-drawer-item__checkout',
+    '#cart-notification-button',
+    '.ajax-cart__checkout',
+    
+    // OBS: Evite seletor genérico de "todo button" aqui.
+    // O fallback de compatibilidade acontece via CHECKOUT_KEYWORDS dentro do isCheckoutElement().
+  ].join(', ');
+  
+  // Palavras-chave que indicam checkout
+  var CHECKOUT_KEYWORDS = ['checkout', 'finalizar', 'comprar', 'buy', 'purchase', 'proceed', 'pagar'];
+
+  // ===== CONTEXTO (evitar falso-positivo em páginas de produto) =====
+  function closestFormAction(el) {
+    try {
+      var f = el && el.closest ? el.closest('form') : null;
+      return (f && f.action) ? String(f.action).toLowerCase() : '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function isAddToCartAction(action) {
+    return !!action && action.indexOf('/cart/add') !== -1;
+  }
+
+   function isCartPage() {
+     try {
+       var p = (window.location && window.location.pathname) ? String(window.location.pathname).toLowerCase() : '';
+       return p.indexOf('/cart') !== -1 && p.indexOf('/cart/add') === -1;
+     } catch (e) {
+       return false;
+     }
+   }
+
+   function rectIntersectsViewport(rect) {
+     try {
+       var vw = window.innerWidth || document.documentElement.clientWidth || 0;
+       var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+       if (!vw || !vh) return true;
+       return rect.right > 0 && rect.bottom > 0 && rect.left < vw && rect.top < vh;
+     } catch (e) {
+       return true;
+     }
+   }
+
+   function isElementVisible(el) {
+     if (!el) return false;
+     try {
+       var ariaHidden = (el.getAttribute && el.getAttribute('aria-hidden')) ? String(el.getAttribute('aria-hidden')).toLowerCase() : '';
+       if (ariaHidden === 'true') return false;
+
+       var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+       if (rect) {
+         // Se estiver totalmente fora da viewport, considere como "fechado" (muitos drawers ficam off-canvas)
+         if (!rectIntersectsViewport(rect)) return false;
+         if (rect.width === 0 || rect.height === 0) return false;
+       }
+
+       var st = window.getComputedStyle ? window.getComputedStyle(el) : null;
+       if (!st) return true;
+       if (st.display === 'none') return false;
+       if (st.visibility === 'hidden') return false;
+       if (st.opacity === '0') return false;
+       if (st.pointerEvents === 'none') return false;
+       return true;
+     } catch (e) {
+       return false;
+     }
+   }
+
+   function getCartContainer(el) {
+     try {
+       if (!el || !el.closest) return null;
+       return el.closest(
+         '#CartDrawer, cart-drawer, .cart-drawer, [id*="CartDrawer"], [data-cart-drawer], .drawer--cart, .cart-notification, [data-cart-notification]'
+       );
+     } catch (e) {
+       return null;
+     }
+   }
+
+   function elementIsInCartContext(el) {
+     if (!el) return false;
+     // Se o elemento estiver dentro de um container típico de carrinho (drawer/notificação) e estiver visível, é contexto de carrinho
+     var container = getCartContainer(el);
+     return !!(container && isElementVisible(container));
+   }
+
+   function isDirectCheckoutTarget(el) {
+     // Verifica se o elemento aponta EXPLICITAMENTE para /checkout (não depende de texto)
+     if (!el) return false;
+     try {
+       // Link com href para /checkout
+       var href = el.getAttribute ? (el.getAttribute('href') || '') : '';
+       if (href.indexOf('/checkout') !== -1 || href.indexOf('/checkouts') !== -1) return true;
+       
+       // Button com formaction para /checkout
+       var formaction = el.getAttribute ? (el.getAttribute('formaction') || '') : '';
+       if (formaction.indexOf('/checkout') !== -1 || formaction.indexOf('/checkouts') !== -1) return true;
+       
+       // Dentro de form com action para /checkout
+       var form = el.closest ? el.closest('form') : null;
+       if (form) {
+         var action = (form.action || '').toLowerCase();
+         // Form que vai para /checkout (não /cart que depois vai para checkout)
+         if ((action.indexOf('/checkout') !== -1 || action.indexOf('/checkouts') !== -1) && action.indexOf('/cart') === -1) {
+           return true;
+         }
+       }
+       
+       // Shopify Payment Button (Buy Now)
+       if (el.closest && el.closest('.shopify-payment-button')) return true;
+       
+     } catch (e) {}
+     return false;
+   }
+
+   function shouldInterceptCheckoutHere(el) {
+     // SKIP_CART=true: intercepta em qualquer lugar
+     if (!!SKIP_CART) return true;
+
+     // SKIP_CART=false: intercepta no carrinho OU se for ação direta para /checkout
+     if (isCartPage()) return true;
+     if (elementIsInCartContext(el)) return true;
+     
+     // IMPORTANTE: Mesmo com SKIP_CART=false, interceptar ações que vão DIRETAMENTE para /checkout
+     // Isso captura "Buy Now" buttons que pulam o carrinho
+     var isDirect = isDirectCheckoutTarget(el);
+     if (isDirect) {
+       log('✓ Ação direta para /checkout detectada - interceptando mesmo com SKIP_CART=false');
+       return true;
+     }
+     
+     if (DEBUG) {
+       log('Context check:', { cartPage: isCartPage(), inCartContext: elementIsInCartContext(el), directCheckout: isDirect, hasEl: !!el });
+     }
+     return false;
+   }
+
+  // ===== INTENÇÃO (evitar falso-positivo em submits programáticos) =====
+  var __ccCheckoutIntentAt = 0;
+  function markCheckoutIntent(reason) {
+    __ccCheckoutIntentAt = Date.now();
+    log('⚑ Intent checkout:', reason);
+  }
+  function hasRecentCheckoutIntent() {
+    return Date.now() - __ccCheckoutIntentAt < 1500;
+  }
+  
+  function isCheckoutElement(el) {
+    if (!el) return false;
+
+    // IMPORTANTE (SKIP_CART=false): se o elemento está dentro de um form de add-to-cart,
+    // ele NÃO deve ser tratado como checkout (muitos temas usam texto "Comprar" no botão de adicionar).
+    try {
+      if (!SKIP_CART) {
+        var formAction = closestFormAction(el);
+        if (isAddToCartAction(formAction)) return false;
+      }
+    } catch (e) {}
+    
+    // Match por seletor
+    try {
+      if (el.matches && el.matches(CHECKOUT_SELECTORS)) return true;
+    } catch (e) {}
+    
+    // Match por texto do botão
+    var text = (el.textContent || el.innerText || '').toLowerCase().trim();
+    for (var i = 0; i < CHECKOUT_KEYWORDS.length; i++) {
+      if (text.indexOf(CHECKOUT_KEYWORDS[i]) !== -1) {
+        // Verificar se é botão/link
+        if (el.tagName === 'BUTTON' || el.tagName === 'A' || el.tagName === 'INPUT') {
+          return true;
+        }
+      }
+    }
+    
+    // Match por href
+    var href = el.getAttribute && el.getAttribute('href');
+    if (href && (href.indexOf('/checkout') !== -1 || href.indexOf('/checkouts') !== -1)) {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  // Redirecionar com itens do carrinho
+  function redirectWithCart() {
+    log('Buscando itens do carrinho...');
+    var didRedirect = false;
+    var fallbackTimer = setTimeout(function() {
+      if (didRedirect) return;
+      didRedirect = true;
+      log('Timeout - redirecionando sem itens');
+      redirectTo(CHECKOUT_URL);
+    }, 2500);
+
+    try {
+      if (!window.fetch) {
+        log('Fetch não disponível');
+        clearTimeout(fallbackTimer);
+        didRedirect = true;
+        redirectTo(CHECKOUT_URL);
+        return;
+      }
+
+      fetch('/cart.js', { credentials: 'same-origin', cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(function(cart) {
+          if (didRedirect) return;
+          clearTimeout(fallbackTimer);
+
+          log('Carrinho:', cart.items ? cart.items.length + ' itens' : 'vazio');
+
+          if (cart && cart.items && cart.items.length > 0) {
+            var cartParam = encodeURIComponent(cart.items.map(function(item) {
+              return String(item.variant_id) + ':' + String(item.quantity);
+            }).join(','));
+
+            didRedirect = true;
+            redirectTo(CHECKOUT_URL + "?cart=" + cartParam);
+          } else {
+            didRedirect = true;
+            redirectTo(CHECKOUT_URL);
+          }
+        })
+        .catch(function(err) {
+          log('Erro /cart.js:', err);
+          if (didRedirect) return;
+          clearTimeout(fallbackTimer);
+          didRedirect = true;
+          redirectTo(CHECKOUT_URL);
+        });
+    } catch (err) {
+      log('Erro:', err);
+      clearTimeout(fallbackTimer);
+      if (!didRedirect) {
+        didRedirect = true;
+        redirectTo(CHECKOUT_URL);
+      }
+    }
+  }
+
+  // ===== PATCH: form.submit / requestSubmit (bypass de evento submit) =====
+  (function patchFormSubmit() {
+    // Alguns temas chamam form.submit() direto (isso NÃO dispara evento submit)
+    try {
+      if (window.HTMLFormElement && HTMLFormElement.prototype && !HTMLFormElement.prototype.__ccSubmitPatched) {
+        HTMLFormElement.prototype.__ccSubmitPatched = true;
+        var originalSubmit = HTMLFormElement.prototype.submit;
+        HTMLFormElement.prototype.submit = function() {
+          try {
+            var form = this;
+            var active = document.activeElement;
+            var activeName = active ? (active.name || '').toLowerCase() : '';
+            var activeText = active ? (active.textContent || active.value || '').toLowerCase() : '';
+
+            var activeLooksLikeCheckout = activeName === 'checkout' ||
+              activeText.indexOf('checkout') !== -1 ||
+              activeText.indexOf('finalizar') !== -1 ||
+              activeText.indexOf('comprar') !== -1;
+
+            var action = (form.action || '').toLowerCase();
+
+            // SKIP_CART=false: nunca interceptar submit de add-to-cart
+            if (!SKIP_CART && isAddToCartAction(action)) {
+              return originalSubmit.apply(this, arguments);
+            }
+            var formHasCheckoutButton = !!(form.querySelector && form.querySelector('[name="checkout"], [type="submit"][name="checkout"], button[name="checkout"], input[name="checkout"]'));
+
+             if (!shouldInterceptCheckoutHere(active || form)) {
+              return originalSubmit.apply(this, arguments);
+            }
+
+            if ((activeLooksLikeCheckout || hasRecentCheckoutIntent()) && (formHasCheckoutButton || action.indexOf('/checkout') !== -1 || action.indexOf('/cart') !== -1)) {
+              log('>>> form.submit() interceptado!');
+              markCheckoutIntent('form.submit');
+              redirectWithCart();
+              return;
+            }
+          } catch (e) {}
+          return originalSubmit.apply(this, arguments);
+        };
+        log('✓ Patched HTMLFormElement.submit');
+      }
+    } catch (e) {
+      log('Não foi possível patchar HTMLFormElement.submit', e);
+    }
+
+    // requestSubmit geralmente dispara submit, mas alguns temas usam direto
+    try {
+      if (window.HTMLFormElement && HTMLFormElement.prototype && HTMLFormElement.prototype.requestSubmit && !HTMLFormElement.prototype.__ccRequestSubmitPatched) {
+        HTMLFormElement.prototype.__ccRequestSubmitPatched = true;
+        var originalRequestSubmit = HTMLFormElement.prototype.requestSubmit;
+        HTMLFormElement.prototype.requestSubmit = function(submitter) {
+          try {
+            var s = submitter || document.activeElement;
+            if (!SKIP_CART && isAddToCartAction(closestFormAction(s))) {
+              return originalRequestSubmit.apply(this, arguments);
+            }
+            var sName = s ? (s.name || '').toLowerCase() : '';
+            var sText = s ? (s.textContent || s.value || '').toLowerCase() : '';
+            var isCheckout = sName === 'checkout' || sText.indexOf('checkout') !== -1 || sText.indexOf('finalizar') !== -1 || sText.indexOf('comprar') !== -1;
+            if (isCheckout) {
+               if (!shouldInterceptCheckoutHere(s)) {
+                return originalRequestSubmit.apply(this, arguments);
+              }
+              log('>>> form.requestSubmit() interceptado!');
+              markCheckoutIntent('form.requestSubmit');
+              redirectWithCart();
+              return;
+            }
+          } catch (e) {}
+          return originalRequestSubmit.apply(this, arguments);
+        };
+        log('✓ Patched HTMLFormElement.requestSubmit');
+      }
+    } catch (e) {
+      log('Não foi possível patchar HTMLFormElement.requestSubmit', e);
+    }
+  })();
+  
+  // ===== INTERCEPTAR FORMS DE CHECKOUT DIRETAMENTE =====
+  function attachToCheckoutForms() {
+    try {
+      // Encontrar todos os forms que contêm botões de checkout
+      var forms = document.querySelectorAll('form');
+      log('Forms encontrados:', forms.length);
+      
+      forms.forEach(function(form) {
+        if (form.__ccFormAttached) return;
+        
+        var action = (form.action || '').toLowerCase();
+        var hasCheckoutButton = form.querySelector('[name="checkout"], [type="submit"][name="checkout"], .cart__checkout-button, .checkout-button');
+        var isAddToCart = action.indexOf('/cart/add') !== -1;
+        var isCartForm = action.indexOf('/cart') !== -1 && !isAddToCart;
+        var isCheckoutForm = action.indexOf('/checkout') !== -1 || action.indexOf('/checkouts') !== -1 || isCartForm;
+        
+        if (hasCheckoutButton || isCheckoutForm) {
+          form.__ccFormAttached = true;
+          log('✓ Form de checkout detectado:', action.substring(0, 50));
+          
+          // Listener de submit com alta prioridade
+           form.addEventListener('submit', function(e) {
+             var submitter = e.submitter || document.activeElement;
+             if (!shouldInterceptCheckoutHere(submitter || form)) return;
+            var submitterName = submitter ? (submitter.name || '').toLowerCase() : '';
+            var submitterText = submitter ? (submitter.textContent || '').toLowerCase() : '';
+            
+            // Verificar se é o botão de checkout
+            if (submitterName === 'checkout' || 
+                submitterText.indexOf('checkout') !== -1 || 
+                submitterText.indexOf('finalizar') !== -1 ||
+                submitterText.indexOf('comprar') !== -1) {
+              log('>>> FORM SUBMIT interceptado!');
+              markCheckoutIntent('submit(form)');
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              redirectWithCart();
+              return false;
+            }
+            
+            // Verificar action do form
+            var formAction = (e.target.action || '').toLowerCase();
+            if (formAction.indexOf('/checkout') !== -1 && formAction.indexOf('/cart') === -1) {
+              log('>>> FORM ACTION /checkout interceptado!');
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              redirectWithCart();
+              return false;
+            }
+          }, true);
+          
+          // Também interceptar clicks nos botões do form
+          var buttons = form.querySelectorAll('button, input[type="submit"]');
+          buttons.forEach(function(btn) {
+            if (btn.__ccBtnAttached) return;
+            btn.__ccBtnAttached = true;
+            
+            var name = (btn.name || '').toLowerCase();
+            var text = (btn.textContent || btn.value || '').toLowerCase();
+            
+            if (name === 'checkout' || text.indexOf('checkout') !== -1 || text.indexOf('finalizar') !== -1) {
+              log('✓ Botão checkout no form:', text.substring(0, 20));
+              
+              btn.addEventListener('click', function(e) {
+                 if (!shouldInterceptCheckoutHere(btn)) return;
+                log('>>> BOTÃO no FORM clicado!');
+                 markCheckoutIntent('click(btn-in-form)');
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Prevenir submit do form
+                if (form) {
+                  form.onsubmit = function() { return false; };
+                }
+                
+                redirectWithCart();
+                return false;
+              }, true);
+            }
+          });
+        }
+      });
+    } catch (e) {
+      log('Erro ao anexar forms:', e);
+    }
+  }
+
+  // ===== INTERCEPTAÇÃO DE SUBMIT GLOBAL =====
+  document.addEventListener('submit', function(e) {
+    var form = e.target;
+    if (!form || form.tagName !== 'FORM') return;
+
+    var submitter = e.submitter || document.activeElement;
+    var formaction = (submitter && submitter.getAttribute) ? submitter.getAttribute('formaction') : '';
+    var action = (formaction || form.action || '').toLowerCase();
+
+    log('Submit global:', action.substring(0, 50));
+
+    // Verificar nome do submitter
+    var submitterName = (submitter && submitter.name) ? submitter.name.toLowerCase() : '';
+    var submitterText = (submitter && submitter.textContent) ? submitter.textContent.toLowerCase() : '';
+    
+    var isCheckout = submitterName === 'checkout' ||
+                     submitterText.indexOf('checkout') !== -1 ||
+                     submitterText.indexOf('finalizar') !== -1 ||
+                     action.indexOf('/checkout') !== -1;
+
+    if (isCheckout && action.indexOf('/cart/add') === -1) {
+       if (!shouldInterceptCheckoutHere(submitter || form)) return;
+      log('>>> CHECKOUT via SUBMIT GLOBAL interceptado!');
+      markCheckoutIntent('submit(global)');
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      redirectWithCart();
+      return false;
+    }
+
+    // SKIP_CART=true: interceptar add-to-cart
+    if (SKIP_CART && (action.indexOf('/cart/add') !== -1)) {
+      var productInput = form.querySelector('[name="id"]');
+      if (!productInput) return;
+
+      log('>>> ADD-TO-CART interceptado!');
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      var quantityInput = form.querySelector('[name="quantity"]');
+      var productId = productInput.value;
+      var quantity = quantityInput ? quantityInput.value : 1;
+      redirectTo(CHECKOUT_URL + "/" + productId + "?quantity=" + quantity);
+      return false;
+    }
+  }, true);
+  
+  // ===== INTERCEPTAÇÃO DE CLICK =====
+  document.addEventListener('click', function(e) {
+    if (!e.target) return;
+
+    var target = e.target;
+    var matched = null;
+
+    // Checar elemento clicado e ancestrais
+    var current = target;
+    for (var i = 0; i < 5 && current; i++) {
+      if (isCheckoutElement(current)) {
+        matched = current;
+        break;
+      }
+      current = current.parentElement;
+    }
+
+    if (matched) {
+       if (!shouldInterceptCheckoutHere(matched)) return;
+      log('>>> CLICK em checkout detectado!', matched.tagName, (matched.textContent || '').substring(0, 30));
+      markCheckoutIntent('click(delegate)');
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      
+      // Se estiver em um form, prevenir submit
+      var form = matched.closest('form');
+      if (form) {
+        form.onsubmit = function() { return false; };
+      }
+      
+      redirectWithCart();
+      return false;
+    }
+  }, true);
+
+  // ===== INTERCEPTAR TODOS OS LINKS DE CHECKOUT =====
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest && e.target.closest('a');
+    if (!link) return;
+    
+    var href = link.getAttribute('href') || '';
+    if (href.indexOf('/checkout') !== -1 || href.indexOf('/checkouts') !== -1) {
+       if (!shouldInterceptCheckoutHere(link)) return;
+      log('>>> LINK de checkout interceptado!', href);
+      markCheckoutIntent('click(link)');
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      redirectWithCart();
+      return false;
+    }
+  }, true);
+
+  // ===== PATCH DE location.assign/replace =====
+  function patchLocationMethod(methodName) {
+    try {
+      var original = window.location[methodName];
+      if (typeof original !== 'function') {
+        log('Não foi possível fazer patch de location.' + methodName);
+        return;
+      }
+
+      Object.defineProperty(window.location, methodName, {
+        value: function(url) {
+          try {
+            if (typeof url === 'string' && (url.indexOf('/checkout') !== -1 || url.indexOf('/checkouts') !== -1)) {
+              if (!shouldInterceptCheckoutHere() && !hasRecentCheckoutIntent()) {
+                return original.call(window.location, url);
+              }
+              log('>>> location.' + methodName + ' interceptado!');
+              redirectWithCart();
+              return;
+            }
+          } catch (e) {}
+          return original.call(window.location, url);
+        },
+        writable: true,
+        configurable: true
+      });
+      log('✓ Patched location.' + methodName);
+    } catch (e) {
+      log('Não foi possível fazer patch de location.' + methodName);
+    }
+  }
+
+  patchLocationMethod('assign');
+  patchLocationMethod('replace');
+
+  // ===== MONITORAR ELEMENTOS DINÂMICOS =====
+  function attachToCheckoutButtons() {
+    try {
+      var buttons = document.querySelectorAll(CHECKOUT_SELECTORS);
+      var validButtons = [];
+      
+      buttons.forEach(function(btn) {
+        // Filtrar apenas elementos válidos (não CSS links, etc)
+        if (btn.tagName === 'BUTTON' || btn.tagName === 'A' || btn.tagName === 'INPUT' || 
+            btn.getAttribute('role') === 'button') {
+          validButtons.push(btn);
+        }
+      });
+      
+      log('Elementos de checkout encontrados na página:', validButtons.length);
+      
+      validButtons.forEach(function(btn, i) {
+        if (btn.__ccAttached) return;
+        if (!isCheckoutElement(btn)) return;
+        btn.__ccAttached = true;
+        
+        log('  - ' + btn.outerHTML.substring(0, 80));
+        
+        btn.addEventListener('click', function(e) {
+         if (!shouldInterceptCheckoutHere(btn)) return;
+          log('>>> BOTÃO checkout clicado diretamente!');
+          markCheckoutIntent('click(attached-btn)');
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
+          // Prevenir submit do form pai
+          var form = btn.closest('form');
+          if (form) {
+            form.onsubmit = function() { return false; };
+          }
+          
+          redirectWithCart();
+          return false;
+        }, true);
+      });
+    } catch (e) {}
+  }
+
+  // Executar imediatamente e após carregamento
+  attachToCheckoutForms();
+  attachToCheckoutButtons();
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      attachToCheckoutForms();
+      attachToCheckoutButtons();
+    });
+  }
+  
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      attachToCheckoutForms();
+      attachToCheckoutButtons();
+    }, 500);
+    setTimeout(function() {
+      attachToCheckoutForms();
+      attachToCheckoutButtons();
+    }, 1500);
+  });
+
+  // MutationObserver para elementos dinâmicos (cart drawer, etc)
+  try {
+    var observer = new MutationObserver(function(mutations) {
+      var shouldReattach = false;
+      mutations.forEach(function(m) {
+        if (m.addedNodes.length > 0) shouldReattach = true;
+      });
+      if (shouldReattach) {
+        setTimeout(function() {
+          attachToCheckoutForms();
+          attachToCheckoutButtons();
+        }, 100);
+      }
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    log('✓ MutationObserver ativo');
+  } catch (e) {}
+
+})();
+</script>
