@@ -295,13 +295,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .footer-bottom p { font-size: 0.75rem; color: rgba(24,24,27,0.6); }
 
 /* ===== CART POPOVER ===== */
-.cart-overlay {
-  position: fixed; inset: 0;
-  z-index: 200;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.2s;
-}
-.cart-overlay.open { opacity: 1; pointer-events: all; }
+.cart-overlay { display: none; }
 
 .cart-drawer {
   position: fixed;

@@ -266,49 +266,21 @@
 
 <script>
 (function(){
-  var btn, drawer, hoverTimer, leaveTimer;
-
   document.addEventListener('DOMContentLoaded', function(){
-    btn    = document.getElementById('cart-btn');
-    drawer = document.getElementById('cart-drawer');
+    var btn    = document.getElementById('cart-btn');
+    var drawer = document.getElementById('cart-drawer');
     if (!btn || !drawer) return;
 
-    function scheduleOpen() {
-      clearTimeout(leaveTimer);
-      clearTimeout(hoverTimer);
-      hoverTimer = setTimeout(function(){
-        if (!drawer.classList.contains('open')) openCart();
-      }, 280);
-    }
+    var timer;
 
-    function scheduleClose() {
-      clearTimeout(hoverTimer);
-      leaveTimer = setTimeout(function(){
-        closeCart();
-      }, 350);
-    }
+    function open()  { clearTimeout(timer); if (!drawer.classList.contains('open')) openCart(); }
+    function close() { clearTimeout(timer); timer = setTimeout(closeCart, 300); }
+    function keep()  { clearTimeout(timer); }
 
-    function cancelClose() {
-      clearTimeout(leaveTimer);
-    }
-
-    btn.addEventListener('mouseenter', scheduleOpen);
-
-    // Só fecha se o mouse saiu para fora da zona btn+drawer
-    btn.addEventListener('mouseleave', function(e){
-      clearTimeout(hoverTimer);
-      // Se foi para o drawer, não fecha
-      if (e.relatedTarget && (e.relatedTarget === drawer || drawer.contains(e.relatedTarget))) return;
-      scheduleClose();
-    });
-
-    drawer.addEventListener('mouseenter', cancelClose);
-
-    drawer.addEventListener('mouseleave', function(e){
-      // Se voltou para o botão, não fecha
-      if (e.relatedTarget && (e.relatedTarget === btn || btn.contains(e.relatedTarget))) return;
-      scheduleClose();
-    });
+    btn.addEventListener('mouseenter', open);
+    btn.addEventListener('mouseleave', close);
+    drawer.addEventListener('mouseenter', keep);
+    drawer.addEventListener('mouseleave', close);
   });
 })();
 </script>
