@@ -29,7 +29,7 @@
     "social_facebook": "https://www.instagram.com/musasclubfit",
     "social_tiktok": "https://www.instagram.com/musasclubfit",
     "social_whatsapp": "https://wa.me/5562994319090",
-    "popup_enabled": false,
+    "popup_enabled": true,
     "popup_delay": 1,
     "popup_repeat_after": 1,
     "wa_bubble_messages": "Precisa rastrear seu pedido?  \nFrete grátis acima de R$299!  \nTroca fácil em até 30 dias!  \nCupom EMPORIO10",
@@ -103,7 +103,6 @@
               "show_amex": true,
               "show_elo": true,
               "show_hipercard": true,
-              "show_boleto": true,
               "installments": "Em até 6x sem juros no cartão"
             }
           }
