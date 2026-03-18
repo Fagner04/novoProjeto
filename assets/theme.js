@@ -81,6 +81,7 @@ async function renderCart() {
     list.insertBefore(el, empty);
   });
   document.getElementById('cart-total-price').textContent = formatMoney(cart.total_price);
+  renderWholesaleProgress(cart);
 }
 
 async function changeItemLine(line, qty) {
@@ -94,6 +95,50 @@ async function changeItemLine(line, qty) {
     await renderCart();
   } finally {
     _cartInteracting = false;
+  }
+}
+
+function renderWholesaleProgress(cart) {
+  var container = document.getElementById('cw-wholesale-progress-container');
+  if (!container) return;
+
+  // Lê configurações expostas pelo Liquid (injetadas no layout)
+  var cfg = window.__cwAtacado;
+  if (!cfg || !cfg.enabled) { container.innerHTML = ''; return; }
+
+  var min = cfg.min_qty || 6;
+  var total = cart.item_count;
+  var remaining = min - total;
+  var progress = Math.min(100, Math.round(total * 100 / min));
+  var active = remaining <= 0;
+
+  if (active) {
+    container.innerHTML =
+      '<div class="cw-wholesale-progress" style="margin:12px 0;padding:10px 14px;background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1px solid #FDBA74;border-radius:8px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span style="font-size:18px;">🎉</span>' +
+          '<div>' +
+            '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0;">🏷 Atacado Ativo!</p>' +
+            '<p style="font-size:11px;color:#166534;margin:2px 0 0;">✓ Você está economizando com preços de atacado!</p>' +
+          '</div>' +
+          '<span style="margin-left:auto;font-size:12px;font-weight:600;color:#15803D;">' + total + '/' + min + ' peças</span>' +
+        '</div>' +
+        '<div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">' +
+          '<div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>' +
+        '</div>' +
+      '</div>';
+  } else {
+    container.innerHTML =
+      '<div class="cw-wholesale-progress" style="margin:12px 0;padding:10px 14px;background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1px solid #FDBA74;border-radius:8px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">' + remaining + '</strong> peça(s) para atacado!</span>' +
+          '<span style="font-size:11px;color:#B45309;">' + total + '/' + min + '</span>' +
+        '</div>' +
+        '<div style="width:100%;height:8px;background:#FDE68A;border-radius:99px;overflow:hidden;">' +
+          '<div style="width:' + progress + '%;height:100%;background:linear-gradient(90deg,#F59E0B,#D97706);border-radius:99px;transition:width 0.4s ease;"></div>' +
+        '</div>' +
+        '<p style="font-size:10px;color:#92400E;margin:4px 0 0;text-align:center;">Adicione mais itens e pague preço de atacado 💰</p>' +
+      '</div>';
   }
 }
 

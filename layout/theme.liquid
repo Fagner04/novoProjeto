@@ -157,5 +157,11 @@
   {% render 'conectwhats-checkout' %}
 
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  <script>
+    window.__cwAtacado = {
+      enabled: {{ settings.conectwhats_atacado_enabled | json }},
+      min_qty: {{ settings.conectwhats_atacado_min_qty | default: 6 }}
+    };
+  </script>
 </body>
 </html>
