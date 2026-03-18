@@ -163,12 +163,12 @@
 
   <div class="wac-msgs" id="wac-msgs"></div>
 
-  <div class="wac-quick">
-    <button class="wac-qbtn" onclick="wacSend('Quero rastrear meu pedido')">
+  <div class="wac-quick" id="wac-quick-grid">
+    <button class="wac-qbtn" onclick="wacOpenRastreio()">
       <span class="wac-qi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
       <span class="wac-ql">Rastrear</span><span class="wac-qs">Meu pedido</span>
     </button>
-    <button class="wac-qbtn" onclick="wacSend('Quero calcular o frete')">
+    <button class="wac-qbtn" onclick="wacOpenFrete()">
       <span class="wac-qi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8"><path d="M3 9h18M3 15h18M12 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span>
       <span class="wac-ql">Calcular</span><span class="wac-qs">Frete</span>
     </button>
@@ -182,7 +182,47 @@
     </button>
   </div>
 
-  <div class="wac-inp">
+  <!-- Mini-form: Rastreio -->
+  <div id="wac-form-rastreio" style="display:none;padding:.75rem 1rem;background:#f0f2f5;border-top:1px solid #e9ebee;">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;">
+      <button onclick="wacCloseForm()" style="background:none;border:none;cursor:pointer;color:#7c3aed;font-size:1.1rem;padding:0;" aria-label="Voltar">←</button>
+      <span style="font-size:.85rem;font-weight:700;color:#111;">Rastrear meu pedido</span>
+    </div>
+    <input id="wac-rastreio-input" type="text" placeholder="Digite o código de rastreio (ex: BR123456789BR)"
+      style="width:100%;border:1.5px solid #e5e7eb;border-radius:.75rem;padding:.6rem .875rem;font-size:.85rem;outline:none;font-family:inherit;box-sizing:border-box;"
+      onkeydown="if(event.key==='Enter')wacDoRastreio()">
+    <div style="display:flex;gap:.5rem;margin-top:.5rem;">
+      <button onclick="wacDoRastreio()" style="flex:1;padding:.65rem;background:linear-gradient(135deg,#5b21b6,#7c3aed);color:#fff;border:none;border-radius:.75rem;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">
+        🔍 Rastrear nos Correios
+      </button>
+      <button onclick="wacSend('Quero rastrear meu pedido: '+document.getElementById('wac-rastreio-input').value)" style="padding:.65rem .9rem;background:#25D366;color:#fff;border:none;border-radius:.75rem;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;" title="Enviar pelo WhatsApp">
+        <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><path d="M24 4C12.954 4 4 12.954 4 24c0 3.59.94 6.96 2.584 9.876L4 44l10.376-2.72A19.88 19.88 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" fill="#fff" fill-opacity=".3"/><path d="M34.507 29.13c-.448-.224-2.652-1.308-3.063-1.457-.41-.149-.708-.224-1.007.224-.298.448-1.156 1.457-1.417 1.755-.261.298-.522.336-.97.112-2.67-1.335-4.424-2.382-6.186-5.4-.467-.803.467-.746 1.335-2.484.149-.298.075-.559-.037-.783-.112-.224-1.007-2.428-1.38-3.323-.364-.87-.733-.75-1.007-.764-.261-.013-.559-.016-.857-.016-.298 0-.783.112-1.193.559-.41.448-1.566 1.53-1.566 3.73 0 2.2 1.604 4.327 1.828 4.625.224.298 3.157 4.82 7.65 6.762 2.843 1.228 3.957.944 4.671.783.97-.224 2.652-1.084 3.025-2.132.373-1.048.373-1.946.261-2.132-.112-.186-.41-.298-.857-.522z" fill="#fff"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mini-form: Calcular Frete -->
+  <div id="wac-form-frete" style="display:none;padding:.75rem 1rem;background:#f0f2f5;border-top:1px solid #e9ebee;">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;">
+      <button onclick="wacCloseForm()" style="background:none;border:none;cursor:pointer;color:#7c3aed;font-size:1.1rem;padding:0;" aria-label="Voltar">←</button>
+      <span style="font-size:.85rem;font-weight:700;color:#111;">Calcular frete</span>
+    </div>
+    <input id="wac-cep-input" type="text" placeholder="Digite seu CEP (ex: 74000-000)" maxlength="9"
+      style="width:100%;border:1.5px solid #e5e7eb;border-radius:.75rem;padding:.6rem .875rem;font-size:.85rem;outline:none;font-family:inherit;box-sizing:border-box;"
+      oninput="this.value=this.value.replace(/\D/g,'').replace(/^(\d{5})(\d)/,'$1-$2').substring(0,9)"
+      onkeydown="if(event.key==='Enter')wacDoFrete()">
+    <div id="wac-frete-result" style="display:none;margin-top:.5rem;padding:.6rem .875rem;background:#fff;border-radius:.75rem;font-size:.82rem;color:#111;border:1px solid #e5e7eb;"></div>
+    <div style="display:flex;gap:.5rem;margin-top:.5rem;">
+      <button onclick="wacDoFrete()" style="flex:1;padding:.65rem;background:linear-gradient(135deg,#5b21b6,#7c3aed);color:#fff;border:none;border-radius:.75rem;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">
+        📦 Calcular
+      </button>
+      <button onclick="wacSend('Quero calcular o frete para o CEP: '+document.getElementById('wac-cep-input').value)" style="padding:.65rem .9rem;background:#25D366;color:#fff;border:none;border-radius:.75rem;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;" title="Perguntar pelo WhatsApp">
+        <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><path d="M24 4C12.954 4 4 12.954 4 24c0 3.59.94 6.96 2.584 9.876L4 44l10.376-2.72A19.88 19.88 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" fill="#fff" fill-opacity=".3"/><path d="M34.507 29.13c-.448-.224-2.652-1.308-3.063-1.457-.41-.149-.708-.224-1.007.224-.298.448-1.156 1.457-1.417 1.755-.261.298-.522.336-.97.112-2.67-1.335-4.424-2.382-6.186-5.4-.467-.803.467-.746 1.335-2.484.149-.298.075-.559-.037-.783-.112-.224-1.007-2.428-1.38-3.323-.364-.87-.733-.75-1.007-.764-.261-.013-.559-.016-.857-.016-.298 0-.783.112-1.193.559-.41.448-1.566 1.53-1.566 3.73 0 2.2 1.604 4.327 1.828 4.625.224.298 3.157 4.82 7.65 6.762 2.843 1.228 3.957.944 4.671.783.97-.224 2.652-1.084 3.025-2.132.373-1.048.373-1.946.261-2.132-.112-.186-.41-.298-.857-.522z" fill="#fff"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="wac-inp" id="wac-inp-default">
     <textarea class="wac-ta" id="wac-ta" placeholder="Digite sua mensagem..." rows="2"></textarea>
     <button class="wac-sbtn" onclick="wacSendCustom()">
       <svg width="18" height="18" viewBox="0 0 48 48" fill="none"><path d="M24 4C12.954 4 4 12.954 4 24c0 3.59.94 6.96 2.584 9.876L4 44l10.376-2.72A19.88 19.88 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4z" fill="#fff" fill-opacity=".2"/><path d="M34.507 29.13c-.448-.224-2.652-1.308-3.063-1.457-.41-.149-.708-.224-1.007.224-.298.448-1.156 1.457-1.417 1.755-.261.298-.522.336-.97.112-2.67-1.335-4.424-2.382-6.186-5.4-.467-.803.467-.746 1.335-2.484.149-.298.075-.559-.037-.783-.112-.224-1.007-2.428-1.38-3.323-.364-.87-.733-.75-1.007-.764-.261-.013-.559-.016-.857-.016-.298 0-.783.112-1.193.559-.41.448-1.566 1.53-1.566 3.73 0 2.2 1.604 4.327 1.828 4.625.224.298 3.157 4.82 7.65 6.762 2.843 1.228 3.957.944 4.671.783.97-.224 2.652-1.084 3.025-2.132.373-1.048.373-1.946.261-2.132-.112-.186-.41-.298-.857-.522z" fill="#fff"/></svg>
@@ -289,6 +329,65 @@
   window.wacSendCustom=function(){
     var v=document.getElementById('wac-ta').value.trim();
     wacSend(v||DEFAULT_MSG);
+  };
+
+  // ---- Rastreio & Frete inline ----
+  var FRETE_URL='{{ settings.frete_planilha_url | escape }}';
+
+  function wacShowForm(id){
+    document.getElementById('wac-quick-grid').style.display='none';
+    document.getElementById('wac-inp-default').style.display='none';
+    document.getElementById('wac-form-rastreio').style.display='none';
+    document.getElementById('wac-form-frete').style.display='none';
+    document.getElementById(id).style.display='block';
+    var inp=document.querySelector('#'+id+' input');
+    if(inp)setTimeout(function(){inp.focus();},100);
+  }
+
+  window.wacCloseForm=function(){
+    document.getElementById('wac-form-rastreio').style.display='none';
+    document.getElementById('wac-form-frete').style.display='none';
+    document.getElementById('wac-quick-grid').style.display='grid';
+    document.getElementById('wac-inp-default').style.display='block';
+    var r=document.getElementById('wac-frete-result');
+    if(r){r.style.display='none';r.innerHTML='';}
+  };
+
+  window.wacOpenRastreio=function(){wacShowForm('wac-form-rastreio');};
+  window.wacOpenFrete=function(){wacShowForm('wac-form-frete');};
+
+  window.wacDoRastreio=function(){
+    var code=document.getElementById('wac-rastreio-input').value.trim().replace(/\s/g,'').toUpperCase();
+    if(!code){alert('Digite o código de rastreio.');return;}
+    window.open('https://rastreamento.correios.com.br/app/index.php?objeto='+encodeURIComponent(code),'_blank');
+  };
+
+  window.wacDoFrete=function(){
+    var cep=document.getElementById('wac-cep-input').value.replace(/\D/g,'');
+    if(cep.length!==8){alert('CEP inválido. Digite 8 dígitos.');return;}
+    var result=document.getElementById('wac-frete-result');
+    if(!FRETE_URL){
+      result.innerHTML='⚠️ URL da planilha não configurada. Acesse a engrenagem do tema e preencha a URL do Google Apps Script.';
+      result.style.display='block';return;
+    }
+    result.innerHTML='⏳ Calculando...';
+    result.style.display='block';
+    fetch(FRETE_URL+'?cep='+cep)
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data.error){
+          result.innerHTML='❌ '+data.error;
+        } else if(data.frete!==undefined){
+          var valor=typeof data.frete==='number'?'R$ '+data.frete.toFixed(2).replace('.',','):data.frete;
+          var prazo=data.prazo?' • '+data.prazo+' dias úteis':'';
+          result.innerHTML='✅ <strong>Frete: '+valor+'</strong>'+prazo+(data.modalidade?' ('+data.modalidade+')':'');
+        } else {
+          result.innerHTML='<pre style="font-size:11px;white-space:pre-wrap;">'+JSON.stringify(data,null,2)+'</pre>';
+        }
+      })
+      .catch(function(){
+        result.innerHTML='❌ Erro ao consultar. Verifique a URL da planilha ou tente pelo WhatsApp.';
+      });
   };
 })();
 </script>
