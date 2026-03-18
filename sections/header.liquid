@@ -180,7 +180,7 @@
         </svg>
       </a>
 
-      <button class="header-icon-btn" onclick="openCart()" aria-label="Carrinho">
+      <button class="header-icon-btn cart-hover-trigger" onclick="openCart()" aria-label="Carrinho" id="cart-btn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
           <path d="M16 10a4 4 0 0 1-8 0"/>
@@ -263,6 +263,49 @@
   </div>
 
 </div>
+
+<script>
+(function(){
+  var btn, drawer, overlay, hoverTimer, leaveTimer;
+
+  document.addEventListener('DOMContentLoaded', function(){
+    btn     = document.getElementById('cart-btn');
+    drawer  = document.getElementById('cart-drawer');
+    overlay = document.getElementById('cart-overlay');
+    if (!btn || !drawer) return;
+
+    // Abre ao passar o mouse (delay 280ms para não abrir por acidente)
+    btn.addEventListener('mouseenter', function(){
+      clearTimeout(leaveTimer);
+      hoverTimer = setTimeout(function(){
+        if (!drawer.classList.contains('open')) openCart();
+      }, 280);
+    });
+
+    btn.addEventListener('mouseleave', function(){
+      clearTimeout(hoverTimer);
+    });
+
+    // Mantém aberto enquanto o mouse estiver no drawer
+    drawer.addEventListener('mouseenter', function(){
+      clearTimeout(leaveTimer);
+    });
+
+    drawer.addEventListener('mouseleave', function(){
+      leaveTimer = setTimeout(function(){
+        closeCart();
+      }, 400);
+    });
+
+    // Fecha se o mouse sair do botão e não entrar no drawer
+    btn.addEventListener('mouseleave', function(){
+      leaveTimer = setTimeout(function(){
+        if (!drawer.matches(':hover')) closeCart();
+      }, 400);
+    });
+  });
+})();
+</script>
 
 {% schema %}
 {
