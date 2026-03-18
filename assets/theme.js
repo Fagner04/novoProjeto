@@ -27,16 +27,15 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ---- Cart ----
+var _cartInteracting = false;
+
 function openCart() {
   document.getElementById('cart-drawer').classList.add('open');
-  document.getElementById('cart-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
   renderCart();
 }
 function closeCart() {
+  if (_cartInteracting) return;
   document.getElementById('cart-drawer').classList.remove('open');
-  document.getElementById('cart-overlay').classList.remove('open');
-  document.body.style.overflow = '';
 }
 async function fetchCart() { return (await fetch('/cart.js')).json(); }
 async function addToCart(id, qty) {
@@ -81,7 +80,13 @@ async function renderCart() {
   });
   document.getElementById('cart-total-price').textContent = formatMoney(cart.total_price);
 }
-async function changeItemQty(id, qty) { await updateCartItem(id, qty); renderCart(); }
+
+async function changeItemQty(id, qty) {
+  _cartInteracting = true;
+  await updateCartItem(id, qty);
+  await renderCart();
+  _cartInteracting = false;
+}
 
 // ===== FAVORITES =====
 function toggleFav(btn, handle) {

@@ -281,6 +281,9 @@
     btn.addEventListener('mouseleave', close);
     drawer.addEventListener('mouseenter', keep);
     drawer.addEventListener('mouseleave', close);
+
+    // Impede fechar enquanto o usuário está clicando dentro do drawer
+    drawer.addEventListener('mousedown', function(){ clearTimeout(timer); });
   });
 })();
 </script>
