@@ -1,4 +1,17 @@
 <style>
+  @keyframes brand-gradient {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .footer-brand-animated {
+    background: linear-gradient(270deg, #7c3aed, #fe7e41, #f5c842, #fe7e41, #7c3aed);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: brand-gradient 4s ease infinite;
+  }
   .footer-payment-block {
     grid-column: 1 / -1;
     display: flex;
@@ -56,7 +69,7 @@
 
         {% if block.type == 'brand' %}
         <div class="footer-brand" {{ block.shopify_attributes }}>
-          <h3>{{ block.settings.title | default: shop.name }}</h3>
+          <h3 class="footer-brand-animated">{{ block.settings.title | default: shop.name }}</h3>
           <p>{{ block.settings.description }}</p>
           {% if block.settings.show_contact %}
             <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;">Atendimento ao Cliente</p>
