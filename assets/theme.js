@@ -31,11 +31,15 @@ var _cartInteracting = false;
 
 function openCart() {
   document.getElementById('cart-drawer').classList.add('open');
+  var waRoot = document.querySelector('.wac-root, .wa-fab-simple');
+  if (waRoot) waRoot.style.display = 'none';
   renderCart();
 }
 function closeCart() {
   if (_cartInteracting) return;
   document.getElementById('cart-drawer').classList.remove('open');
+  var waRoot = document.querySelector('.wac-root, .wa-fab-simple');
+  if (waRoot) waRoot.style.display = '';
 }
 async function fetchCart() { return (await fetch('/cart.js')).json(); }
 async function addToCart(id, qty) {
