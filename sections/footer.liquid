@@ -124,11 +124,12 @@
           <p class="payment-title">{{ block.settings.title | default: 'Formas de Pagamento' }}</p>
           <div class="payment-icons-row">
             {% if block.settings.show_pix %}
-            <div class="pay-chip pay-pix" title="Pix">
-              <svg viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg">
-                <rect width="750" height="471" rx="40" fill="#32BCAD"/>
-                <path fill="#fff" d="M467 167c-14 0-27 5-37 15l-54 54c-9 9-23 9-32 0l-54-54c-10-10-23-15-37-15h-21l68 68c21 21 55 21 76 0l68-68h-77zm-234 137c14 0 27-5 37-15l54-54c9-9 23-9 32 0l54 54c10 10 23 15 37 15h21l-68-68c-21-21-55-21-76 0l-68 68h77z"/>
-                <text x="375" y="410" text-anchor="middle" font-family="Arial" font-weight="900" font-size="60" fill="#fff" letter-spacing="8">PIX</text>
+            <div class="pay-chip" style="background:#fff;" title="Pix">
+              <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <path d="M314 114c-15 0-30 6-41 17l-72 72c-3 3-7 3-10 0l-72-72c-11-11-26-17-41-17h-28l93 93c23 23 60 23 83 0l93-93h-5z" fill="#32BCAD"/>
+                <path d="M128 398c15 0 30-6 41-17l72-72c3-3 7-3 10 0l72 72c11 11 26 17 41 17h5l-93-93c-23-23-60-23-83 0l-93 93h28z" fill="#32BCAD"/>
+                <path d="M114 128l-93 93c-23 23-23 60 0 83l93 93 17-17-86-86c-14-14-14-36 0-50l86-86-17-17z" fill="#77E4D4"/>
+                <path d="M398 128l17 17-86 86c-14 14-14 36 0 50l86 86-17 17-93-93c-23-23-23-60 0-83l93-93z" fill="#77E4D4"/>
               </svg>
             </div>
             {% endif %}
