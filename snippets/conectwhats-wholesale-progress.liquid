@@ -60,18 +60,7 @@
       <div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">
         <div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>
       </div>
-      {%- if has_wholesale_prices and wholesale_total > 0 -%}
-        <div class="cw-new-total">
-          <p class="cw-new-total-label">💰 Total com Atacado:</p>
-          <p class="cw-new-total-price">{{ wholesale_total | money }}</p>
-          {%- if savings > 0 -%}
-            <div style="margin-top:4px;font-size:11px;color:#166534;">
-              Preço normal: <s>{{ original_total | money }}</s><br>
-              Você economiza: <strong>{{ savings | money }}</strong>
-            </div>
-          {%- endif -%}
-        </div>
-      {%- endif -%}
+      {%- comment -%} card removido — total exibido via JS no rodapé {%- endcomment -%}
     {%- else -%}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
         <span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">{{ remaining }}</strong> peça(s) para atacado!</span>
