@@ -185,6 +185,17 @@
   var productVariants = {{ product.variants | json }};
   var selectedOptions = [{% for option in product.options_with_values %}"{{ option.selected_value }}"{% unless forloop.last %},{% endunless %}{% endfor %}];
   var allImages = {{ product.images | map: 'src' | json }};
+
+  // Mapa de estoque por variant_id (exposto via Liquid pois não vem no JSON padrão)
+  var variantInventory = {
+    {% for variant in product.variants %}
+      "{{ variant.id }}": {
+        "qty": {{ variant.inventory_quantity | default: 0 }},
+        "policy": "{{ variant.inventory_policy }}",
+        "management": {{ variant.inventory_management | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  };
   var currentPair = [0, 1];
 
   // --- Variant selection ---
@@ -255,11 +266,12 @@
       return v.options.every(function(opt, i) { return opt === selectedOptions[i]; });
     });
     if (!variant) return 99;
+    var inv = variantInventory[variant.id];
     // Sem controle de estoque ou política "continue" = sem limite
-    if (!variant.inventory_management || variant.inventory_policy === 'continue') return 99;
-    // Se inventory_quantity não veio no JSON ou é 0, libera até 99 para não bloquear
-    if (!variant.inventory_quantity || variant.inventory_quantity <= 0) return 99;
-    return variant.inventory_quantity;
+    if (!inv || !inv.management || inv.policy === 'continue') return 99;
+    // Estoque zerado ou negativo = sem limite (evita bloquear o botão)
+    if (!inv.qty || inv.qty <= 0) return 99;
+    return inv.qty;
   }
 
   function changeQty(delta) {
