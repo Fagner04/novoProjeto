@@ -28,5 +28,8 @@
     {% endif %}
     <h3 class="product-card-title">{{ card_product.title }}</h3>
     <p class="product-card-price">{{ card_product.price_min | money }}</p>
+    {%- if card_product.metafields.custom.wholesale_price -%}
+    <span class="wholesale-badge" style="display:inline-block;margin-top:3px;font-size:10px;color:#9A3412;line-height:1.2;font-weight:700;">Atacado: <strong style="color:#C2410C;">{{ card_product.metafields.custom.wholesale_price.value | money }}</strong>{%- if card_product.metafields.custom.wholesale_min_qty -%} (mín. {{ card_product.metafields.custom.wholesale_min_qty.value }} un.){%- endif -%}</span>
+    {%- endif -%}
   </div>
 </a>

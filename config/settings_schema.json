@@ -100,5 +100,13 @@
       { "type": "range", "id": "wa_hide_after", "label": "Sumir após (segundos)", "min": 2, "max": 20, "step": 1, "default": 5 },
       { "type": "range", "id": "wa_repeat_after", "label": "Repetir a cada (segundos)", "min": 5, "max": 120, "step": 5, "default": 30 }
     ]
+  },
+  {
+    "name": "Atacado (ConectWhats)",
+    "settings": [
+      { "type": "header", "content": "Configurações de Atacado" },
+      { "type": "checkbox", "id": "conectwhats_atacado_enabled", "label": "Ativar barra de progresso de atacado", "default": false },
+      { "type": "number", "id": "conectwhats_atacado_min_qty", "label": "Quantidade mínima para atacado", "default": 6 }
+    ]
   }
 ]
