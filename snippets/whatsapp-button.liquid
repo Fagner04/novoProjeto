@@ -375,8 +375,18 @@
     fetch(FRETE_URL+'?cep='+cep)
       .then(function(r){return r.json();})
       .then(function(data){
-        if(data.error){
+        if(!data.success && data.error){
           result.innerHTML='❌ '+data.error;
+        } else if(data.options && data.options.length>0){
+          var html='<p style="font-weight:700;margin:0 0 6px;font-size:.82rem;">📦 Opções de frete:</p>';
+          data.options.forEach(function(op){
+            var price=typeof op.price==='number'?'R$ '+op.price.toFixed(2).replace('.',','):op.price;
+            html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f0f0;">'
+              +'<div><strong style="font-size:.82rem;">'+op.name+'</strong><br><span style="font-size:.72rem;color:#6b7280;">'+op.estimated_days+'</span></div>'
+              +'<strong style="color:#7c3aed;font-size:.85rem;">'+price+'</strong>'
+              +'</div>';
+          });
+          result.innerHTML=html;
         } else if(data.frete!==undefined){
           var valor=typeof data.frete==='number'?'R$ '+data.frete.toFixed(2).replace('.',','):data.frete;
           var prazo=data.prazo?' • '+data.prazo+' dias úteis':'';
