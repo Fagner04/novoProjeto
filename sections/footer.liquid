@@ -164,18 +164,23 @@
 
             {% if block.settings.show_elo %}
             <div class="pay-chip" title="Elo" style="background:#000;">
-              <svg viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0h750v471H0z" fill="#000"/>
-                <!-- círculo amarelo -->
-                <circle cx="210" cy="235" r="130" fill="none" stroke="#F8C000" stroke-width="50"/>
-                <!-- fatia azul no topo-direito -->
-                <path d="M210 105 A130 130 0 0 1 340 235 L210 235 Z" fill="#00A4E0"/>
-                <!-- bloco E -->
-                <rect x="355" y="175" width="110" height="45" rx="8" fill="#fff"/>
-                <rect x="355" y="250" width="110" height="45" rx="8" fill="#EE4023"/>
-                <rect x="355" y="212" width="85" height="38" rx="0" fill="#fff"/>
-                <!-- texto elo -->
-                <text x="510" y="278" font-family="Arial Black,Arial" font-weight="900" font-size="115" fill="#fff">elo</text>
+              <svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- fundo preto -->
+                <rect width="780" height="500" fill="#000"/>
+                <!-- círculo anel amarelo -->
+                <circle cx="195" cy="250" r="130" fill="none" stroke="#FFD100" stroke-width="52"/>
+                <!-- fatia laranja (setor ~90° topo-direito) -->
+                <path d="M195 120 A130 130 0 0 1 325 250 L195 250 Z" fill="#FF6600"/>
+                <!-- tampa preta para fechar o anel na fatia -->
+                <path d="M195 120 A130 130 0 0 1 325 250 L195 250 Z" fill="none" stroke="#000" stroke-width="52"/>
+                <!-- letra E (3 barras) -->
+                <rect x="360" y="168" width="105" height="42" rx="6" fill="#fff"/>
+                <rect x="360" y="229" width="80"  height="42" rx="6" fill="#fff"/>
+                <rect x="360" y="290" width="105" height="42" rx="6" fill="#fff"/>
+                <!-- letra l -->
+                <rect x="490" y="168" width="38" height="164" rx="6" fill="#fff"/>
+                <!-- letra o (anel branco) -->
+                <circle cx="600" cy="250" r="68" fill="none" stroke="#fff" stroke-width="38"/>
               </svg>
             </div>
             {% endif %}
