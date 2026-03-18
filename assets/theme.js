@@ -81,7 +81,7 @@ async function renderCart() {
     list.insertBefore(el, empty);
   });
   document.getElementById('cart-total-price').textContent = formatMoney(cart.total_price);
-  renderWholesaleProgress(cart);
+  await renderWholesaleProgress(cart);
 }
 
 async function changeItemLine(line, qty) {
@@ -98,11 +98,27 @@ async function changeItemLine(line, qty) {
   }
 }
 
-function renderWholesaleProgress(cart) {
+// Cache de preços de atacado por handle
+var _wsCache = {};
+
+async function getWholesalePrice(handle) {
+  if (_wsCache[handle] !== undefined) return _wsCache[handle];
+  try {
+    var r = await fetch('/products/' + handle + '?view=wholesale');
+    var text = await r.text();
+    // extrai só o JSON (ignora whitespace/html ao redor)
+    var match = text.match(/\{[\s\S]*\}/);
+    if (!match) { _wsCache[handle] = null; return null; }
+    var data = JSON.parse(match[0]);
+    _wsCache[handle] = data.wholesale_price || null; // em centavos
+  } catch(e) { _wsCache[handle] = null; }
+  return _wsCache[handle];
+}
+
+async function renderWholesaleProgress(cart) {
   var container = document.getElementById('cw-wholesale-progress-container');
   if (!container) return;
 
-  // Lê configurações expostas pelo Liquid (injetadas no layout)
   var cfg = window.__cwAtacado;
   if (!cfg || !cfg.enabled) { container.innerHTML = ''; return; }
 
@@ -112,34 +128,69 @@ function renderWholesaleProgress(cart) {
   var progress = Math.min(100, Math.round(total * 100 / min));
   var active = remaining <= 0;
 
-  if (active) {
-    container.innerHTML =
-      '<div class="cw-wholesale-progress" style="margin:12px 0;padding:10px 14px;background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1px solid #FDBA74;border-radius:8px;">' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span style="font-size:18px;">🎉</span>' +
-          '<div>' +
-            '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0;">🏷 Atacado Ativo!</p>' +
-            '<p style="font-size:11px;color:#166534;margin:2px 0 0;">✓ Você está economizando com preços de atacado!</p>' +
-          '</div>' +
-          '<span style="margin-left:auto;font-size:12px;font-weight:600;color:#15803D;">' + total + '/' + min + ' peças</span>' +
+  var wholesaleHtml = '';
+
+  if (active && cart.items && cart.items.length > 0) {
+    // Busca preços de atacado para todos os itens únicos
+    var handles = [...new Set(cart.items.map(function(i){ return i.handle; }))];
+    await Promise.all(handles.map(function(h){ return getWholesalePrice(h); }));
+
+    var wsTotal = 0;
+    var origTotal = 0;
+    var hasWs = false;
+
+    cart.items.forEach(function(item) {
+      var wsPrice = _wsCache[item.handle]; // centavos
+      origTotal += item.final_line_price;
+      if (wsPrice && wsPrice > 0) {
+        hasWs = true;
+        wsTotal += wsPrice * item.quantity;
+      } else {
+        wsTotal += item.final_line_price;
+      }
+    });
+
+    var savings = origTotal - wsTotal;
+
+    wholesaleHtml =
+      '<div style="display:flex;align-items:center;gap:6px;">' +
+        '<span style="font-size:18px;">🎉</span>' +
+        '<div>' +
+          '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0;">🏷 Atacado Ativo!</p>' +
+          '<p style="font-size:11px;color:#166534;margin:2px 0 0;">✓ Você está economizando com preços de atacado!</p>' +
         '</div>' +
-        '<div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">' +
-          '<div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>' +
-        '</div>' +
-      '</div>';
-  } else {
-    container.innerHTML =
-      '<div class="cw-wholesale-progress" style="margin:12px 0;padding:10px 14px;background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1px solid #FDBA74;border-radius:8px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-          '<span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">' + remaining + '</strong> peça(s) para atacado!</span>' +
-          '<span style="font-size:11px;color:#B45309;">' + total + '/' + min + '</span>' +
-        '</div>' +
-        '<div style="width:100%;height:8px;background:#FDE68A;border-radius:99px;overflow:hidden;">' +
-          '<div style="width:' + progress + '%;height:100%;background:linear-gradient(90deg,#F59E0B,#D97706);border-radius:99px;transition:width 0.4s ease;"></div>' +
-        '</div>' +
-        '<p style="font-size:10px;color:#92400E;margin:4px 0 0;text-align:center;">Adicione mais itens e pague preço de atacado 💰</p>' +
-      '</div>';
+        '<span style="margin-left:auto;font-size:12px;font-weight:600;color:#15803D;">' + total + '/' + min + ' peças</span>' +
+      '</div>' +
+      '<div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">' +
+        '<div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>' +
+      '</div>' +
+      (hasWs && wsTotal > 0 ?
+        '<div style="background:#F0FDF4;border:2px solid #86EFAC;border-radius:8px;padding:10px 12px;margin-top:10px;">' +
+          '<p style="font-size:11px;color:#166534;margin:0 0 2px;font-weight:600;">💰 Total com Atacado:</p>' +
+          '<p style="font-size:18px;font-weight:700;color:#15803D;margin:0;">' + formatMoney(wsTotal) + '</p>' +
+          (savings > 0 ?
+            '<div style="margin-top:4px;font-size:11px;color:#166534;">' +
+              'Preço normal: <s>' + formatMoney(origTotal) + '</s> &nbsp;' +
+              '<strong>Você economiza ' + formatMoney(savings) + '</strong>' +
+            '</div>'
+          : '') +
+        '</div>'
+      : '');
+  } else if (!active) {
+    wholesaleHtml =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+        '<span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">' + remaining + '</strong> peça(s) para atacado!</span>' +
+        '<span style="font-size:11px;color:#B45309;">' + total + '/' + min + '</span>' +
+      '</div>' +
+      '<div style="width:100%;height:8px;background:#FDE68A;border-radius:99px;overflow:hidden;">' +
+        '<div style="width:' + progress + '%;height:100%;background:linear-gradient(90deg,#F59E0B,#D97706);border-radius:99px;transition:width 0.4s ease;"></div>' +
+      '</div>' +
+      '<p style="font-size:10px;color:#92400E;margin:4px 0 0;text-align:center;">Adicione mais itens e pague preço de atacado 💰</p>';
   }
+
+  container.innerHTML = wholesaleHtml
+    ? '<div class="cw-wholesale-progress" style="margin:12px 0;padding:10px 14px;background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1px solid #FDBA74;border-radius:8px;">' + wholesaleHtml + '</div>'
+    : '';
 }
 
 // mantém compatibilidade

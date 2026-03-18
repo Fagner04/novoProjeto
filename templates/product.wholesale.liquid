@@ -1,0 +1,1 @@
+{% layout none %}{"wholesale_price":{% if product.metafields.custom.wholesale_price.value %}{{ product.metafields.custom.wholesale_price.value | times: 100 | round }}{% else %}null{% endif %},"product_id":{{ product.id }}}
