@@ -211,6 +211,9 @@
 
     // Atualiza disponibilidade de todas as opções com base na seleção atual
     updateOptionAvailability();
+    // Reseta quantidade para 1 ao trocar variante
+    qty = 1;
+    changeQty(0);
   }
 
   function updateOptionAvailability() {
@@ -240,6 +243,8 @@
 
   // Inicializa disponibilidade ao carregar
   updateOptionAvailability();
+  // Inicializa estado dos botões de quantidade
+  changeQty(0);
 
   function formatMoney(cents) {
     return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
@@ -247,10 +252,27 @@
 
   // --- Quantity ---
   var qty = 1;
+
+  function getMaxQty() {
+    var variant = productVariants.find(function(v) {
+      return v.options.every(function(opt, i) { return opt === selectedOptions[i]; });
+    });
+    if (!variant) return 99;
+    // inventory_management null = sem controle de estoque (sem limite)
+    if (!variant.inventory_management) return 99;
+    // inventory_policy 'continue' = pode vender mesmo sem estoque
+    if (variant.inventory_policy === 'continue') return 99;
+    return Math.max(1, variant.inventory_quantity || 1);
+  }
+
   function changeQty(delta) {
-    qty = Math.max(1, qty + delta);
+    var max = getMaxQty();
+    qty = Math.min(max, Math.max(1, qty + delta));
     document.getElementById('qty-display').textContent = qty;
     document.getElementById('qty-input').value = qty;
+    // Atualiza visual dos botões
+    document.querySelector('.product-qty-row .cart-qty button:first-child').disabled = qty <= 1;
+    document.querySelector('.product-qty-row .cart-qty button:last-child').disabled = qty >= max;
   }
 
   // --- Gallery: show pair of images ---
