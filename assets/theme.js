@@ -202,18 +202,7 @@ async function renderWholesaleProgress(cart) {
       '<div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">' +
         '<div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>' +
       '</div>' +
-      (hasWs && wsTotal > 0 ?
-        '<div style="background:#F0FDF4;border:2px solid #86EFAC;border-radius:8px;padding:10px 12px;margin-top:10px;">' +
-          '<p style="font-size:11px;color:#166534;margin:0 0 2px;font-weight:600;">💰 Total com Atacado:</p>' +
-          '<p style="font-size:18px;font-weight:700;color:#15803D;margin:0;">' + formatMoney(wsTotal) + '</p>' +
-          (savings > 0 ?
-            '<div style="margin-top:4px;font-size:11px;color:#166534;">' +
-              'Preço normal: <s>' + formatMoney(origTotal) + '</s> &nbsp;' +
-              '<strong>Você economiza ' + formatMoney(savings) + '</strong>' +
-            '</div>'
-          : '') +
-        '</div>'
-      : '');
+      '';
   } else if (!active) {
     // Restaura total normal
     var totalEl = document.getElementById('cart-total-price');
