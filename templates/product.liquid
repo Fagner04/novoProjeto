@@ -221,21 +221,32 @@
       var optionIndex = null;
       group.querySelectorAll('.option-btn').forEach(function(btn) {
         if (optionIndex === null) optionIndex = parseInt(btn.dataset.optionIndex);
-        // Testa se existe variante disponível com essa combinação
+
         var testOptions = selectedOptions.slice();
         testOptions[optionIndex] = btn.dataset.optionValue;
-        var hasAvailable = productVariants.some(function(v) {
-          return v.options.every(function(opt, i) { return opt === testOptions[i]; }) && v.available;
-        });
-        var exists = productVariants.some(function(v) {
+
+        // Encontra a variante correspondente
+        var matchVariant = productVariants.find(function(v) {
           return v.options.every(function(opt, i) { return opt === testOptions[i]; });
         });
-        if (!exists || !hasAvailable) {
+
+        var inStock = matchVariant && matchVariant.available &&
+          (!matchVariant.inventory_management ||
+           matchVariant.inventory_policy === 'continue' ||
+           matchVariant.inventory_quantity > 0);
+
+        if (!inStock) {
           btn.classList.add('unavailable');
-          btn.title = 'Esgotado';
+          btn.setAttribute('title', 'Esgotado');
+          btn.style.pointerEvents = 'none';
+          btn.style.opacity = '0.4';
+          btn.style.textDecoration = 'line-through';
         } else {
           btn.classList.remove('unavailable');
-          btn.title = '';
+          btn.removeAttribute('title');
+          btn.style.pointerEvents = '';
+          btn.style.opacity = '';
+          btn.style.textDecoration = '';
         }
       });
     });
