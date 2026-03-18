@@ -289,11 +289,19 @@
     "about_section_main": {
       "type": "about",
       "settings": {
-        "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png",
+        "image": "shopify://shop_images/about-musas-BrmRoVnG.jpg",
         "title": "Pouco De Nós",
         "content": "<h5>O MUSAS CLUB nasceu para mulheres que não passam despercebidas. Uma marca fitness que foge do óbvio, quebra padrões e transforma cada treino em uma experiência de poder e autoestima.<br/><br/>Aqui, cada peça é pensada para te lembrar da sua força, da sua beleza e do quanto você é capaz. Vestir MUSAS Club é olhar no espelho e sentir aquela confiança subir, aquela motivação bater e a vontade de ir além aparecer.<br/><br/>Porque treinar não é só sobre o corpo — é sobre amor-próprio, autoconfiança e a decisão diária de cuidar de você.</h5>",
         "cta_text": "Comprar agora!",
-        "cta_link": "shopify://collections/all"
+        "cta_link": "shopify://collections/all",
+        "bg_color": "#ffffff",
+        "title_color": "#18181b",
+        "text_color": "#52525b",
+        "divider_color": "#fe7e41",
+        "btn_bg": "#fe7e41",
+        "btn_text": "#fffcfc",
+        "padding_top": 0,
+        "padding_bottom": 0
       }
     }
   },
