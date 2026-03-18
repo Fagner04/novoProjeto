@@ -125,13 +125,6 @@
             "label": "Leggings",
             "image": "shopify://shop_images/IMG_7335.jpg"
           }
-        },
-        "collection_item_6WHMgw": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "label": "Novidades"
-          }
         }
       },
       "block_order": [
@@ -142,8 +135,7 @@
         "collection_item_amCGyW",
         "collection_item_fqPbnM",
         "collection_item_J9UqpA",
-        "collection_item_EpWJhE",
-        "collection_item_6WHMgw"
+        "collection_item_EpWJhE"
       ],
       "name": "Carrossel de Coleções",
       "settings": {
