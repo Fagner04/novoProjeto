@@ -156,7 +156,7 @@
   {% render 'promo-popup' %}
   {% render 'conectwhats-checkout' %}
 
-  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  <script src="{{ 'theme.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
   <script>
     window.__cwAtacado = {
       enabled: {{ settings.conectwhats_atacado_enabled | json }},
