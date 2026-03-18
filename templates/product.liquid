@@ -244,8 +244,8 @@
         if (!inStock) {
           btn.classList.add('unavailable');
           btn.setAttribute('title', 'Esgotado');
-          btn.style.pointerEvents = 'none';
-          btn.style.opacity = '0.4';
+          btn.style.pointerEvents = ''; // mantém clicável para ver combinações
+          btn.style.opacity = '0.45';
           btn.style.textDecoration = 'line-through';
         } else {
           btn.classList.remove('unavailable');
