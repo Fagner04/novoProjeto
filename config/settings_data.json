@@ -35,7 +35,7 @@
     "wa_bubble_messages": "Precisa rastrear seu pedido?  \nFrete grátis acima de R$299!  \nTroca fácil em até 30 dias!  \nCupom EMPORIO10",
     "wa_repeat_after": 120,
     "conectwhats_atacado_enabled": true,
-    "conectwhats_atacado_min_qty": 1,
+    "conectwhats_atacado_min_qty": 6,
     "color_header_icon_bg": "#c1434300",
     "color_header_icon_border": "#a0181800",
     "sections": {
