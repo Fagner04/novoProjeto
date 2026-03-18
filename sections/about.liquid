@@ -1,4 +1,4 @@
-<section class="about-section" id="about">
+<section class="about-section" id="about" style="background:{{ section.settings.bg_color | default: '#FDF6F0' }};padding-top:{{ section.settings.padding_top | default: 64 }}px;padding-bottom:{{ section.settings.padding_bottom | default: 64 }}px;">
   <div class="container-elegant">
     <div class="about-inner">
 
@@ -11,9 +11,9 @@
       {% endif %}
 
       <div class="about-content">
-        <h2>{{ section.settings.title | default: 'Pouco De Nós' }}</h2>
+        <h2 style="color:{{ section.settings.title_color | default: '#18181b' }};">{{ section.settings.title | default: 'Pouco De Nós' }}</h2>
 
-        <div class="about-divider">
+        <div class="about-divider" style="color:{{ section.settings.divider_color | default: '#fe7e41' }};">
           <span></span>
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
@@ -21,13 +21,13 @@
           <span></span>
         </div>
 
-        <div style="font-size:1rem;line-height:1.75;color:rgba(24,24,27,0.8);">
+        <div style="font-size:1rem;line-height:1.75;color:{{ section.settings.text_color | default: '#52525b' }};">
           {{ section.settings.content | default: 'O MUSAS CLUB nasceu para mulheres que não passam despercebidas.' }}
         </div>
 
         <a href="{{ section.settings.cta_link | default: '/collections/all' }}"
-          class="btn-primary btn-musas"
-          style="border-radius:9999px;margin-top:1.5rem;display:inline-flex;">
+          class="btn-musas"
+          style="border-radius:9999px;margin-top:1.5rem;display:inline-flex;background:{{ section.settings.btn_bg | default: '#fe7e41' }};color:{{ section.settings.btn_text | default: '#ffffff' }};padding:0.75rem 1.75rem;font-weight:700;font-size:0.875rem;letter-spacing:0.05em;text-transform:uppercase;text-decoration:none;">
           {{ section.settings.cta_text | default: 'Comprar agora!' }}
         </a>
       </div>
@@ -44,7 +44,16 @@
     { "type": "text", "id": "title", "label": "Título", "default": "Pouco De Nós" },
     { "type": "richtext", "id": "content", "label": "Texto" },
     { "type": "text", "id": "cta_text", "label": "Texto do botão", "default": "Comprar agora!" },
-    { "type": "url", "id": "cta_link", "label": "Link do botão" }
+    { "type": "url", "id": "cta_link", "label": "Link do botão" },
+    { "type": "header", "content": "Cores e Estilo" },
+    { "type": "color", "id": "bg_color", "label": "Cor de fundo", "default": "#FDF6F0" },
+    { "type": "color", "id": "title_color", "label": "Cor do título", "default": "#18181b" },
+    { "type": "color", "id": "text_color", "label": "Cor do texto", "default": "#52525b" },
+    { "type": "color", "id": "divider_color", "label": "Cor do divisor (estrela)", "default": "#fe7e41" },
+    { "type": "color", "id": "btn_bg", "label": "Cor do botão", "default": "#fe7e41" },
+    { "type": "color", "id": "btn_text", "label": "Cor do texto do botão", "default": "#ffffff" },
+    { "type": "range", "id": "padding_top", "label": "Espaçamento superior", "min": 0, "max": 120, "step": 8, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Espaçamento inferior", "min": 0, "max": 120, "step": 8, "unit": "px", "default": 64 }
   ],
   "presets": [{ "name": "Sobre a Marca" }]
 }
