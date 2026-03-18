@@ -222,18 +222,10 @@
       group.querySelectorAll('.option-btn').forEach(function(btn) {
         if (optionIndex === null) optionIndex = parseInt(btn.dataset.optionIndex);
 
-        var testOptions = selectedOptions.slice();
-        testOptions[optionIndex] = btn.dataset.optionValue;
-
-        // Encontra a variante correspondente
-        var matchVariant = productVariants.find(function(v) {
-          return v.options.every(function(opt, i) { return opt === testOptions[i]; });
+        // Verifica se existe alguma variante disponível com esse valor nessa posição
+        var inStock = productVariants.some(function(v) {
+          return v.options[optionIndex] === btn.dataset.optionValue && v.available;
         });
-
-        var inStock = matchVariant && matchVariant.available &&
-          (!matchVariant.inventory_management ||
-           matchVariant.inventory_policy === 'continue' ||
-           matchVariant.inventory_quantity > 0);
 
         if (!inStock) {
           btn.classList.add('unavailable');
@@ -254,12 +246,6 @@
 
   // Inicializa disponibilidade ao carregar
   updateOptionAvailability();
-  // Inicializa estado dos botões de quantidade
-  changeQty(0);
-
-  function formatMoney(cents) {
-    return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
-  }
 
   // --- Quantity ---
   var qty = 1;
@@ -284,6 +270,13 @@
     // Atualiza visual dos botões
     document.querySelector('.product-qty-row .cart-qty button:first-child').disabled = qty <= 1;
     document.querySelector('.product-qty-row .cart-qty button:last-child').disabled = qty >= max;
+  }
+
+  // Inicializa botões de quantidade após declarar tudo
+  changeQty(0);
+
+  function formatMoney(cents) {
+    return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
   }
 
   // --- Gallery: show pair of images ---
