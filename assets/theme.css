@@ -506,7 +506,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 @media (max-width: 639px) { .main-images-grid { grid-template-columns: 1fr; } }
 .main-image-slot { position: relative; aspect-ratio: 3/4; overflow: hidden; background: var(--muted); }
 .main-image-slot img { width: 100%; height: 100%; object-fit: cover; }
-.product-new-badge { position: absolute; top: 0.75rem; left: 0.75rem; background: var(--brand-purple, #7c3aed); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; z-index: 2; }
+.product-new-badge { position: absolute; top: 0.75rem; left: 0.75rem; background: #7c3aed; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; z-index: 2; }
 
 /* Description box */
 .product-desc-box { background: #fff; border-radius: 1rem; padding: 1.25rem 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
