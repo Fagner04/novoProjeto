@@ -204,11 +204,42 @@
       document.getElementById('price-pix').textContent = formatMoney(Math.round(price * 0.95));
       document.getElementById('price-card').textContent = formatMoney(price);
       document.getElementById('price-installments').textContent = 'ou 6x de ' + formatMoney(Math.round(price / 6)) + ' sem juros';
-      var btn2 = document.getElementById('add-to-cart-btn');
-      btn2.disabled = !variant.available;
-      btn2.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Indisponível';
+      var addBtn = document.getElementById('add-to-cart-btn');
+      addBtn.disabled = !variant.available;
+      addBtn.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Indisponível';
     }
+
+    // Atualiza disponibilidade de todas as opções com base na seleção atual
+    updateOptionAvailability();
   }
+
+  function updateOptionAvailability() {
+    document.querySelectorAll('.option-buttons').forEach(function(group) {
+      var optionIndex = null;
+      group.querySelectorAll('.option-btn').forEach(function(btn) {
+        if (optionIndex === null) optionIndex = parseInt(btn.dataset.optionIndex);
+        // Testa se existe variante disponível com essa combinação
+        var testOptions = selectedOptions.slice();
+        testOptions[optionIndex] = btn.dataset.optionValue;
+        var hasAvailable = productVariants.some(function(v) {
+          return v.options.every(function(opt, i) { return opt === testOptions[i]; }) && v.available;
+        });
+        var exists = productVariants.some(function(v) {
+          return v.options.every(function(opt, i) { return opt === testOptions[i]; });
+        });
+        if (!exists || !hasAvailable) {
+          btn.classList.add('unavailable');
+          btn.title = 'Esgotado';
+        } else {
+          btn.classList.remove('unavailable');
+          btn.title = '';
+        }
+      });
+    });
+  }
+
+  // Inicializa disponibilidade ao carregar
+  updateOptionAvailability();
 
   function formatMoney(cents) {
     return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
