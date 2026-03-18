@@ -98,7 +98,7 @@ async function changeItemLine(line, qty) {
   }
 }
 
-// Cache de preços de atacado por handle
+// Cache de preços de atacado por handle (limpo a cada sessão, não entre renders)
 var _wsCache = {};
 
 async function getWholesalePrice(handle) {
@@ -110,7 +110,13 @@ async function getWholesalePrice(handle) {
     var match = text.match(/\{[\s\S]*\}/);
     if (!match) { _wsCache[handle] = null; return null; }
     var data = JSON.parse(match[0]);
-    _wsCache[handle] = data.wholesale_price || null; // em centavos
+    // Normaliza para centavos: se < 1000 assume reais (ex: 159.90), senão já é centavos
+    var raw = data.wholesale_price;
+    if (raw !== null && raw !== undefined) {
+      _wsCache[handle] = raw < 1000 ? Math.round(raw * 100) : Math.round(raw);
+    } else {
+      _wsCache[handle] = null;
+    }
   } catch(e) { _wsCache[handle] = null; }
   return _wsCache[handle];
 }
