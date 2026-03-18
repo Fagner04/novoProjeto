@@ -59,16 +59,42 @@ async function renderCart() {
   }
   empty.style.display = 'none'; footer.style.display = 'block';
   list.querySelectorAll('.cart-item').forEach(i => i.remove());
-  // usa índice de linha (1-based) para evitar conflito com variant_id duplicado
+
+  // Pré-carrega preços de atacado antes de renderizar os itens
+  var cfg = window.__cwAtacado;
+  var wholesaleActive = false;
+  if (cfg && cfg.enabled) {
+    var min = cfg.min_qty || 6;
+    wholesaleActive = cart.item_count >= min;
+    if (wholesaleActive) {
+      var handles = [...new Set(cart.items.map(function(i){ return i.handle; }))];
+      await Promise.all(handles.map(function(h){ return getWholesalePrice(h); }));
+    }
+  }
+
   cart.items.forEach((item, index) => {
     const lineIndex = index + 1;
+    const wsPrice = wholesaleActive ? _wsCache[item.handle] : null; // centavos
+
+    var priceHtml;
+    if (wsPrice && wsPrice > 0) {
+      priceHtml =
+        '<p class="cart-item-price" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          '<s style="color:#aaa;font-size:12px;">' + formatMoney(item.final_price) + '</s>' +
+          '<span style="color:#15803D;font-weight:700;">' + formatMoney(wsPrice) + '</span>' +
+          '<span style="background:#DCFCE7;color:#166534;font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700;">ATACADO</span>' +
+        '</p>';
+    } else {
+      priceHtml = '<p class="cart-item-price">' + formatMoney(item.final_price) + '</p>';
+    }
+
     const el = document.createElement('div');
     el.className = 'cart-item';
     el.innerHTML = `<img class="cart-item-image" src="${item.image}" alt="${item.title}">
       <div class="cart-item-info">
         <p class="cart-item-title">${item.product_title}</p>
         <p class="cart-item-variant">${item.variant_title !== 'Default Title' ? item.variant_title : ''}</p>
-        <p class="cart-item-price">${formatMoney(item.final_price)}</p>
+        ${priceHtml}
         <div class="cart-qty">
           <button type="button" onclick="changeItemLine(${lineIndex},${item.quantity-1})">−</button>
           <span>${item.quantity}</span>
