@@ -226,6 +226,14 @@
       "type": "_blocks",
       "settings": {}
     },
+    "about_section_main": {
+      "type": "about",
+      "settings": {
+        "title": "Pouco De Nós",
+        "cta_text": "Comprar agora!",
+        "cta_link": "/collections/all"
+      }
+    },
     "products_carousel_Lfhr8p": {
       "type": "products-carousel",
       "blocks": {
@@ -281,6 +289,7 @@
     "trust",
     "featured_products_3iVPUp",
     "177353118617f156ac",
-    "products_carousel_Lfhr8p"
+    "products_carousel_Lfhr8p",
+    "about_section_main"
   ]
 }
