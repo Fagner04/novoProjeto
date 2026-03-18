@@ -164,23 +164,15 @@
 
             {% if block.settings.show_elo %}
             <div class="pay-chip" title="Elo" style="background:#000;">
-              <svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg">
-                <!-- fundo preto -->
-                <rect width="780" height="500" fill="#000"/>
-                <!-- círculo anel amarelo -->
-                <circle cx="195" cy="250" r="130" fill="none" stroke="#FFD100" stroke-width="52"/>
-                <!-- fatia laranja (setor ~90° topo-direito) -->
-                <path d="M195 120 A130 130 0 0 1 325 250 L195 250 Z" fill="#FF6600"/>
-                <!-- tampa preta para fechar o anel na fatia -->
-                <path d="M195 120 A130 130 0 0 1 325 250 L195 250 Z" fill="none" stroke="#000" stroke-width="52"/>
-                <!-- letra E (3 barras) -->
-                <rect x="360" y="168" width="105" height="42" rx="6" fill="#fff"/>
-                <rect x="360" y="229" width="80"  height="42" rx="6" fill="#fff"/>
-                <rect x="360" y="290" width="105" height="42" rx="6" fill="#fff"/>
-                <!-- letra l -->
-                <rect x="490" y="168" width="38" height="164" rx="6" fill="#fff"/>
-                <!-- letra o (anel branco) -->
-                <circle cx="600" cy="250" r="68" fill="none" stroke="#fff" stroke-width="38"/>
+              <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
+                <!-- arco azul (esquerda ~120°) -->
+                <path d="M120 160 m-90 0 a90 90 0 0 1 45 -77.9" fill="none" stroke="#00AEEF" stroke-width="28" stroke-linecap="round"/>
+                <!-- arco amarelo (topo ~120°) -->
+                <path d="M75 82.1 a90 90 0 0 1 90 0" fill="none" stroke="#FFC20E" stroke-width="28" stroke-linecap="round"/>
+                <!-- arco vermelho (baixo ~120°) -->
+                <path d="M165 82.1 a90 90 0 0 1 45 77.9" fill="none" stroke="#EE3124" stroke-width="28" stroke-linecap="round"/>
+                <!-- texto elo -->
+                <text x="230" y="185" font-family="Arial,sans-serif" font-weight="700" font-size="105" fill="#fff">elo</text>
               </svg>
             </div>
             {% endif %}
