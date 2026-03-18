@@ -233,9 +233,12 @@
       group.querySelectorAll('.option-btn').forEach(function(btn) {
         if (optionIndex === null) optionIndex = parseInt(btn.dataset.optionIndex);
 
-        // Verifica se existe alguma variante disponível com esse valor nessa posição
+        // Verifica se existe variante disponível combinando este valor com as outras opções já selecionadas
         var inStock = productVariants.some(function(v) {
-          return v.options[optionIndex] === btn.dataset.optionValue && v.available;
+          return v.available && v.options.every(function(opt, i) {
+            if (i === optionIndex) return opt === btn.dataset.optionValue;
+            return opt === selectedOptions[i];
+          });
         });
 
         if (!inStock) {
