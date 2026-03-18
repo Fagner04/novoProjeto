@@ -271,24 +271,55 @@
     var drawer = document.getElementById('cart-drawer');
     if (!btn || !drawer) return;
 
-    var timer;
-    var locked = false; // trava enquanto o usuário interage
+    var hoverTimer;
+    var pinned = false; // true = aberto por clique, não fecha no mouseleave
 
-    function open()  { clearTimeout(timer); if (!drawer.classList.contains('open')) openCart(); }
-    function close() { clearTimeout(timer); if (locked) return; timer = setTimeout(closeCart, 400); }
-    function keep()  { clearTimeout(timer); }
+    // Clique na sacola: abre/fecha e pina
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      clearTimeout(hoverTimer);
+      if (drawer.classList.contains('open')) {
+        pinned = false;
+        closeCart();
+      } else {
+        pinned = true;
+        openCart();
+      }
+    });
 
-    btn.addEventListener('mouseenter', open);
-    btn.addEventListener('mouseleave', close);
-    drawer.addEventListener('mouseenter', keep);
-    drawer.addEventListener('mouseleave', close);
+    // Hover (só desktop): abre sem pinar
+    btn.addEventListener('mouseenter', function(){
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(function(){
+        if (!drawer.classList.contains('open')) {
+          pinned = false;
+          openCart();
+        }
+      }, 300);
+    });
 
-    // Trava o fechamento no mousedown e libera após o click (ou mouseup)
-    drawer.addEventListener('mousedown', function(){ locked = true; clearTimeout(timer); });
-    document.addEventListener('mouseup', function(){ locked = false; });
+    btn.addEventListener('mouseleave', function(e){
+      clearTimeout(hoverTimer);
+      if (pinned) return;
+      // só fecha se o mouse não foi para o drawer
+      if (e.relatedTarget && (drawer === e.relatedTarget || drawer.contains(e.relatedTarget))) return;
+      hoverTimer = setTimeout(function(){ if (!pinned) closeCart(); }, 400);
+    });
+
+    drawer.addEventListener('mouseleave', function(e){
+      if (pinned) return;
+      if (e.relatedTarget && (btn === e.relatedTarget || btn.contains(e.relatedTarget))) return;
+      hoverTimer = setTimeout(function(){ if (!pinned) closeCart(); }, 400);
+    });
+
+    drawer.addEventListener('mouseenter', function(){
+      clearTimeout(hoverTimer);
+    });
+
+    // Clique fora fecha (só se não pinado por clique... na verdade fecha sempre)
     document.addEventListener('click', function(e){
-      // Fecha se clicou fora do drawer e fora do botão
       if (!drawer.contains(e.target) && !btn.contains(e.target)) {
+        pinned = false;
         closeCart();
       }
     });
