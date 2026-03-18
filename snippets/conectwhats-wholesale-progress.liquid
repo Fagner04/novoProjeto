@@ -1,4 +1,4 @@
-{%- comment -%} BARRA DE PROGRESSO ATACADO + CÁLCULO TOTAL {%- endcomment -%}
+{%- comment -%} BARRA DE PROGRESSO ATACADO — card de total removido, exibido via JS {%- endcomment -%}
 {%- if settings.conectwhats_atacado_enabled -%}
   {%- assign wholesale_min = settings.conectwhats_atacado_min_qty | default: 6 -%}
   {%- assign total_items = cart.item_count -%}
@@ -7,32 +7,6 @@
   {%- assign remaining = wholesale_min | minus: total_items -%}
   {%- assign wholesale_active = false -%}
   {%- if remaining <= 0 -%}{%- assign wholesale_active = true -%}{%- endif -%}
-
-  {%- comment -%} CALCULAR TOTAL COM PREÇOS DE ATACADO {%- endcomment -%}
-  {%- assign wholesale_total = 0 -%}
-  {%- assign original_total = 0 -%}
-  {%- assign has_wholesale_prices = false -%}
-  {%- if wholesale_active -%}
-    {%- for item in cart.items -%}
-      {%- assign ws_price = item.product.metafields.custom.wholesale_price.value -%}
-      {%- unless ws_price -%}{%- assign ws_price = item.product.metafields.custom.wholesale_price -%}{%- endunless -%}
-      {%- if ws_price and ws_price > 0 -%}
-        {%- assign has_wholesale_prices = true -%}
-        {%- if ws_price < 1000 -%}
-          {%- assign ws_price_cents = ws_price | times: 100 -%}
-        {%- else -%}
-          {%- assign ws_price_cents = ws_price -%}
-        {%- endif -%}
-        {%- assign item_ws_total = ws_price_cents | times: item.quantity -%}
-        {%- assign wholesale_total = wholesale_total | plus: item_ws_total -%}
-        {%- assign original_total = original_total | plus: item.final_line_price -%}
-      {%- else -%}
-        {%- assign wholesale_total = wholesale_total | plus: item.final_line_price -%}
-        {%- assign original_total = original_total | plus: item.final_line_price -%}
-      {%- endif -%}
-    {%- endfor -%}
-    {%- assign savings = original_total | minus: wholesale_total -%}
-  {%- endif -%}
 
   <style>
     .cw-wholesale-progress { font-family: inherit; }
@@ -54,7 +28,6 @@
       <div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">
         <div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>
       </div>
-      {%- comment -%} card removido — total exibido via JS no rodapé {%- endcomment -%}
     {%- else -%}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
         <span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">{{ remaining }}</strong> peça(s) para atacado!</span>
