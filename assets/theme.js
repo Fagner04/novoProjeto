@@ -291,7 +291,22 @@ document.addEventListener('DOMContentLoaded', function() {
       const qty = parseInt(document.getElementById('qty-input').value) || 1;
       btn.disabled = true; btn.textContent = 'Adicionando...';
       try {
-        await addToCart(variantId, qty);
+        // Verifica estoque disponível vs quantidade já no carrinho
+        const cart = await fetchCart();
+        const inCart = cart.items.reduce(function(sum, item) {
+          return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
+        }, 0);
+        const maxQty = typeof getMaxQty === 'function' ? getMaxQty() : 99;
+        const canAdd = maxQty - inCart;
+        if (canAdd <= 0) {
+          btn.disabled = false;
+          btn.textContent = 'Estoque esgotado';
+          setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; }, 2000);
+          openCart();
+          return;
+        }
+        const qtyToAdd = Math.min(qty, canAdd);
+        await addToCart(variantId, qtyToAdd);
         btn.textContent = 'Adicionado ✓';
         setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
         openCart();
