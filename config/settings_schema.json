@@ -108,5 +108,26 @@
       { "type": "checkbox", "id": "conectwhats_atacado_enabled", "label": "Ativar barra de progresso de atacado", "default": false },
       { "type": "number", "id": "conectwhats_atacado_min_qty", "label": "Quantidade mínima para atacado", "default": 6 }
     ]
+  },
+  {
+    "name": "Frete e Rastreio",
+    "settings": [
+      { "type": "header", "content": "Cálculo de Frete via Planilha Google Sheets" },
+      { "type": "paragraph", "content": "Configure uma planilha do Google Sheets como banco de dados de frete. Crie um Google Apps Script, configure as regras de frete por CEP/região e publique como Web App." },
+      { "type": "checkbox", "id": "frete_planilha_enabled", "label": "Ativar cálculo de frete via planilha", "default": false },
+      { "type": "text", "id": "frete_planilha_url", "label": "URL da API do Google Sheets (Apps Script)", "info": "Cole aqui a URL do Google Apps Script publicado como Web App" },
+      { "type": "header", "content": "Rastreio de Pedidos" },
+      { "type": "paragraph", "content": "Permite que o cliente rastreie o pedido diretamente pelo site informando o código de rastreio." },
+      { "type": "checkbox", "id": "rastreio_enabled", "label": "Ativar rastreio de pedidos", "default": false },
+      { "type": "select", "id": "rastreio_carrier", "label": "Transportadora padrão", "default": "correios",
+        "options": [
+          { "value": "correios", "label": "Correios" },
+          { "value": "jadlog", "label": "Jadlog" },
+          { "value": "total_express", "label": "Total Express" },
+          { "value": "custom", "label": "URL personalizada" }
+        ]
+      },
+      { "type": "text", "id": "rastreio_custom_url", "label": "URL personalizada de rastreio", "info": "Use {codigo} como placeholder. Ex: https://minhalogistica.com/rastrear/{codigo}" }
+    ]
   }
 ]
