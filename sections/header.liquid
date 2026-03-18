@@ -271,9 +271,7 @@
     var drawer = document.getElementById('cart-drawer');
     if (!btn || !drawer) return;
 
-    // Só clique abre/fecha
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
+    btn.addEventListener('click', function(){
       if (drawer.classList.contains('open')) {
         closeCart();
       } else {
@@ -281,12 +279,12 @@
       }
     });
 
-    // Clique fora fecha
+    // Fecha ao clicar fora (bubble, depois do btn click)
     document.addEventListener('click', function(e){
-      if (!drawer.contains(e.target) && !btn.contains(e.target)) {
+      if (drawer.classList.contains('open') && !drawer.contains(e.target) && !btn.contains(e.target)) {
         closeCart();
       }
-    }, true);
+    });
   });
 })();
 </script>
