@@ -125,8 +125,11 @@
           <div class="payment-icons-row">
             {% if block.settings.show_pix %}
             <div class="pay-chip pay-pix" title="Pix">
-              <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#32BCAD" d="M0 0h512v512H0z"/><path fill="#fff" d="M356.7 182.6c-17.4 0-33.8 6.8-46.1 19.1l-67.4 67.4c-5.4 5.4-14.2 5.4-19.6 0l-67.6-67.6c-12.3-12.3-28.7-19.1-46.1-19.1h-13l85.2 85.2c26.3 26.3 69 26.3 95.3 0l85-85h-5.7zm-246.8 146.8c17.4 0 33.8-6.8 46.1-19.1l67.6-67.6c5.4-5.4 14.2-5.4 19.6 0l67.4 67.4c12.3 12.3 28.7 19.1 46.1 19.1h5.7l-85-85c-26.3-26.3-69-26.3-95.3 0l-85.2 85.2h13z"/>
+              <svg viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg">
+                <rect width="750" height="471" rx="40" fill="#32BCAD"/>
+                <path fill="#fff" d="M112.57 391.19c20.056 0 38.928-7.808 53.12-22l76.693-76.692c5.385-5.384 14.765-5.373 20.137 0l76.989 76.989c14.192 14.192 33.064 22 53.12 22h15.138l-97.13 97.13c-29.53 29.53-77.418 29.53-106.948 0l-97.425-97.427h6.306z" transform="translate(125,0)"/>
+                <path fill="#fff" d="M112.57 120.81c20.056 0 38.928 7.808 53.12 22l76.693 76.692c5.565 5.566 14.572 5.566 20.137 0l76.989-76.989c14.192-14.192 33.064-22 53.12-22h6.306l-97.425-97.424c-29.53-29.53-77.418-29.53-106.948 0L97.432 120.81h15.138z" transform="translate(125,0)"/>
+                <path fill="#fff" d="M458.901 208.282l-55.938-55.938h-10.334c-13.538 0-26.555 5.44-36.083 15.082l-76.989 76.989c-7.361 7.36-17.085 11.04-26.808 11.04-9.724 0-19.447-3.68-26.808-11.04l-76.693-76.693c-9.528-9.528-22.545-15.082-36.083-15.082H98.913l-55.814 55.814c-29.53 29.53-29.53 77.418 0 106.948l55.814 55.814h14.238c13.538 0 26.555-5.44 36.083-15.082l76.693-76.693c14.334-14.334 39.282-14.334 53.616 0l76.989 76.989c9.528 9.528 22.545 15.082 36.083 15.082h10.334l55.938-55.938c29.531-29.531 29.531-77.419.014-107.292z" transform="translate(125,0)"/>
               </svg>
             </div>
             {% endif %}
@@ -174,24 +177,7 @@
               </svg>
             </div>
             {% endif %}
-            {% if block.settings.show_boleto %}
-            <div class="pay-chip pay-boleto" title="Boleto">
-              <svg viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg">
-                <rect width="750" height="471" rx="40" fill="#f5f5f5" stroke="#ddd" stroke-width="8"/>
-                <rect x="100" y="120" width="40" height="231" fill="#222"/>
-                <rect x="160" y="120" width="20" height="231" fill="#222"/>
-                <rect x="200" y="120" width="50" height="231" fill="#222"/>
-                <rect x="270" y="120" width="25" height="231" fill="#222"/>
-                <rect x="315" y="120" width="45" height="231" fill="#222"/>
-                <rect x="380" y="120" width="20" height="231" fill="#222"/>
-                <rect x="420" y="120" width="55" height="231" fill="#222"/>
-                <rect x="495" y="120" width="30" height="231" fill="#222"/>
-                <rect x="545" y="120" width="15" height="231" fill="#222"/>
-                <rect x="580" y="120" width="40" height="231" fill="#222"/>
-                <rect x="640" y="120" width="20" height="231" fill="#222"/>
-              </svg>
-            </div>
-            {% endif %}
+
           </div>
           {% if block.settings.installments != blank %}
             <p class="payment-installments">{{ block.settings.installments }}</p>
@@ -265,7 +251,6 @@
         { "type": "checkbox", "id": "show_amex", "label": "Mostrar American Express", "default": false },
         { "type": "checkbox", "id": "show_elo", "label": "Mostrar Elo", "default": true },
         { "type": "checkbox", "id": "show_hipercard", "label": "Mostrar Hipercard", "default": true },
-        { "type": "checkbox", "id": "show_boleto", "label": "Mostrar Boleto", "default": true },
         { "type": "text", "id": "installments", "label": "Texto de parcelamento", "default": "Em até 6x sem juros no cartão" }
       ]
     }
@@ -290,7 +275,7 @@
       { "type": "menu", "settings": { "title": "Central de Atendimento" } },
       { "type": "menu", "settings": { "title": "Institucional" } },
       { "type": "newsletter", "settings": {} },
-      { "type": "payment", "settings": { "show_pix": true, "show_visa": true, "show_mastercard": true, "show_elo": true, "show_hipercard": true, "show_boleto": true, "installments": "Em até 6x sem juros no cartão" } }
+      { "type": "payment", "settings": { "show_pix": true, "show_visa": true, "show_mastercard": true, "show_elo": true, "show_hipercard": true, "installments": "Em até 6x sem juros no cartão" } }
     ]
   }
 }
