@@ -255,11 +255,11 @@
       return v.options.every(function(opt, i) { return opt === selectedOptions[i]; });
     });
     if (!variant) return 99;
-    // inventory_management null = sem controle de estoque (sem limite)
-    if (!variant.inventory_management) return 99;
-    // inventory_policy 'continue' = pode vender mesmo sem estoque
-    if (variant.inventory_policy === 'continue') return 99;
-    return Math.max(1, variant.inventory_quantity || 1);
+    // Sem controle de estoque ou política "continue" = sem limite
+    if (!variant.inventory_management || variant.inventory_policy === 'continue') return 99;
+    // Se inventory_quantity não veio no JSON ou é 0, libera até 99 para não bloquear
+    if (!variant.inventory_quantity || variant.inventory_quantity <= 0) return 99;
+    return variant.inventory_quantity;
   }
 
   function changeQty(delta) {
