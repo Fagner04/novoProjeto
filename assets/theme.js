@@ -184,6 +184,12 @@ async function renderWholesaleProgress(cart) {
 
     var savings = origTotal - wsTotal;
 
+    // Atualiza o total exibido no rodapé do carrinho
+    var totalEl = document.getElementById('cart-total-price');
+    if (totalEl && hasWs) {
+      totalEl.innerHTML = '<s style="color:#aaa;font-size:13px;font-weight:400;">' + formatMoney(origTotal) + '</s> <span style="color:#15803D;font-weight:700;">' + formatMoney(wsTotal) + '</span>';
+    }
+
     wholesaleHtml =
       '<div style="display:flex;align-items:center;gap:6px;">' +
         '<span style="font-size:18px;">🎉</span>' +
@@ -209,6 +215,10 @@ async function renderWholesaleProgress(cart) {
         '</div>'
       : '');
   } else if (!active) {
+    // Restaura total normal
+    var totalEl = document.getElementById('cart-total-price');
+    if (totalEl) totalEl.textContent = formatMoney(cart.total_price);
+
     wholesaleHtml =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
         '<span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">' + remaining + '</strong> peça(s) para atacado!</span>' +
