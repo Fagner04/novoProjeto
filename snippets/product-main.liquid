@@ -31,19 +31,20 @@
           + (viaData.logradouro ? viaData.logradouro + ', ' : '') + viaData.bairro + ' — ' + viaData.localidade + '/' + viaData.uf + '</p>';
 
         var sep = FRETE_API.indexOf('?') > -1 ? '&' : '?';
-        var apiUrl = FRETE_API + sep + 'cep=' + cepRaw + '&uf=' + encodeURIComponent(viaData.uf) + '&cidade=' + encodeURIComponent(viaData.localidade) + '&callback=__freteCallback';
+        var targetUrl = FRETE_API + sep + 'cep=' + cepRaw + '&uf=' + encodeURIComponent(viaData.uf) + '&cidade=' + encodeURIComponent(viaData.localidade);
+        var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
 
-        window.__freteCallback = function(data) {
-          delete window.__freteCallback;
-          renderFrete(data);
-        };
-
-        var script = document.createElement('script');
-        script.onerror = function() {
-          resDiv.innerHTML = '<p class="frete-erro">Erro ao consultar planilha. Verifique a URL nas configurações.</p>';
-        };
-        script.src = apiUrl;
-        document.body.appendChild(script);
+        fetch(proxyUrl)
+          .then(function(r){ return r.json(); })
+          .then(function(proxyData) {
+            var data;
+            try { data = JSON.parse(proxyData.contents); } catch(e) { data = null; }
+            if (!data) { resDiv.innerHTML = '<p class="frete-erro">Resposta inválida da planilha.</p>'; return; }
+            renderFrete(data);
+          })
+          .catch(function() {
+            resDiv.innerHTML = '<p class="frete-erro">Erro ao consultar planilha. Verifique a URL nas configurações.</p>';
+          });
       })
       .catch(function() {
         resDiv.innerHTML = '<p class="frete-erro">Erro ao consultar CEP. Tente novamente.</p>';
