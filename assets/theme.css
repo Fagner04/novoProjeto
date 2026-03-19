@@ -727,14 +727,14 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .wac-panel.open { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: all !important; }
 
 /* ===== CARD CÁLCULO DE FRETE ===== */
-.frete-card { background: #fff; border-radius: 1rem; padding: 1.1rem 1.25rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-top: 0.75rem; }
+.frete-card { background: #fff; border-radius: 1rem; padding: 1.1rem 1.25rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-top: 0.75rem; overflow: hidden; box-sizing: border-box; width: 100%; }
 .frete-card-header { display: flex; align-items: center; gap: 0.5rem; font-family: 'Poppins', sans-serif; font-size: 0.875rem; font-weight: 700; color: var(--foreground); margin-bottom: 0.875rem; }
 .frete-card-header svg { color: var(--brand-orange); }
-.frete-input-row { display: flex; gap: 0.5rem; align-items: stretch; }
+.frete-input-row { display: flex; gap: 0.5rem; align-items: stretch; width: 100%; box-sizing: border-box; }
 .frete-input { flex: 1; border: 1.5px solid var(--border); border-radius: 0.625rem; padding: 0.65rem 0.875rem; font-size: 0.9375rem; font-family: 'Poppins', sans-serif; outline: none; transition: border-color 0.2s; color: var(--foreground); background: #fafafa; }
 .frete-input:focus { border-color: var(--brand-orange); background: #fff; }
 .frete-input::placeholder { color: #a1a1aa; }
-.frete-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1rem; background: var(--brand-orange); color: #fff; border: none; border-radius: 0.625rem; font-size: 0.8125rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: filter 0.2s; font-family: 'Poppins', sans-serif; flex-shrink: 0; }
+.frete-btn { display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.65rem 0.875rem; background: var(--brand-orange); color: #fff; border: none; border-radius: 0.625rem; font-size: 0.8125rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: filter 0.2s; font-family: 'Poppins', sans-serif; flex-shrink: 0; max-width: 120px; }
 .frete-btn:hover { filter: brightness(1.1); }
 .frete-endereco { margin-top: 0.5rem; }
 .frete-end-text { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; color: var(--muted-foreground); }
