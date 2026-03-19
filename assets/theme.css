@@ -136,7 +136,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .header-search-form:focus-within { border-color: var(--brand-orange); }
 
 /* ===== HERO ===== */
-.hero-section { width: 100%; padding: 0; margin-top: 0; background: var(--background); }
+.hero-section { width: 100%; padding: 0; margin: 0; background: transparent; }
 .hero-carousel-wrap {
   position: relative;
   overflow: hidden;
