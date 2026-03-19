@@ -159,6 +159,30 @@
             <span>1ª Troca Grátis</span>
           </div>
         </div>
+
+        <!-- Card de Cálculo de Frete -->
+        {% if settings.frete_planilha_enabled and settings.frete_planilha_url != blank %}
+        <div class="frete-card">
+          <div class="frete-card-header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Calcular Frete</span>
+          </div>
+          <div class="frete-input-row">
+            <input type="text" id="frete-cep" class="frete-input" placeholder="00000-000" maxlength="9" inputmode="numeric"
+              oninput="freteFormatCep(this)" onkeydown="if(event.key==='Enter')calcularFrete()">
+            <button class="frete-btn" onclick="calcularFrete()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              Calcular
+            </button>
+          </div>
+          <div id="frete-endereco" class="frete-endereco"></div>
+          <div id="frete-resultado" class="frete-resultado"></div>
+          <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" class="frete-nao-sei">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Não sei meu CEP
+          </a>
+        </div>
+        {% endif %}
       </div>
 
     </div>
@@ -290,7 +314,60 @@
   // Inicializa botões de quantidade após declarar tudo
   changeQty(0);
 
-  function formatMoney(cents) {
+  // --- Frete ---
+  var FRETE_API = {{ settings.frete_planilha_url | json }};
+
+  function freteFormatCep(input) {
+    var v = input.value.replace(/\D/g, '').slice(0, 8);
+    input.value = v.length > 5 ? v.slice(0,5) + '-' + v.slice(5) : v;
+    if (v.length === 8) calcularFrete();
+  }
+
+  async function calcularFrete() {
+    var cepRaw = (document.getElementById('frete-cep').value || '').replace(/\D/g, '');
+    var endDiv = document.getElementById('frete-endereco');
+    var resDiv = document.getElementById('frete-resultado');
+    if (cepRaw.length !== 8) {
+      endDiv.innerHTML = '';
+      resDiv.innerHTML = '<p class="frete-erro">Digite um CEP válido com 8 dígitos.</p>';
+      return;
+    }
+    resDiv.innerHTML = '<p class="frete-loading"><span class="frete-spinner"></span> Consultando...</p>';
+    endDiv.innerHTML = '';
+    try {
+      // 1. Busca endereço via ViaCEP
+      var viaRes = await fetch('https://viacep.com.br/ws/' + cepRaw + '/json/');
+      var viaData = await viaRes.json();
+      if (viaData.erro) { resDiv.innerHTML = '<p class="frete-erro">CEP não encontrado.</p>'; return; }
+      endDiv.innerHTML = '<p class="frete-end-text"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ' + (viaData.logradouro ? viaData.logradouro + ', ' : '') + viaData.bairro + ' — ' + viaData.localidade + '/' + viaData.uf + '</p>';
+
+      // 2. Consulta planilha Google Sheets
+      var apiUrl = FRETE_API + (FRETE_API.indexOf('?') > -1 ? '&' : '?') + 'cep=' + cepRaw + '&uf=' + viaData.uf + '&cidade=' + encodeURIComponent(viaData.localidade);
+      var freteRes = await fetch(apiUrl);
+      var freteData = await freteRes.json();
+
+      if (freteData.error) { resDiv.innerHTML = '<p class="frete-erro">' + freteData.error + '</p>'; return; }
+
+      var html = '<div class="frete-opcoes">';
+      var opcoes = Array.isArray(freteData) ? freteData : (freteData.opcoes || [freteData]);
+      opcoes.forEach(function(op) {
+        var gratis = op.valor == 0 || op.valor === '0' || String(op.valor).toLowerCase() === 'grátis';
+        html += '<div class="frete-opcao">'
+          + '<div class="frete-opcao-info">'
+          + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>'
+          + '<div><strong>' + (op.nome || op.modalidade || 'Entrega') + '</strong>'
+          + (op.prazo ? '<span class="frete-prazo">Até ' + op.prazo + ' dias úteis</span>' : '')
+          + '</div></div>'
+          + '<span class="frete-valor ' + (gratis ? 'frete-gratis' : '') + '">' + (gratis ? 'GRÁTIS' : 'R$ ' + String(op.valor).replace('.', ',')) + '</span>'
+          + '</div>';
+      });
+      html += '</div>';
+      resDiv.innerHTML = html;
+    } catch(e) {
+      resDiv.innerHTML = '<p class="frete-erro">Erro ao consultar frete. Tente novamente.</p>';
+    }
+  }
+
     return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
   }
 
