@@ -38,7 +38,7 @@
               {% endif %}
               <p class="vitrine-card-status">
                 <span class="vitrine-dot {% unless product.available %}vitrine-dot-off{% endunless %}"></span>
-                {{ product.available ? 'Disponível' : 'Esgotado' }}
+                {% if product.available %}Disponível{% else %}Esgotado{% endif %}
               </p>
             </div>
           </a>
