@@ -465,6 +465,79 @@
     var expanded = content.classList.toggle('expanded');
     btn.textContent = expanded ? '− Ver menos' : '+ Ver mais';
   }
+
+  // --- Verifica estoque após adicionar ao carrinho ---
+  function checkStockAfterAdd(variantId, inventoryQty, inventoryPolicy) {
+    // Se sem controle de estoque ou política continue, nunca esgota
+    if (!inventoryQty || inventoryPolicy === 'continue') return;
+
+    fetch('/cart.js')
+      .then(function(r) { return r.json(); })
+      .then(function(cart) {
+        var inCart = 0;
+        cart.items.forEach(function(item) {
+          if (item.variant_id == variantId) inCart += item.quantity;
+        });
+        var addBtn = document.getElementById('add-to-cart-btn');
+        if (inCart >= inventoryQty) {
+          addBtn.disabled = true;
+          addBtn.textContent = 'Esgotado';
+        } else {
+          // Atualiza o máximo de quantidade disponível
+          var remaining = inventoryQty - inCart;
+          if (qty > remaining) {
+            qty = remaining;
+            document.getElementById('qty-display').textContent = qty;
+            document.getElementById('qty-input').value = qty;
+          }
+        }
+      });
+  }
+
+  // Intercepta o submit do formulário para verificar estoque após adicionar
+  document.getElementById('product-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var form = this;
+    var addBtn = document.getElementById('add-to-cart-btn');
+    var originalText = addBtn.textContent;
+    addBtn.disabled = true;
+    addBtn.textContent = 'Adicionando...';
+
+    var formData = new FormData(form);
+    fetch('/cart/add.js', { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(item) {
+        // Dispara evento para atualizar o carrinho (drawer)
+        document.dispatchEvent(new CustomEvent('cart:updated'));
+        // Atualiza badge do carrinho se existir
+        fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+          var badge = document.querySelector('.cart-badge');
+          if (badge) badge.textContent = cart.item_count;
+          // Abre o drawer se existir
+          var drawer = document.getElementById('cart-drawer');
+          if (drawer) {
+            drawer.classList.add('open');
+            var overlay = document.querySelector('.cart-overlay');
+            if (overlay) overlay.style.display = 'block';
+          }
+        });
+
+        // Verifica estoque restante
+        var variantId = parseInt(document.getElementById('variant-id').value);
+        var inv = variantInventory[variantId];
+        if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
+          checkStockAfterAdd(variantId, inv.qty, inv.policy);
+        } else {
+          addBtn.disabled = false;
+          addBtn.textContent = originalText;
+        }
+      })
+      .catch(function(err) {
+        addBtn.disabled = false;
+        addBtn.textContent = originalText;
+        console.error('Erro ao adicionar ao carrinho:', err);
+      });
+  });
 </script>
 
 
