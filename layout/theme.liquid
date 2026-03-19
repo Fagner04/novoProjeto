@@ -158,6 +158,14 @@
 
   <script src="{{ 'theme.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
   <script>
+    function setHeaderHeight(){
+      var h=document.getElementById('site-header');
+      if(h)document.documentElement.style.setProperty('--header-h',h.offsetHeight+'px');
+    }
+    document.addEventListener('DOMContentLoaded',setHeaderHeight);
+    window.addEventListener('resize',setHeaderHeight);
+  </script>
+  <script>
     window.__cwAtacado = {
       enabled: {{ settings.conectwhats_atacado_enabled | json }},
       min_qty: {{ settings.conectwhats_atacado_min_qty | default: 6 }}
