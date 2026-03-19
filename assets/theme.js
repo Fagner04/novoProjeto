@@ -312,7 +312,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const qtyToAdd = Math.min(qty, canAdd);
         await addToCart(variantId, qtyToAdd);
         btn.textContent = 'Adicionado ✓';
-        setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
+        // Verifica se esgotou após adicionar
+        if (typeof checkStockAfterAdd === 'function') {
+          var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
+          if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
+            checkStockAfterAdd(variantId, inv.qty, inv.policy);
+          } else {
+            setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
+          }
+        } else {
+          setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
+        }
         openCart();
       } catch(err) {
         btn.disabled = false; btn.textContent = 'Erro - Tente novamente';
