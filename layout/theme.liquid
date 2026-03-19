@@ -159,8 +159,11 @@
   <script src="{{ 'theme.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
   <script>
     function setHeaderHeight(){
-      var h=document.getElementById('site-header');
-      if(h)document.documentElement.style.setProperty('--header-h',h.offsetHeight+'px');
+      var ann=document.getElementById('announcement-bar');
+      var hdr=document.getElementById('site-header');
+      var annH=ann?ann.offsetHeight:0;
+      var hdrH=hdr?hdr.offsetHeight:0;
+      document.documentElement.style.setProperty('--header-h',(annH+hdrH)+'px');
     }
     document.addEventListener('DOMContentLoaded',setHeaderHeight);
     window.addEventListener('resize',setHeaderHeight);
