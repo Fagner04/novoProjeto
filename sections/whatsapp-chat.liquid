@@ -68,6 +68,40 @@
   var SHOW_DELAY = {{ show_delay }} * 1000;
   var HIDE_AFTER = {{ hide_after }} * 1000;
   var REPEAT_AFTER = {{ repeat_after }} * 1000;
+  var STATUS_OFFLINE = '{{ section.settings.status_text | default: "Offline" | escape }}';
+  var STATUS_ONLINE  = '{{ section.settings.status_online | default: "Online agora" | escape }}';
+  var SCHEDULE_ENABLED = {{ section.settings.schedule_enabled | default: true }};
+  var TZ_OFFSET = parseInt('{{ section.settings.tz_offset | default: "-3" }}') || -3;
+  var HOURS = {
+    weekday:  '{{ section.settings.hours_weekday | default: "09:00-18:00" | escape }}',
+    saturday: '{{ section.settings.hours_saturday | default: "10:00-14:00" | escape }}',
+    sunday:   '{{ section.settings.hours_sunday | default: "" | escape }}'
+  };
+
+  function parseRange(str) {
+    if (!str) return null;
+    var p = str.split('-');
+    if (p.length < 2) return null;
+    function toMin(t) { var x = t.split(':'); return parseInt(x[0]) * 60 + (parseInt(x[1]) || 0); }
+    return { start: toMin(p[0]), end: toMin(p[1]) };
+  }
+  function isOnline() {
+    if (!SCHEDULE_ENABLED) return false;
+    var now = new Date();
+    var local = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + TZ_OFFSET * 3600000);
+    var dow = local.getDay();
+    var mins = local.getHours() * 60 + local.getMinutes();
+    var rangeStr = dow === 0 ? HOURS.sunday : dow === 6 ? HOURS.saturday : HOURS.weekday;
+    var range = parseRange(rangeStr);
+    return range && mins >= range.start && mins < range.end;
+  }
+  function applyStatus() {
+    var online = isOnline();
+    var dot = document.querySelector('#wa-panel .wa-status');
+    if (dot) dot.textContent = online ? STATUS_ONLINE : STATUS_OFFLINE;
+  }
+  applyStatus();
+  setInterval(applyStatus, 60000);
 
   // Cycle messages from blocks
   var cycleMessages = [
@@ -163,7 +197,22 @@
     { "type": "header", "content": "Configurações gerais" },
     { "type": "text", "id": "whatsapp_number", "label": "Número WhatsApp (com DDI)", "default": "5562994319090", "info": "Ex: 5562994319090 (sem + ou espaços)" },
     { "type": "text", "id": "agent_name", "label": "Nome do atendente", "default": "Musas Atendimento" },
-    { "type": "text", "id": "status_text", "label": "Status", "default": "Offline" },
+    { "type": "text", "id": "status_text", "label": "Status quando offline", "default": "Offline" },
+    { "type": "header", "content": "Horário de Atendimento" },
+    { "type": "paragraph", "content": "O status muda automaticamente para Online/Offline conforme o horário configurado." },
+    { "type": "checkbox", "id": "schedule_enabled", "label": "Ativar status automático por horário", "default": true },
+    { "type": "select", "id": "tz_offset", "label": "Fuso horário", "default": "-3",
+      "options": [
+        { "value": "-5", "label": "UTC-5 (Acre)" },
+        { "value": "-4", "label": "UTC-4 (Amazonas)" },
+        { "value": "-3", "label": "UTC-3 (Brasília)" },
+        { "value": "-2", "label": "UTC-2 (Fernando de Noronha)" }
+      ]
+    },
+    { "type": "text", "id": "hours_weekday", "label": "Horário Seg–Sex", "default": "09:00-18:00", "info": "Formato HH:MM-HH:MM. Ex: 09:00-18:00" },
+    { "type": "text", "id": "hours_saturday", "label": "Horário Sábado", "default": "10:00-14:00", "info": "Deixe vazio para não atender aos sábados" },
+    { "type": "text", "id": "hours_sunday", "label": "Horário Domingo", "default": "", "info": "Deixe vazio para não atender aos domingos" },
+    { "type": "text", "id": "status_online", "label": "Texto quando online", "default": "Online agora" },
     { "type": "header", "content": "Mensagens" },
     { "type": "textarea", "id": "welcome_message", "label": "Mensagem de boas-vindas (painel)", "default": "👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?" },
     { "type": "text", "id": "textarea_placeholder", "label": "Placeholder do campo de texto", "default": "Digite sua mensagem..." },
