@@ -1,4 +1,4 @@
-<section class="hero-section" style="--hero-h-desktop:{{ section.settings.height_desktop }}px;--hero-h-mobile:{{ section.settings.height_mobile }}px;">
+<section class="hero-section" style="--hero-h-desktop:{% if section.settings.height_mode == 'custom' %}{{ section.settings.height_desktop }}px{% else %}100svh{% endif %};--hero-h-mobile:{% if section.settings.height_mode == 'custom' %}{{ section.settings.height_mobile }}px{% else %}100svh{% endif %};">
   <div class="hero-carousel-wrap">
     <div class="hero-slides" id="hero-slides">
       {% for block in section.blocks %}
@@ -93,24 +93,30 @@ document.addEventListener('DOMContentLoaded',function(){heroGoTo(0);resetHeroTim
   "presets": [{ "name": "Hero Banner", "blocks": [{ "type": "slide" }] }],
   "settings": [
     { "type": "header", "content": "Tamanho do Banner" },
-    { "type": "paragraph", "content": "📐 Medidas recomendadas — Desktop: 1920×600px (paisagem). Mobile: 750×900px (retrato). Formatos aceitos: JPG, PNG, WEBP." },
+    { "type": "paragraph", "content": "📐 Medidas recomendadas — Desktop: 1920×1080px (tela cheia). Mobile: 750×1334px (retrato). Formatos aceitos: JPG, PNG, WEBP." },
+    { "type": "select", "id": "height_mode", "label": "Altura do banner", "default": "full", "options": [
+      { "value": "full", "label": "Tela cheia (100vh)" },
+      { "value": "custom", "label": "Altura personalizada (px)" }
+    ]},
     {
       "type": "range",
       "id": "height_desktop",
-      "label": "Altura no desktop (px)",
+      "label": "Altura desktop personalizada (px)",
       "min": 300,
       "max": 900,
       "step": 10,
-      "default": 580
+      "default": 580,
+      "info": "Usado apenas quando 'Altura personalizada' estiver selecionada"
     },
     {
       "type": "range",
       "id": "height_mobile",
-      "label": "Altura no mobile (px)",
+      "label": "Altura mobile personalizada (px)",
       "min": 300,
       "max": 800,
       "step": 10,
-      "default": 500
+      "default": 500,
+      "info": "Usado apenas quando 'Altura personalizada' estiver selecionada"
     },
     { "type": "header", "content": "Card de Oferta" },
     { "type": "checkbox", "id": "promo_enabled", "label": "Exibir card de oferta", "default": false },
