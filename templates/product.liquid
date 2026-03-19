@@ -332,6 +332,10 @@
       resDiv.innerHTML = '<p class="frete-erro">Digite um CEP válido com 8 dígitos.</p>';
       return;
     }
+    if (!FRETE_API) {
+      resDiv.innerHTML = '<p class="frete-erro">URL da planilha não configurada nas settings.</p>';
+      return;
+    }
     resDiv.innerHTML = '<p class="frete-loading"><span class="frete-spinner"></span> Consultando...</p>';
     endDiv.innerHTML = '';
     try {
@@ -341,17 +345,40 @@
       if (viaData.erro) { resDiv.innerHTML = '<p class="frete-erro">CEP não encontrado.</p>'; return; }
       endDiv.innerHTML = '<p class="frete-end-text"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ' + (viaData.logradouro ? viaData.logradouro + ', ' : '') + viaData.bairro + ' — ' + viaData.localidade + '/' + viaData.uf + '</p>';
 
-      // 2. Consulta planilha Google Sheets
-      var apiUrl = FRETE_API + (FRETE_API.indexOf('?') > -1 ? '&' : '?') + 'cep=' + cepRaw + '&uf=' + viaData.uf + '&cidade=' + encodeURIComponent(viaData.localidade);
-      var freteRes = await fetch(apiUrl);
-      var freteData = await freteRes.json();
+      // 2. Consulta planilha via JSONP (evita CORS do Google Apps Script)
+      var sep = FRETE_API.indexOf('?') > -1 ? '&' : '?';
+      var apiUrl = FRETE_API + sep + 'cep=' + cepRaw + '&uf=' + encodeURIComponent(viaData.uf) + '&cidade=' + encodeURIComponent(viaData.localidade) + '&callback=__freteCallback';
+
+      var freteData = await new Promise(function(resolve, reject) {
+        var cbName = '__freteCallback';
+        var script = document.createElement('script');
+        var timer = setTimeout(function() {
+          delete window[cbName];
+          document.body.removeChild(script);
+          reject(new Error('timeout'));
+        }, 8000);
+        window[cbName] = function(data) {
+          clearTimeout(timer);
+          delete window[cbName];
+          document.body.removeChild(script);
+          resolve(data);
+        };
+        script.onerror = function() {
+          clearTimeout(timer);
+          delete window[cbName];
+          document.body.removeChild(script);
+          reject(new Error('script error'));
+        };
+        script.src = apiUrl;
+        document.body.appendChild(script);
+      });
 
       if (freteData.error) { resDiv.innerHTML = '<p class="frete-erro">' + freteData.error + '</p>'; return; }
 
       var html = '<div class="frete-opcoes">';
       var opcoes = Array.isArray(freteData) ? freteData : (freteData.opcoes || [freteData]);
       opcoes.forEach(function(op) {
-        var gratis = op.valor == 0 || op.valor === '0' || String(op.valor).toLowerCase() === 'grátis';
+        var gratis = op.valor == 0 || op.valor === '0' || String(op.valor).toLowerCase().indexOf('gr') > -1;
         html += '<div class="frete-opcao">'
           + '<div class="frete-opcao-info">'
           + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>'
@@ -364,10 +391,9 @@
       html += '</div>';
       resDiv.innerHTML = html;
     } catch(e) {
-      resDiv.innerHTML = '<p class="frete-erro">Erro ao consultar frete. Tente novamente.</p>';
+      resDiv.innerHTML = '<p class="frete-erro">Erro ao consultar frete. Verifique se a URL da planilha está correta e publicada como Web App.</p>';
     }
   }
-
     return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
   }
 
