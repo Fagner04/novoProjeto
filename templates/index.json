@@ -46,6 +46,7 @@
         "slide_Awni3z"
       ],
       "settings": {
+        "margin_top_extra": -80,
         "height_mode": "custom",
         "height_desktop": 720,
         "height_mobile": 500,
