@@ -1,5 +1,5 @@
 <script>
-  var FRETE_API = {{ settings.frete_planilha_url | json }};
+  var FRETE_API = {{ frete_url | json }};
 
   function freteFormatCep(input) {
     var v = input.value.replace(/\D/g, '').slice(0, 8);
@@ -234,7 +234,7 @@
         </div>
 
         <!-- Card de Cálculo de Frete -->
-        {% if settings.frete_planilha_enabled and settings.frete_planilha_url != blank %}
+        {% if frete_enabled and frete_url != blank %}
         <div class="frete-card">
           <div class="frete-card-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
