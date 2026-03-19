@@ -284,6 +284,19 @@
         "gradient_angle": 180
       }
     },
+    "vitrine_main": {
+      "type": "vitrine",
+      "settings": {
+        "title": "VITRINE",
+        "products_count": 6,
+        "show_frete": true,
+        "show_parcelas": true,
+        "accent_color": "#fe7e41",
+        "bg_color": "#fafafa",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
     "about_section_main": {
       "type": "about",
       "settings": {
@@ -310,6 +323,7 @@
     "featured_products_3iVPUp",
     "177353118617f156ac",
     "products_carousel_Lfhr8p",
+    "vitrine_main",
     "about_section_main"
   ]
 }
