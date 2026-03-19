@@ -32,16 +32,22 @@
 
         var sep = FRETE_API.indexOf('?') > -1 ? '&' : '?';
         var targetUrl = FRETE_API + sep + 'cep=' + cepRaw + '&uf=' + encodeURIComponent(viaData.uf) + '&cidade=' + encodeURIComponent(viaData.localidade);
-        var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
 
-        fetch(proxyUrl)
+        fetch(targetUrl, { redirect: 'follow' })
           .then(function(r){ return r.json(); })
           .then(function(data) {
             if (!data) { resDiv.innerHTML = '<p class="frete-erro">Resposta inválida da planilha.</p>'; return; }
             renderFrete(data);
           })
           .catch(function() {
-            resDiv.innerHTML = '<p class="frete-erro">Erro ao consultar planilha. Verifique a URL nas configurações.</p>';
+            // fallback: tenta via proxy gratuito
+            var proxyUrl = 'https://proxy.cors.sh/' + targetUrl;
+            fetch(proxyUrl, { headers: { 'x-cors-api-key': 'temp_' + Date.now() } })
+              .then(function(r){ return r.json(); })
+              .then(function(data) { renderFrete(data); })
+              .catch(function() {
+                resDiv.innerHTML = '<p class="frete-erro">Não foi possível consultar o frete. Tente novamente.</p>';
+              });
           });
       })
       .catch(function() {
