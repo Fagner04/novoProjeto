@@ -32,13 +32,11 @@
 
         var sep = FRETE_API.indexOf('?') > -1 ? '&' : '?';
         var targetUrl = FRETE_API + sep + 'cep=' + cepRaw + '&uf=' + encodeURIComponent(viaData.uf) + '&cidade=' + encodeURIComponent(viaData.localidade);
-        var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
+        var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
 
         fetch(proxyUrl)
           .then(function(r){ return r.json(); })
-          .then(function(proxyData) {
-            var data;
-            try { data = JSON.parse(proxyData.contents); } catch(e) { data = null; }
+          .then(function(data) {
             if (!data) { resDiv.innerHTML = '<p class="frete-erro">Resposta inválida da planilha.</p>'; return; }
             renderFrete(data);
           })
