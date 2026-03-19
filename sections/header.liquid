@@ -149,12 +149,20 @@
         });
 
         function fetchSuggestions(q){
-          fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=6&resources[options][fields]=title,product_type,variants.title,vendor')
+          var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          var timeoutId = setTimeout(function(){
+            if(controller) controller.abort();
+            box.innerHTML = '<div class="search-ac-empty">Tempo esgotado. <a href="/search?q=' + encodeURIComponent(q) + '&type=product" style="color:#7c3aed;">Ver todos resultados</a></div>';
+            box.style.display = 'block';
+          }, 4000);
+
+          fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=6&resources[options][fields]=title,product_type,variants.title,vendor', controller ? { signal: controller.signal } : {})
             .then(function(r){ return r.json(); })
             .then(function(data){
+              clearTimeout(timeoutId);
               var products = (data.resources && data.resources.results && data.resources.results.products) || [];
               if(products.length === 0){
-                box.innerHTML = '<div class="search-ac-empty">Nenhum produto encontrado</div>';
+                box.innerHTML = '<div class="search-ac-empty">Nenhum produto encontrado. <a href="/search?q=' + encodeURIComponent(q) + '&type=product" style="color:#7c3aed;">Busca completa</a></div>';
                 box.style.display = 'block';
                 return;
               }
@@ -168,7 +176,11 @@
               }).join('');
               box.style.display = 'block';
             })
-            .catch(function(){ box.style.display='none'; });
+            .catch(function(){
+              clearTimeout(timeoutId);
+              box.innerHTML = '<div class="search-ac-empty"><a href="/search?q=' + encodeURIComponent(q) + '&type=product" style="color:#7c3aed;font-weight:600;">🔍 Ver resultados para "' + q + '"</a></div>';
+              box.style.display = 'block';
+            });
         }
       }
 
