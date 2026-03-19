@@ -46,8 +46,8 @@
         "slide_Awni3z"
       ],
       "settings": {
-        "height_mode": "custom",
-        "height_desktop": 300,
+        "height_mode": "full",
+        "height_desktop": 900,
         "height_mobile": 500,
         "promo_enabled": true,
         "promo_badge": "✨ OFERTA ESPECIAL ✨",
