@@ -1,4 +1,4 @@
-<section class="hero-section">
+<section class="hero-section" style="--hero-h-desktop:{{ section.settings.height_desktop }}px;--hero-h-mobile:{{ section.settings.height_mobile }}px;">
   <div class="hero-carousel-wrap">
     <div class="hero-slides" id="hero-slides">
       {% for block in section.blocks %}
@@ -92,6 +92,26 @@ document.addEventListener('DOMContentLoaded',function(){heroGoTo(0);resetHeroTim
   ],
   "presets": [{ "name": "Hero Banner", "blocks": [{ "type": "slide" }] }],
   "settings": [
+    { "type": "header", "content": "Tamanho do Banner" },
+    { "type": "paragraph", "content": "📐 Medidas recomendadas — Desktop: 1920×600px (paisagem). Mobile: 750×900px (retrato). Formatos aceitos: JPG, PNG, WEBP." },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "Altura no desktop (px)",
+      "min": 300,
+      "max": 900,
+      "step": 10,
+      "default": 580
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Altura no mobile (px)",
+      "min": 300,
+      "max": 800,
+      "step": 10,
+      "default": 500
+    },
     { "type": "header", "content": "Card de Oferta" },
     { "type": "checkbox", "id": "promo_enabled", "label": "Exibir card de oferta", "default": false },
     { "type": "text", "id": "promo_badge", "label": "Badge (ex: ✨ OFERTA ESPECIAL ✨)", "default": "✨ OFERTA ESPECIAL ✨" },
