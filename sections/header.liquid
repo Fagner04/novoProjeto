@@ -152,7 +152,10 @@
               return;
             }
             box.innerHTML = products.map(function(p){
-              var img = p.featured_image ? '<img src="' + p.featured_image + '" alt="' + p.title + '">' : '<img src="" alt="" style="background:#f4f4f5;">';
+              var imgSrc = p.featured_image ? (p.featured_image.indexOf('?') > -1 ? p.featured_image + '&width=100' : p.featured_image + '?width=100') : '';
+              var img = imgSrc
+                ? '<img src="' + imgSrc + '" alt="' + p.title.replace(/"/g,'&quot;') + '">'
+                : '<div style="width:44px;height:44px;border-radius:8px;background:#f4f4f5;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
               var price = p.price ? '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.',',') + '</span>' : '';
               return '<a href="' + p.url + '">' + img + '<span class="search-ac-info"><span class="search-ac-title">' + p.title + '</span>' + price + '</span></a>';
             }).join('');
