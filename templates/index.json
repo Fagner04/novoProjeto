@@ -46,7 +46,10 @@
         "slide_Awni3z"
       ],
       "settings": {
-        "promo_enabled": false,
+        "height_mode": "full",
+        "height_desktop": 900,
+        "height_mobile": 500,
+        "promo_enabled": true,
         "promo_badge": "✨ OFERTA ESPECIAL ✨",
         "promo_title": "Feliz dia das mulheres 😍",
         "promo_text": "Cada peça é um presente de força e beleza!",
