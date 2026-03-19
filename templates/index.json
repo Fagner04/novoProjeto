@@ -28,6 +28,7 @@
         },
         "slide_Awni3z": {
           "type": "slide",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/Banner_Promocao_De_Doces_Confeitaria_Rosa.png",
             "image_mobile": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png",
@@ -46,7 +47,7 @@
         "slide_Awni3z"
       ],
       "settings": {
-        "margin_top_extra": -72,
+        "margin_top_extra": -70,
         "height_mode": "custom",
         "height_desktop": 640,
         "height_mobile": 500,
