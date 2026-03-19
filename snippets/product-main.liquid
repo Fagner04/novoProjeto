@@ -30,24 +30,14 @@
         endDiv.innerHTML = '<p class="frete-end-text"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> '
           + (viaData.logradouro ? viaData.logradouro + ', ' : '') + viaData.bairro + ' — ' + viaData.localidade + '/' + viaData.uf + '</p>';
 
-        var sep = FRETE_API.indexOf('?') > -1 ? '&' : '?';
-        var targetUrl = FRETE_API + sep + 'cep=' + cepRaw + '&uf=' + encodeURIComponent(viaData.uf) + '&cidade=' + encodeURIComponent(viaData.localidade);
-
-        fetch(targetUrl, { redirect: 'follow' })
+        fetch(FRETE_API + '?cep=' + cepRaw)
           .then(function(r){ return r.json(); })
           .then(function(data) {
             if (!data) { resDiv.innerHTML = '<p class="frete-erro">Resposta inválida da planilha.</p>'; return; }
             renderFrete(data);
           })
           .catch(function() {
-            // fallback: tenta via proxy gratuito
-            var proxyUrl = 'https://proxy.cors.sh/' + targetUrl;
-            fetch(proxyUrl, { headers: { 'x-cors-api-key': 'temp_' + Date.now() } })
-              .then(function(r){ return r.json(); })
-              .then(function(data) { renderFrete(data); })
-              .catch(function() {
-                resDiv.innerHTML = '<p class="frete-erro">Não foi possível consultar o frete. Tente novamente.</p>';
-              });
+            resDiv.innerHTML = '<p class="frete-erro">Não foi possível consultar o frete. Tente novamente.</p>';
           });
       })
       .catch(function() {
@@ -57,20 +47,47 @@
 
   function renderFrete(data) {
     var resDiv = document.getElementById('frete-resultado');
-    if (!data || data.error) { resDiv.innerHTML = '<p class="frete-erro">' + (data && data.error ? data.error : 'Sem resultado.') + '</p>'; return; }
-    var opcoes = Array.isArray(data) ? data : (data.opcoes || [data]);
+    if (!data) { resDiv.innerHTML = '<p class="frete-erro">Sem resultado.</p>'; return; }
+
+    // Formato: { success: false, error: "..." }
+    if (!data.success && data.error) {
+      resDiv.innerHTML = '<p class="frete-erro">' + data.error + '</p>';
+      return;
+    }
+
     var html = '<div class="frete-opcoes">';
-    opcoes.forEach(function(op) {
-      var gratis = !op.valor || op.valor == 0 || String(op.valor).toLowerCase().indexOf('gr') > -1;
+
+    // Formato: { options: [{name, price, estimated_days}] }
+    if (data.options && data.options.length > 0) {
+      data.options.forEach(function(op) {
+        var price = typeof op.price === 'number' ? op.price.toFixed(2).replace('.', ',') : op.price;
+        var gratis = !op.price || op.price == 0;
+        html += '<div class="frete-opcao">'
+          + '<div class="frete-opcao-info">'
+          + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>'
+          + '<div><strong>' + (op.name || 'Entrega') + '</strong>'
+          + (op.estimated_days ? '<span class="frete-prazo">' + op.estimated_days + '</span>' : '')
+          + '</div></div>'
+          + '<span class="frete-valor ' + (gratis ? 'frete-gratis' : '') + '">' + (gratis ? 'GRÁTIS' : 'R$ ' + price) + '</span>'
+          + '</div>';
+      });
+    // Formato legado: { frete, prazo }
+    } else if (data.frete !== undefined) {
+      var valor = typeof data.frete === 'number' ? data.frete.toFixed(2).replace('.', ',') : data.frete;
+      var gratis = !data.frete || data.frete == 0;
       html += '<div class="frete-opcao">'
         + '<div class="frete-opcao-info">'
         + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>'
-        + '<div><strong>' + (op.nome || op.modalidade || 'Entrega') + '</strong>'
-        + (op.prazo ? '<span class="frete-prazo">Até ' + op.prazo + ' dias úteis</span>' : '')
+        + '<div><strong>Entrega</strong>'
+        + (data.prazo ? '<span class="frete-prazo">Até ' + data.prazo + ' dias úteis</span>' : '')
         + '</div></div>'
-        + '<span class="frete-valor ' + (gratis ? 'frete-gratis' : '') + '">' + (gratis ? 'GRÁTIS' : 'R$ ' + String(op.valor).replace('.', ',')) + '</span>'
+        + '<span class="frete-valor ' + (gratis ? 'frete-gratis' : '') + '">' + (gratis ? 'GRÁTIS' : 'R$ ' + valor) + '</span>'
         + '</div>';
-    });
+    } else {
+      resDiv.innerHTML = '<p class="frete-erro">Formato de resposta não reconhecido.</p>';
+      return;
+    }
+
     html += '</div>';
     resDiv.innerHTML = html;
   }
