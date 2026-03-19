@@ -1,5 +1,5 @@
 <script>
-  var FRETE_API = {{ settings.frete_planilha_url | json }};
+  var FRETE_API = {{ section.settings.frete_url | json }};
 
   function freteFormatCep(input) {
     var v = input.value.replace(/\D/g, '').slice(0, 8);
@@ -234,7 +234,7 @@
         </div>
 
         <!-- Card de Cálculo de Frete -->
-        {% if settings.frete_planilha_enabled and settings.frete_planilha_url != blank %}
+        {% if section.settings.frete_enabled and section.settings.frete_url != blank %}
         <div class="frete-card">
           <div class="frete-card-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
@@ -389,8 +389,9 @@
 
   // --- Frete: funções definidas no topo do arquivo ---
 
-
   function formatMoney(cents) {
+    return 'R$\u00a0' + (cents / 100).toFixed(2).replace('.', ',');
+  }
 
   // --- Gallery: show pair of images ---
   function setMainImages(index) {
@@ -428,3 +429,24 @@
     btn.textContent = expanded ? '− Ver menos' : '+ Ver mais';
   }
 </script>
+
+{% schema %}
+{
+  "name": "Página de Produto",
+  "settings": [
+    { "type": "header", "content": "Cálculo de Frete" },
+    {
+      "type": "checkbox",
+      "id": "frete_enabled",
+      "label": "Exibir card de cálculo de frete",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "frete_url",
+      "label": "URL do Google Apps Script",
+      "info": "Cole aqui a URL do seu Apps Script publicado como Web App. Ex: https://script.google.com/macros/s/SEU_ID/exec"
+    }
+  ]
+}
+{% endschema %}
