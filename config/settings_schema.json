@@ -89,7 +89,22 @@
       { "type": "checkbox", "id": "wa_enabled", "label": "Ativar chat WhatsApp", "default": true },
       { "type": "text", "id": "wa_number", "label": "Número WhatsApp (com DDI)", "default": "5562994319090", "info": "Ex: 5562994319090 (sem + ou espaços)" },
       { "type": "text", "id": "wa_agent_name", "label": "Nome do atendente", "default": "Musas Atendimento" },
-      { "type": "text", "id": "wa_status", "label": "Status exibido", "default": "Offline" },
+      { "type": "text", "id": "wa_status", "label": "Status exibido (quando offline)", "default": "Offline" },
+      { "type": "header", "content": "Horário de Atendimento" },
+      { "type": "paragraph", "content": "O status 'Online' aparece automaticamente dentro do horário configurado. Fora do horário exibe o status offline acima." },
+      { "type": "checkbox", "id": "wa_schedule_enabled", "label": "Ativar status automático por horário", "default": true },
+      { "type": "select", "id": "wa_tz_offset", "label": "Fuso horário", "default": "-3",
+        "options": [
+          { "value": "-5", "label": "UTC-5 (Acre)" },
+          { "value": "-4", "label": "UTC-4 (Amazonas)" },
+          { "value": "-3", "label": "UTC-3 (Brasília)" },
+          { "value": "-2", "label": "UTC-2 (Fernando de Noronha)" }
+        ]
+      },
+      { "type": "text", "id": "wa_hours_weekday", "label": "Horário Seg–Sex", "default": "09:00-18:00", "info": "Formato HH:MM-HH:MM. Ex: 09:00-18:00" },
+      { "type": "text", "id": "wa_hours_saturday", "label": "Horário Sábado", "default": "10:00-14:00", "info": "Deixe vazio para não atender aos sábados" },
+      { "type": "text", "id": "wa_hours_sunday", "label": "Horário Domingo", "default": "", "info": "Deixe vazio para não atender aos domingos" },
+      { "type": "text", "id": "wa_status_online", "label": "Texto quando online", "default": "Online agora" },
       { "type": "header", "content": "Mensagens" },
       { "type": "textarea", "id": "wa_welcome", "label": "Mensagem de boas-vindas", "default": "👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?" },
       { "type": "text", "id": "wa_default_msg", "label": "Mensagem padrão (campo vazio)", "default": "Olá! Vim pelo site e gostaria de mais informações." },

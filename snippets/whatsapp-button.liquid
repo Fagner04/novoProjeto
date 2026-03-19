@@ -1,12 +1,18 @@
 {%- assign wa_number = settings.wa_number | default: '5562994319090' -%}
 {%- assign wa_agent = settings.wa_agent_name | default: 'Musas Atendimento' -%}
-{%- assign wa_status = settings.wa_status | default: 'Online agora' -%}
+{%- assign wa_status = settings.wa_status | default: 'Offline' -%}
+{%- assign wa_status_online = settings.wa_status_online | default: 'Online agora' -%}
 {%- assign wa_welcome = settings.wa_welcome | default: '👋 Olá! Bem-vindo à Musas! Como posso ajudar você hoje?' -%}
 {%- assign wa_default_msg = settings.wa_default_msg | default: 'Olá! Vim pelo site e gostaria de mais informações.' -%}
 {%- assign wa_footer = settings.wa_footer | default: 'Resposta em até 2 horas durante horário comercial' -%}
 {%- assign wa_show_delay = settings.wa_show_delay | default: 3 -%}
 {%- assign wa_hide_after = settings.wa_hide_after | default: 6 -%}
 {%- assign wa_repeat_after = settings.wa_repeat_after | default: 30 -%}
+{%- assign wa_schedule_enabled = settings.wa_schedule_enabled | default: true -%}
+{%- assign wa_tz_offset = settings.wa_tz_offset | default: '-3' -%}
+{%- assign wa_hours_weekday = settings.wa_hours_weekday | default: '09:00-18:00' -%}
+{%- assign wa_hours_saturday = settings.wa_hours_saturday | default: '10:00-14:00' -%}
+{%- assign wa_hours_sunday = settings.wa_hours_sunday | default: '' -%}
 {% if settings.wa_enabled != false %}
 <style>
 .wac*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
@@ -154,7 +160,7 @@
     </div>
     <div class="wac-hdr-info">
       <div class="wac-hdr-name">{{ wa_agent }}</div>
-      <div class="wac-hdr-status">{{ wa_status }}</div>
+      <div class="wac-hdr-status" id="wac-status-text">{{ wa_status }}</div>
     </div>
     <button class="wac-hdr-close" onclick="wacToggle()" aria-label="Fechar">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -240,6 +246,45 @@
   var REPEAT_AFTER={{ wa_repeat_after }}*1000;
   var WELCOME='{{ wa_welcome | escape }}';
   var DEFAULT_MSG='{{ wa_default_msg | escape }}';
+  var STATUS_OFFLINE='{{ wa_status | escape }}';
+  var STATUS_ONLINE='{{ wa_status_online | escape }}';
+  var SCHEDULE_ENABLED={{ wa_schedule_enabled }};
+  var TZ_OFFSET=parseInt('{{ wa_tz_offset }}')||(-3);
+  var HOURS={
+    weekday:'{{ wa_hours_weekday | escape }}',
+    saturday:'{{ wa_hours_saturday | escape }}',
+    sunday:'{{ wa_hours_sunday | escape }}'
+  };
+
+  // ---- Status automático por horário ----
+  function parseRange(str){
+    if(!str)return null;
+    var p=str.split('-');
+    if(p.length<2)return null;
+    function toMin(t){var x=t.split(':');return parseInt(x[0])*60+(parseInt(x[1])||0);}
+    return{start:toMin(p[0]),end:toMin(p[1])};
+  }
+  function isOnline(){
+    if(!SCHEDULE_ENABLED)return false;
+    var now=new Date();
+    var utc=now.getTime()+now.getTimezoneOffset()*60000;
+    var local=new Date(utc+TZ_OFFSET*3600000);
+    var dow=local.getDay(); // 0=dom,6=sab
+    var mins=local.getHours()*60+local.getMinutes();
+    var rangeStr=dow===0?HOURS.sunday:dow===6?HOURS.saturday:HOURS.weekday;
+    var range=parseRange(rangeStr);
+    return range&&mins>=range.start&&mins<range.end;
+  }
+  function applyStatus(){
+    var online=isOnline();
+    var dot=document.querySelector('.wac-hdr-dot');
+    var txt=document.getElementById('wac-status-text');
+    if(dot)dot.style.background=online?'#4ade80':'#f87171';
+    if(txt)txt.textContent=online?STATUS_ONLINE:STATUS_OFFLINE;
+  }
+  applyStatus();
+  setInterval(applyStatus,60000); // atualiza a cada minuto
+
   var h=new Date().getHours();
   var greeting=h>=5&&h<12?'Bom dia! ☀️':h>=12&&h<18?'Boa tarde! 👋':'Boa noite! 🌙';
 
