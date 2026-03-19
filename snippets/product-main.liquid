@@ -285,19 +285,13 @@
     </div>
 
     <!-- Related Products -->
-    {% if recommendations.products_count > 0 %}
-      <div style="margin-top:4rem;">
-        <div class="section-header">
-          <p class="label-caps" style="margin-bottom:0.75rem;">Você também pode gostar</p>
-          <h2 class="heading-section">Produtos Relacionados</h2>
-        </div>
-        <div class="products-grid" style="margin-top:2rem;">
-          {% for rec in recommendations.products limit: 4 %}
-            {% render 'product-card', product: rec %}
-          {% endfor %}
-        </div>
+    <div id="related-products-section" style="margin-top:4rem;display:none;">
+      <div class="section-header">
+        <p class="label-caps" style="margin-bottom:0.75rem;">Você também pode gostar</p>
+        <h2 class="heading-section">Produtos Relacionados</h2>
       </div>
-    {% endif %}
+      <div class="products-grid" id="related-products-grid" style="margin-top:2rem;"></div>
+    </div>
 
   </div>
 </div>
@@ -465,6 +459,49 @@
     var expanded = content.classList.toggle('expanded');
     btn.textContent = expanded ? '− Ver menos' : '+ Ver mais';
   }
+
+  // --- Produtos Relacionados ---
+  (function() {
+    var productId = {{ product.id }};
+    var collectionHandle = '{{ collection.handle | default: "all" }}';
+    var currentHandle = '{{ product.handle }}';
+    var section = document.getElementById('related-products-section');
+    var grid = document.getElementById('related-products-grid');
+
+    function renderCard(p) {
+      var price = p.variants && p.variants[0] ? p.variants[0].price : 0;
+      var pix = Math.round(price * 0.95);
+      var img = p.featured_image ? p.featured_image + '&width=400' : '';
+      return '<a href="/products/' + p.handle + '" class="product-card" style="text-decoration:none;">'
+        + (img ? '<div class="product-card-img-wrap"><img src="' + img + '" alt="' + p.title + '" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;"></div>' : '')
+        + '<div class="product-card-info" style="padding:.75rem .25rem 0;">'
+        + '<p style="font-size:.8rem;color:#888;margin:0 0 2px;">' + (p.vendor || '') + '</p>'
+        + '<p style="font-size:.9rem;font-weight:600;color:#111;margin:0 0 4px;line-height:1.3;">' + p.title + '</p>'
+        + '<p style="font-size:.85rem;color:#32bcad;font-weight:700;margin:0;">R$\u00a0' + (pix/100).toFixed(2).replace('.',',') + ' <span style="font-size:.7rem;font-weight:400;color:#888;">no pix</span></p>'
+        + '</div></a>';
+    }
+
+    fetch('/recommendations/products.json?product_id=' + productId + '&limit=4')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var products = (data.products || []).filter(function(p) { return p.handle !== currentHandle; }).slice(0, 4);
+        if (products.length > 0) {
+          grid.innerHTML = products.map(renderCard).join('');
+          section.style.display = 'block';
+        } else {
+          return fetch('/collections/' + collectionHandle + '/products.json?limit=8')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              var ps = (d.products || []).filter(function(p) { return p.handle !== currentHandle; }).slice(0, 4);
+              if (ps.length > 0) {
+                grid.innerHTML = ps.map(renderCard).join('');
+                section.style.display = 'block';
+              }
+            });
+        }
+      })
+      .catch(function() {});
+  })();
 
   // --- Verifica estoque após adicionar ao carrinho ---
   function checkStockAfterAdd(variantId, inventoryQty, inventoryPolicy, btn) {
