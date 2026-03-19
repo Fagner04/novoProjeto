@@ -158,7 +158,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
 .hero-slide.active { opacity: 1; pointer-events: all; }
 .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
 .hero-bg-mobile { display: block; }
 .hero-bg-desktop { display: none; }
 @media (min-width: 768px) { .hero-bg-mobile { display: none; } .hero-bg-desktop { display: block; } }
