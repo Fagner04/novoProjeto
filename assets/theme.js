@@ -313,13 +313,11 @@ document.addEventListener('DOMContentLoaded', function() {
         await addToCart(variantId, qtyToAdd);
         btn.textContent = 'Adicionado ✓';
         // Verifica se esgotou após adicionar
-        if (typeof checkStockAfterAdd === 'function') {
-          var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
-          if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
-            checkStockAfterAdd(variantId, inv.qty, inv.policy);
-          } else {
-            setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
-          }
+        var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
+        if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0 && typeof checkStockAfterAdd === 'function') {
+          setTimeout(function() {
+            checkStockAfterAdd(variantId, inv.qty, inv.policy, btn);
+          }, 800);
         } else {
           setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
         }

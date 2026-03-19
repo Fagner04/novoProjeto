@@ -467,8 +467,11 @@
   }
 
   // --- Verifica estoque após adicionar ao carrinho ---
-  function checkStockAfterAdd(variantId, inventoryQty, inventoryPolicy) {
-    if (!inventoryQty || inventoryPolicy === 'continue') return;
+  function checkStockAfterAdd(variantId, inventoryQty, inventoryPolicy, btn) {
+    if (!inventoryQty || inventoryPolicy === 'continue') {
+      if (btn) { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }
+      return;
+    }
     fetch('/cart.js')
       .then(function(r) { return r.json(); })
       .then(function(cart) {
@@ -476,11 +479,17 @@
         cart.items.forEach(function(item) {
           if (item.variant_id == variantId) inCart += item.quantity;
         });
-        var addBtn = document.getElementById('add-to-cart-btn');
+        var addBtn = btn || document.getElementById('add-to-cart-btn');
         if (inCart >= inventoryQty) {
           addBtn.disabled = true;
           addBtn.textContent = 'Esgotado';
+        } else {
+          addBtn.disabled = false;
+          addBtn.textContent = 'Adicionar ao Carrinho';
         }
+      })
+      .catch(function() {
+        if (btn) { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }
       });
   }
 </script>
