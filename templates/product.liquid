@@ -131,11 +131,11 @@
             <input type="hidden" name="quantity" id="qty-input" value="1">
           </div>
 
-          <button type="submit" class="add-to-cart-btn" id="add-to-cart-btn">
+          <button type="submit" class="add-to-cart-btn" id="add-to-cart-btn" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
             {% if product.selected_or_first_available_variant.available %}
               Adicionar ao Carrinho
             {% else %}
-              Indisponível
+              Esgotado
             {% endif %}
           </button>
         </form>
@@ -217,7 +217,7 @@
       document.getElementById('price-installments').textContent = 'ou 6x de ' + formatMoney(Math.round(price / 6)) + ' sem juros';
       var addBtn = document.getElementById('add-to-cart-btn');
       addBtn.disabled = !variant.available;
-      addBtn.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Indisponível';
+      addBtn.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Esgotado';
     }
 
     // Atualiza disponibilidade de todas as opções com base na seleção atual

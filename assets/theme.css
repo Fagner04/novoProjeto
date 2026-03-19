@@ -399,7 +399,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .option-btn.unavailable { opacity: 0.4; cursor: not-allowed; text-decoration: line-through; }
 .add-to-cart-btn { width: 100%; padding: 1rem; background: var(--brand-orange); color: #fff; border: none; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
 .add-to-cart-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
-.add-to-cart-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.add-to-cart-btn:disabled { opacity: 1; cursor: not-allowed; transform: none; filter: none; background: #d4d4d8; color: #71717a; pointer-events: none; }
 .product-description { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); font-size: 0.9375rem; line-height: 1.75; color: rgba(24,24,27,0.8); }
 
 /* ===== COOKIE BANNER ===== */
