@@ -173,7 +173,7 @@
       {% if customer %}
         <a href="/account" class="header-icon-btn" aria-label="Minha conta">
       {% else %}
-        <a href="/account/login" class="header-icon-btn" aria-label="Minha conta">
+        <a href="{{ section.settings.account_login_url | default: '/account/login' }}" class="header-icon-btn" aria-label="Minha conta">
       {% endif %}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
@@ -240,7 +240,7 @@
     {% if customer %}
       <a href="/account" onclick="toggleMobileMenu()" class="mobile-menu-account">
     {% else %}
-      <a href="/account/login" onclick="toggleMobileMenu()" class="mobile-menu-account">
+      <a href="{{ section.settings.account_login_url | default: '/account/login' }}" onclick="toggleMobileMenu()" class="mobile-menu-account">
     {% endif %}
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
@@ -325,6 +325,16 @@
       "id": "nav_active_underline",
       "label": "Cor do sublinhado ao passar o mouse",
       "default": "#fe7e41"
+    },
+    {
+      "type": "header",
+      "content": "Conta do usuário"
+    },
+    {
+      "type": "url",
+      "id": "account_login_url",
+      "label": "Link do ícone de conta (login)",
+      "info": "Padrão: /account/login. Pode apontar para uma página personalizada."
     }
   ]
 }
