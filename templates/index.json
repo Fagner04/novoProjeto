@@ -50,7 +50,7 @@
         "margin_top_extra": -72,
         "margin_top_extra_mobile": -106,
         "height_mode": "custom",
-        "height_desktop": 730,
+        "height_desktop": 740,
         "height_mobile": 500,
         "promo_enabled": true,
         "promo_badge": "✨ OFERTA ESPECIAL ✨",
@@ -284,6 +284,22 @@
         "gradient_angle": 180
       }
     },
+    "vitrine_FmbVRi": {
+      "type": "vitrine",
+      "name": "Vitrine de Produtos",
+      "settings": {
+        "title": "VITRINE",
+        "collection": "ultimas-novidades",
+        "ver_todos_link": "shopify://collections/all",
+        "products_count": 15,
+        "show_frete": false,
+        "show_parcelas": true,
+        "accent_color": "#fe7e41",
+        "bg_color": "#fafafa",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
     "about_section_main": {
       "type": "about",
       "settings": {
@@ -310,6 +326,7 @@
     "featured_products_3iVPUp",
     "177353118617f156ac",
     "products_carousel_Lfhr8p",
+    "vitrine_FmbVRi",
     "about_section_main"
   ]
 }

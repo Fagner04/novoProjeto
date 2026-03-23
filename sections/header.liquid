@@ -119,45 +119,75 @@
 
     <script>
     (function(){
-      var input = document.getElementById('search-input');
-      var box   = document.getElementById('search-results');
-      var timer;
+      function initSearch() {
+        var input = document.getElementById('search-input');
+        var box   = document.getElementById('search-results');
+        if(!input || !box) return;
+        var timer;
 
-      if(!input) return;
+        function tryFetch() {
+          clearTimeout(timer);
+          var q = input.value.trim();
+          if(q.length < 2){ box.style.display='none'; return; }
+          box.innerHTML = '<div class="search-ac-loading">Buscando...</div>';
+          box.style.display = 'block';
+          timer = setTimeout(function(){ fetchSuggestions(q); }, 280);
+        }
 
-      input.addEventListener('input', function(){
-        clearTimeout(timer);
-        var q = input.value.trim();
-        if(q.length < 2){ box.style.display='none'; return; }
-        box.innerHTML = '<div class="search-ac-loading">Buscando...</div>';
-        box.style.display = 'block';
-        timer = setTimeout(function(){ fetchSuggestions(q); }, 280);
-      });
+        input.addEventListener('input', tryFetch);
+        input.addEventListener('keyup', tryFetch);
+        input.addEventListener('focus', function(){
+          if(input.value.trim().length >= 2) tryFetch();
+        });
 
-      input.addEventListener('keydown', function(e){
-        if(e.key === 'Escape'){ box.style.display='none'; }
-      });
+        input.addEventListener('keydown', function(e){
+          if(e.key === 'Escape'){ box.style.display='none'; }
+        });
 
-      document.addEventListener('click', function(e){
-        if(!e.target.closest('#search-form')){ box.style.display='none'; }
-      });
+        document.addEventListener('click', function(e){
+          if(!e.target.closest('#search-form')){ box.style.display='none'; }
+        });
 
-      function fetchSuggestions(q){
-        fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=6&resources[options][fields]=title,product_type,variants.title')
-          .then(function(r){ return r.json(); })
-          .then(function(data){
-            var products = (data.resources && data.resources.results && data.resources.results.products) || [];
-            if(products.length === 0){
-              box.innerHTML = '<div class="search-ac-empty">Nenhum produto encontrado</div>';
-              return;
-            }
-            box.innerHTML = products.map(function(p){
-              var img = p.featured_image ? '<img src="' + p.featured_image + '" alt="' + p.title + '">' : '<img src="" alt="" style="background:#f4f4f5;">';
-              var price = p.price ? '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.',',') + '</span>' : '';
-              return '<a href="' + p.url + '">' + img + '<span class="search-ac-info"><span class="search-ac-title">' + p.title + '</span>' + price + '</span></a>';
-            }).join('');
-          })
-          .catch(function(){ box.style.display='none'; });
+        function fetchSuggestions(q){
+          var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          var timeoutId = setTimeout(function(){
+            if(controller) controller.abort();
+            box.innerHTML = '<div class="search-ac-empty">Tempo esgotado. <a href="/search?q=' + encodeURIComponent(q) + '&type=product" style="color:#7c3aed;">Ver todos resultados</a></div>';
+            box.style.display = 'block';
+          }, 4000);
+
+          fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=6&resources[options][fields]=title,product_type,variants.title,vendor', controller ? { signal: controller.signal } : {})
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+              clearTimeout(timeoutId);
+              var products = (data.resources && data.resources.results && data.resources.results.products) || [];
+              if(products.length === 0){
+                box.innerHTML = '<div class="search-ac-empty">Nenhum produto encontrado. <a href="/search?q=' + encodeURIComponent(q) + '&type=product" style="color:#7c3aed;">Busca completa</a></div>';
+                box.style.display = 'block';
+                return;
+              }
+              box.innerHTML = products.map(function(p){
+                var imgSrc = p.featured_image ? (p.featured_image.indexOf('?') > -1 ? p.featured_image + '&width=100' : p.featured_image + '?width=100') : '';
+                var img = imgSrc
+                  ? '<img src="' + imgSrc + '" alt="' + p.title.replace(/"/g,'&quot;') + '">'
+                  : '<div style="width:44px;height:44px;border-radius:8px;background:#f4f4f5;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
+                var price = p.price ? '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.',',') + '</span>' : '';
+                return '<a href="' + p.url + '">' + img + '<span class="search-ac-info"><span class="search-ac-title">' + p.title + '</span>' + price + '</span></a>';
+              }).join('');
+              box.style.display = 'block';
+            })
+            .catch(function(){
+              clearTimeout(timeoutId);
+              box.innerHTML = '<div class="search-ac-empty"><a href="/search?q=' + encodeURIComponent(q) + '&type=product" style="color:#7c3aed;font-weight:600;">🔍 Ver resultados para "' + q + '"</a></div>';
+              box.style.display = 'block';
+            });
+        }
+      }
+
+      if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', initSearch);
+      } else {
+        initSearch();
       }
     })();
     </script>

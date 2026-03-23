@@ -285,19 +285,13 @@
     </div>
 
     <!-- Related Products -->
-    {% if recommendations.products_count > 0 %}
-      <div style="margin-top:4rem;">
-        <div class="section-header">
-          <p class="label-caps" style="margin-bottom:0.75rem;">Você também pode gostar</p>
-          <h2 class="heading-section">Produtos Relacionados</h2>
-        </div>
-        <div class="products-grid" style="margin-top:2rem;">
-          {% for rec in recommendations.products limit: 4 %}
-            {% render 'product-card', product: rec %}
-          {% endfor %}
-        </div>
+    <div id="related-products-section" style="margin-top:4rem;display:none;">
+      <div class="section-header">
+        <p class="label-caps" style="margin-bottom:0.75rem;">Você também pode gostar</p>
+        <h2 class="heading-section">Produtos Relacionados</h2>
       </div>
-    {% endif %}
+      <div class="products-grid" id="related-products-grid" style="margin-top:2rem;"></div>
+    </div>
 
   </div>
 </div>
@@ -465,6 +459,86 @@
     var expanded = content.classList.toggle('expanded');
     btn.textContent = expanded ? '− Ver menos' : '+ Ver mais';
   }
+
+  // --- Produtos Relacionados ---
+  (function() {
+    var productId = {{ product.id }};
+    var collectionHandle = '{{ collection.handle | default: "all" }}';
+    var currentHandle = '{{ product.handle }}';
+    var section = document.getElementById('related-products-section');
+    var grid = document.getElementById('related-products-grid');
+
+    function renderCard(p, wsPrice, wsMinQty) {
+      var price = p.variants && p.variants[0] ? p.variants[0].price : 0;
+      var img = p.featured_image ? p.featured_image + '&width=600' : '';
+      var available = p.variants && p.variants.some(function(v){ return v.available; });
+      var category = p.product_type || p.vendor || '';
+
+      var wholesaleHtml = '';
+      if (wsPrice && wsPrice > 0) {
+        var wsFormatted = 'R$\u00a0' + (wsPrice/100).toFixed(2).replace('.',',');
+        wholesaleHtml = '<span class="wholesale-badge" style="display:inline-block;margin-top:3px;font-size:10px;color:#9A3412;line-height:1.2;font-weight:700;">Atacado: <strong style="color:#C2410C;">' + wsFormatted + '</strong>' + (wsMinQty ? ' (mín. ' + wsMinQty + ' un.)' : '') + '</span>';
+      }
+
+      return '<a href="/products/' + p.handle + '" class="product-card">'
+        + '<div class="product-card-image image-hover">'
+        + (img
+            ? '<img src="' + img + '" alt="' + p.title.replace(/"/g,'&quot;') + '" loading="lazy" width="600" height="800">'
+            : '<div style="width:100%;height:100%;background:#f2f2f3;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#aaa;">Sem imagem</div>')
+        + (!available ? '<span class="product-card-badge">Esgotado</span>' : '')
+        + '<div class="product-card-overlay"><span>Ver Detalhes</span></div>'
+        + '</div>'
+        + '<div class="product-card-info">'
+        + (category ? '<p class="product-card-category">' + category + '</p>' : '')
+        + '<h3 class="product-card-title">' + p.title + '</h3>'
+        + '<p class="product-card-price">R$\u00a0' + (price/100).toFixed(2).replace('.',',') + '</p>'
+        + wholesaleHtml
+        + '</div></a>';
+    }
+
+    function fetchWholesale(handle) {
+      return fetch('/products/' + handle + '?view=wholesale')
+        .then(function(r){ return r.text(); })
+        .then(function(text){
+          var match = text.match(/\{[\s\S]*\}/);
+          if (!match) return null;
+          var data = JSON.parse(match[0]);
+          var raw = data.wholesale_price;
+          if (raw == null) return null;
+          var cents = raw < 1000 ? Math.round(raw * 100) : Math.round(raw);
+          return { price: cents, min_qty: data.wholesale_min_qty || null };
+        })
+        .catch(function(){ return null; });
+    }
+
+    function loadAndRender(products) {
+      Promise.all(products.map(function(p){ return fetchWholesale(p.handle); }))
+        .then(function(wsData) {
+          grid.innerHTML = products.map(function(p, i){
+            var ws = wsData[i];
+            return renderCard(p, ws ? ws.price : null, ws ? ws.min_qty : null);
+          }).join('');
+          section.style.display = 'block';
+        });
+    }
+
+    fetch('/recommendations/products.json?product_id=' + productId + '&limit=4')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var products = (data.products || []).filter(function(p) { return p.handle !== currentHandle; }).slice(0, 4);
+        if (products.length > 0) {
+          loadAndRender(products);
+        } else {
+          return fetch('/collections/' + collectionHandle + '/products.json?limit=8')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              var ps = (d.products || []).filter(function(p) { return p.handle !== currentHandle; }).slice(0, 4);
+              if (ps.length > 0) loadAndRender(ps);
+            });
+        }
+      })
+      .catch(function() {});
+  })();
 
   // --- Verifica estoque após adicionar ao carrinho ---
   function checkStockAfterAdd(variantId, inventoryQty, inventoryPolicy, btn) {
