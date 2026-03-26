@@ -56,7 +56,8 @@
           "menu": "menu",
           "nav_hover_color": "#fe7e41",
           "nav_active_color": "#fe7e41",
-          "nav_active_underline": "#fe7e41"
+          "nav_active_underline": "#fe7e41",
+          "account_login_url": "https://www.conectwhats.com/portal/musasclub"
         }
       },
       "footer": {
