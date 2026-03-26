@@ -36,6 +36,9 @@
               {% if section.settings.show_parcelas %}
                 <p class="vitrine-card-parcelas">6x de R$ {{ product.price_min | divided_by: 6 | money_without_currency }} <span>sem juros</span></p>
               {% endif %}
+              {%- if product.metafields.custom.wholesale_price -%}
+                <p class="vitrine-card-atacado">Atacado: <strong>{{ product.metafields.custom.wholesale_price.value | money }}</strong>{%- if product.metafields.custom.wholesale_min_qty -%} (mín. {{ product.metafields.custom.wholesale_min_qty.value }} un.){%- endif -%}</p>
+              {%- endif -%}
               <p class="vitrine-card-status">
                 <span class="vitrine-dot {% unless product.available %}vitrine-dot-off{% endunless %}"></span>
                 {% if product.available %}Disponível{% else %}Esgotado{% endif %}
@@ -76,6 +79,8 @@
 .vitrine-card-frete { font-size:.7rem; color:#16a34a; font-weight:600; margin:0 0 2px; }
 .vitrine-card-parcelas { font-size:.68rem; font-weight:700; color:#18181b; margin:0 0 4px; text-transform:uppercase; letter-spacing:.03em; }
 .vitrine-card-parcelas span { font-weight:400; }
+.vitrine-card-atacado { font-size:.7rem; color:#9A3412; font-weight:600; margin:0 0 4px; }
+.vitrine-card-atacado strong { color:#C2410C; }
 .vitrine-card-status { font-size:.7rem; color:#71717a; margin:0; display:flex; align-items:center; gap:.3rem; }
 .vitrine-dot { width:7px; height:7px; border-radius:9999px; background:#4ade80; flex-shrink:0; }
 .vitrine-dot-off { background:#f87171; }
