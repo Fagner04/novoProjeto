@@ -509,6 +509,12 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 @media (max-width: 1023px) { .carousel-card { flex: 0 0 calc(50% - 0.5rem); } }
 @media (max-width: 639px) { .carousel-card { flex: 0 0 calc(100%); } }
 @media (max-width: 639px) { .carousel-arrow { display: none; } }
+@media (max-width: 639px) {
+  .carousel-track-outer { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .carousel-track-outer::-webkit-scrollbar { display: none; }
+  .carousel-track { transform: none !important; }
+  .carousel-card { flex: 0 0 75%; scroll-snap-align: start; }
+}
 
 .carousel-card-image { position: relative; aspect-ratio: 3/4; overflow: hidden; }
 .carousel-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
