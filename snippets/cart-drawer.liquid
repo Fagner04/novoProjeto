@@ -51,15 +51,6 @@
   var ACESSORIO_TAG = {{ settings.atacado_acessorio_tag | json }};
   var ACESSORIO_MIN_VALUE = parseFloat({{ settings.atacado_acessorio_min_value | default: '100.00' | json }}) * 100;
   var ACESSORIO_MSG = {{ settings.atacado_acessorio_msg | default: 'Valor mínimo deste produto' | json }};
-  {% if customer %}
-    {% assign is_ws = false %}
-    {% for tag in customer.tags %}
-      {% if tag == 'atacadista' %}{% assign is_ws = true %}{% endif %}
-    {% endfor %}
-    var IS_WHOLESALE = {{ is_ws | json }};
-  {% else %}
-    var IS_WHOLESALE = false;
-  {% endif %}
 
   // Cache de tags por handle buscadas via API
   var _tagsCache = {};
@@ -76,11 +67,9 @@
   }
 
   function checkAcessorioRule(cartItems) {
-    console.log('[ACESSORIO] IS_WHOLESALE:', IS_WHOLESALE);
     console.log('[ACESSORIO] TAG buscada:', ACESSORIO_TAG);
     console.log('[ACESSORIO] MIN_VALUE (centavos):', ACESSORIO_MIN_VALUE);
     console.log('[ACESSORIO] cartItems:', cartItems.map(function(i){ return {handle: i.handle, title: i.product_title}; }));
-    if (!IS_WHOLESALE) { console.log('[ACESSORIO] Saindo: não é atacadista'); return; }
 
     var warning = document.getElementById('cart-acessorio-warning');
     var container = document.getElementById('cart-acessorio-items');
