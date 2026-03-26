@@ -124,6 +124,14 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
+        "badge_zbmixA": {
+          "type": "badge",
+          "settings": {
+            "icon": "screen",
+            "title": "Produção Própria",
+            "text": "Criação exclusiva, produção limitada"
+          }
+        },
         "badge_CDMyc8": {
           "type": "badge",
           "settings": {
@@ -150,6 +158,7 @@
         }
       },
       "block_order": [
+        "badge_zbmixA",
         "badge_CDMyc8",
         "badge_GPWWW6",
         "badge_YjcbiL"
