@@ -64,7 +64,6 @@ async function renderCart() {
   empty.style.display = 'none'; footer.style.display = 'block';
   list.querySelectorAll('.cart-item').forEach(i => i.remove());
 
-  // Pré-carrega preços de atacado antes de renderizar os itens
   var cfg = window.__cwAtacado;
   var wholesaleActive = false;
   if (cfg && cfg.enabled) {
@@ -76,14 +75,13 @@ async function renderCart() {
     }
   }
 
-  // Pré-carrega tags de acessórios se a regra estiver ativa
   var acCfg = window.__cwAcessorio;
   if (acCfg && acCfg.enabled) {
     var uniqueHandles = [...new Set(cart.items.map(function(i){ return i.handle; }))];
     await Promise.all(uniqueHandles.map(function(h){ return getProductTags(h); }));
   }
 
-  // Agrupa total por handle de acessório para calcular progresso
+  // Agrupa total por handle de acessório
   var acessorioTotals = {};
   if (acCfg && acCfg.enabled) {
     cart.items.forEach(function(item) {
@@ -98,87 +96,77 @@ async function renderCart() {
     const lineIndex = index + 1;
     const wsPrice = wholesaleActive ? _wsCache[item.handle] : null;
 
+    // Verifica se é acessório
+    var isAcessorio = acCfg && acCfg.enabled && acessorioTotals[item.handle] !== undefined;
+    var acessorioAtingiu = false;
+    var acessorioHtml = '';
+    var itemBorder = '';
+    var badgeHtml = '';
+
+    if (isAcessorio) {
+      var total = acessorioTotals[item.handle];
+      var minVal = acCfg.min_value;
+      var pct = Math.min(100, Math.round((total / minVal) * 100));
+      var faltam = Math.max(0, minVal - total);
+      acessorioAtingiu = faltam === 0;
+      itemBorder = 'border:1.5px solid ' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';border-radius:0.75rem;';
+      badgeHtml = '<span style="position:absolute;bottom:0;left:0;background:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:0 4px 0 6px;white-space:nowrap;">'
+        + 'Min. ' + formatMoney(minVal) + '</span>';
+      acessorioHtml = '<div style="margin-top:6px;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
+        + '<span style="font-size:0.72rem;font-weight:600;color:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';">🏷️ Valor mínimo deste produto</span>'
+        + '<span style="font-size:0.72rem;font-weight:700;color:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';">'
+        + (acessorioAtingiu ? '✅ Atacado ativo' : 'Faltam ' + formatMoney(faltam)) + '</span>'
+        + '</div>'
+        + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
+        + '<div style="height:100%;background:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';border-radius:9999px;width:' + pct + '%;"></div>'
+        + '</div>'
+        + (!acessorioAtingiu ? '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do mínimo: preço de varejo aplicado</p>' : '')
+        + '</div>';
+    }
+
+    // Se acessório e não atingiu mínimo → força preço de varejo
+    var effectiveWsPrice = (isAcessorio && !acessorioAtingiu) ? null : wsPrice;
+
     var priceHtml;
-    if (wsPrice && wsPrice > 0) {
+    if (effectiveWsPrice && effectiveWsPrice > 0) {
       priceHtml =
         '<p class="cart-item-price" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
           '<s style="color:#aaa;font-size:12px;">' + formatMoney(item.final_price) + '</s>' +
-          '<span style="color:#15803D;font-weight:700;">' + formatMoney(wsPrice) + '</span>' +
+          '<span style="color:#15803D;font-weight:700;">' + formatMoney(effectiveWsPrice) + '</span>' +
           '<span style="background:#DCFCE7;color:#166534;font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700;">ATACADO</span>' +
         '</p>';
     } else {
       priceHtml = '<p class="cart-item-price">' + formatMoney(item.final_price) + '</p>';
     }
 
-    // Barra de progresso de acessório dentro do card
-    var acessorioHtml = '';
-    var itemBorder = '';
-    if (acCfg && acCfg.enabled && acessorioTotals[item.handle] !== undefined) {
-      var total = acessorioTotals[item.handle];
-      var minVal = acCfg.min_value;
-      var pct = Math.min(100, Math.round((total / minVal) * 100));
-      var faltam = Math.max(0, minVal - total);
-      var atingiu = faltam === 0;
-      itemBorder = 'border:1.5px solid ' + (atingiu ? '#16a34a' : '#F97316') + ';';
-      var badgeHtml = '<span style="position:absolute;bottom:0;left:0;background:' + (atingiu ? '#16a34a' : '#F97316') + ';color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:0 4px 0 6px;white-space:nowrap;">'
-        + 'Min. ' + formatMoney(minVal) + '</span>';
-      acessorioHtml = '<div style="margin-top:6px;">'
-        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
-        + '<span style="font-size:0.72rem;font-weight:600;color:' + (atingiu ? '#16a34a' : '#F97316') + ';">🏷️ Valor mínimo deste produto</span>'
-        + '<span style="font-size:0.72rem;font-weight:700;color:' + (atingiu ? '#16a34a' : '#F97316') + ';">'
-        + (atingiu ? '✅ Atacado ativo' : 'Faltam ' + formatMoney(faltam)) + '</span>'
-        + '</div>'
-        + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
-        + '<div style="height:100%;background:' + (atingiu ? '#16a34a' : '#F97316') + ';border-radius:9999px;width:' + pct + '%;"></div>'
-        + '</div>'
-        + '</div>';
-
-      // Injeta badge na imagem via wrapper
-      const el = document.createElement('div');
-      el.className = 'cart-item';
-      el.style.cssText = itemBorder + 'border-radius:0.75rem;';
-      el.innerHTML = '<div style="position:relative;flex-shrink:0;">'
-        + '<img class="cart-item-image" src="' + item.image + '" alt="' + item.title + '">'
-        + badgeHtml
-        + '</div>'
-        + '<div class="cart-item-info">'
-        + '<p class="cart-item-title">' + item.product_title + '</p>'
-        + '<p class="cart-item-variant">' + (item.variant_title !== 'Default Title' ? item.variant_title : '') + '</p>'
-        + priceHtml
-        + acessorioHtml
-        + '<div class="cart-qty">'
-        + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity-1) + ')">−</button>'
-        + '<span>' + item.quantity + '</span>'
-        + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity+1) + ')">+</button>'
-        + '</div></div>'
-        + '<button type="button" class="cart-remove" onclick="changeItemLine(' + lineIndex + ',0)" aria-label="Remover">'
-        + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
-        + '</button>';
-      list.insertBefore(el, empty);
-      return;
-    }
-
     const el = document.createElement('div');
     el.className = 'cart-item';
-    el.innerHTML = `<img class="cart-item-image" src="${item.image}" alt="${item.title}">
-      <div class="cart-item-info">
-        <p class="cart-item-title">${item.product_title}</p>
-        <p class="cart-item-variant">${item.variant_title !== 'Default Title' ? item.variant_title : ''}</p>
-        ${priceHtml}
-        <div class="cart-qty">
-          <button type="button" onclick="changeItemLine(${lineIndex},${item.quantity-1})">−</button>
-          <span>${item.quantity}</span>
-          <button type="button" onclick="changeItemLine(${lineIndex},${item.quantity+1})">+</button>
-        </div>
-      </div>
-      <button type="button" class="cart-remove" onclick="changeItemLine(${lineIndex},0)" aria-label="Remover">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-      </button>`;
+    if (itemBorder) el.style.cssText = itemBorder;
+    el.innerHTML = '<div style="position:relative;flex-shrink:0;">'
+      + '<img class="cart-item-image" src="' + item.image + '" alt="' + item.title + '">'
+      + badgeHtml
+      + '</div>'
+      + '<div class="cart-item-info">'
+      + '<p class="cart-item-title">' + item.product_title + '</p>'
+      + '<p class="cart-item-variant">' + (item.variant_title !== 'Default Title' ? item.variant_title : '') + '</p>'
+      + priceHtml
+      + acessorioHtml
+      + '<div class="cart-qty">'
+      + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity-1) + ')">−</button>'
+      + '<span>' + item.quantity + '</span>'
+      + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity+1) + ')">+</button>'
+      + '</div></div>'
+      + '<button type="button" class="cart-remove" onclick="changeItemLine(' + lineIndex + ',0)" aria-label="Remover">'
+      + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
+      + '</button>';
     list.insertBefore(el, empty);
   });
+
   document.getElementById('cart-total-price').textContent = formatMoney(cart.total_price);
   await renderWholesaleProgress(cart);
 }
+
 
 async function changeItemLine(line, qty) {
   _cartInteracting = true;
