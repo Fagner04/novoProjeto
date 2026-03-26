@@ -73,7 +73,7 @@
           "settings": {
             "collection": "musas",
             "label": "MUSAS",
-            "image": "shopify://shop_images/IMG_4275.webp"
+            "image": "shopify://shop_images/EB9494C6-A8BB-4B08-BF93-3C53FCE401FB.jpg"
           }
         },
         "collection_item_6WHtpL": {
@@ -288,7 +288,7 @@
       "type": "vitrine",
       "name": "Vitrine de Produtos",
       "settings": {
-        "title": "VITRINE",
+        "title": "Vitrine",
         "collection": "ultimas-novidades",
         "ver_todos_link": "shopify://collections/all",
         "products_count": 15,
