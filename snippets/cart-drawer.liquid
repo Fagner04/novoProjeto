@@ -76,7 +76,11 @@
   }
 
   function checkAcessorioRule(cartItems) {
-    if (!IS_WHOLESALE) return;
+    console.log('[ACESSORIO] IS_WHOLESALE:', IS_WHOLESALE);
+    console.log('[ACESSORIO] TAG buscada:', ACESSORIO_TAG);
+    console.log('[ACESSORIO] MIN_VALUE (centavos):', ACESSORIO_MIN_VALUE);
+    console.log('[ACESSORIO] cartItems:', cartItems.map(function(i){ return {handle: i.handle, title: i.product_title}; }));
+    if (!IS_WHOLESALE) { console.log('[ACESSORIO] Saindo: não é atacadista'); return; }
 
     var warning = document.getElementById('cart-acessorio-warning');
     var container = document.getElementById('cart-acessorio-items');
@@ -85,6 +89,7 @@
     // Busca tags de todos os produtos únicos
     var handles = [...new Set(cartItems.map(function(i){ return i.handle; }))];
     Promise.all(handles.map(getProductTags)).then(function() {
+      console.log('[ACESSORIO] Tags cache:', JSON.stringify(_tagsCache));
       var acessoriosByProduct = {};
       cartItems.forEach(function(item) {
         var tags = _tagsCache[item.handle] || [];
