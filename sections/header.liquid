@@ -254,7 +254,8 @@
 
   <!-- Nav links do menu Shopify -->
   <nav class="mobile-menu-nav">
-    {% for link in linklists[section.settings.menu].links %}
+    {% assign mobile_menu = section.settings.menu_mobile | default: section.settings.menu %}
+    {% for link in linklists[mobile_menu].links %}
       <a href="{{ link.url }}" onclick="toggleMobileMenu()">
         <span>{{ link.title }}</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -331,7 +332,13 @@
     {
       "type": "link_list",
       "id": "menu",
-      "label": "Menu de navegação",
+      "label": "Menu desktop",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_mobile",
+      "label": "Menu mobile (deixe vazio para usar o mesmo do desktop)",
       "default": "main-menu"
     },
     {
