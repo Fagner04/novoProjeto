@@ -68,6 +68,14 @@
     "collections_carousel_qrWhkd": {
       "type": "collections-carousel",
       "blocks": {
+        "collection_item_nfiKxV": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "fitnes",
+            "label": "BLUSINHAS POC",
+            "image": "shopify://shop_images/IMG_3495_0ffcaeeb-8714-4f14-8271-bb6e5e0325de.jpg"
+          }
+        },
         "collection_item_RJBU4G": {
           "type": "collection_item",
           "settings": {
@@ -110,6 +118,7 @@
         }
       },
       "block_order": [
+        "collection_item_nfiKxV",
         "collection_item_RJBU4G",
         "collection_item_6WHtpL",
         "collection_item_7dWE8H",
