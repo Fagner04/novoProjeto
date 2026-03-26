@@ -109,20 +109,25 @@ async function renderCart() {
       var pct = Math.min(100, Math.round((total / minVal) * 100));
       var faltam = Math.max(0, minVal - total);
       acessorioAtingiu = faltam === 0;
-      itemBorder = 'border:1.5px solid ' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';border-radius:0.75rem;';
+
+      // Badge na imagem sempre aparece (indica que é produto com mínimo)
       badgeHtml = '<span style="position:absolute;bottom:0;left:0;background:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:0 4px 0 6px;white-space:nowrap;">'
         + 'Min. ' + formatMoney(minVal) + '</span>';
-      acessorioHtml = '<div style="margin-top:6px;">'
-        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
-        + '<span style="font-size:0.72rem;font-weight:600;color:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';">🏷️ Valor mínimo deste produto</span>'
-        + '<span style="font-size:0.72rem;font-weight:700;color:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';">'
-        + (acessorioAtingiu ? '✅ Atacado ativo' : 'Faltam ' + formatMoney(faltam)) + '</span>'
-        + '</div>'
-        + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
-        + '<div style="height:100%;background:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';border-radius:9999px;width:' + pct + '%;"></div>'
-        + '</div>'
-        + (!acessorioAtingiu ? '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do mínimo: preço de varejo aplicado</p>' : '')
-        + '</div>';
+
+      // Borda e aviso só aparecem quando NÃO atingiu o mínimo
+      if (!acessorioAtingiu) {
+        itemBorder = 'border:1.5px solid #F97316;border-radius:0.75rem;';
+        acessorioHtml = '<div style="margin-top:6px;">'
+          + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
+          + '<span style="font-size:0.72rem;font-weight:600;color:#F97316;">🏷️ Valor mínimo deste produto</span>'
+          + '<span style="font-size:0.72rem;font-weight:700;color:#F97316;">Faltam ' + formatMoney(faltam) + '</span>'
+          + '</div>'
+          + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
+          + '<div style="height:100%;background:#F97316;border-radius:9999px;width:' + pct + '%;"></div>'
+          + '</div>'
+          + '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do mínimo: preço de varejo aplicado</p>'
+          + '</div>';
+      }
     }
 
     // Se acessório e não atingiu mínimo → força preço de varejo
