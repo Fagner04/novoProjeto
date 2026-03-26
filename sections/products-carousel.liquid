@@ -184,6 +184,21 @@ if (wr) {
   wr.addEventListener('mouseenter', stopAutoplay);
   wr.addEventListener('mouseleave', startAutoplay);
 }
+
+// Swipe touch no mobile
+var touchStartX = 0;
+var trackOuter = document.querySelector('.carousel-track-outer');
+if (trackOuter) {
+  trackOuter.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    stopAutoplay();
+  }, { passive: true });
+  trackOuter.addEventListener('touchend', function(e) {
+    var diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) slideCarousel(diff > 0 ? 1 : -1);
+    startAutoplay();
+  }, { passive: true });
+}
 </script>
 
 {% schema %}
