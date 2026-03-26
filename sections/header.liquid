@@ -243,15 +243,6 @@
     </button>
   </div>
 
-  <!-- Search mobile -->
-  <form action="/search" method="get" class="mobile-menu-search">
-    <input type="hidden" name="type" value="product">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-    </svg>
-    <input type="search" name="q" placeholder="Pesquisar produtos...">
-  </form>
-
   <!-- Nav links estilo cards -->
   <nav class="mobile-menu-nav-cards">
     {% assign mobile_menu = section.settings.menu_mobile | default: section.settings.menu %}
