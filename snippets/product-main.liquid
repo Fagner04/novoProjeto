@@ -301,6 +301,15 @@
   var selectedOptions = [{% for option in product.options_with_values %}"{{ option.selected_value }}"{% unless forloop.last %},{% endunless %}{% endfor %}];
   var allImages = {{ product.images | map: 'src' | json }};
 
+  // Mapa de imagem por variant_id
+  var variantImages = {
+    {% for variant in product.variants %}
+      {% if variant.featured_image %}
+        "{{ variant.id }}": "{{ variant.featured_image.src | image_url: width: 900 }}"{% unless forloop.last %},{% endunless %}
+      {% endif %}
+    {% endfor %}
+  };
+
   // Mapa de estoque por variant_id (exposto via Liquid pois não vem no JSON padrão)
   var variantInventory = {
     {% for variant in product.variants %}
@@ -333,6 +342,18 @@
       var addBtn = document.getElementById('add-to-cart-btn');
       addBtn.disabled = !variant.available;
       addBtn.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Esgotado';
+
+      // Troca imagem principal se a variante tiver imagem própria
+      if (variantImages[variant.id]) {
+        var img0 = document.getElementById('main-img-0');
+        if (img0) img0.src = variantImages[variant.id];
+        // Atualiza thumb ativo para a imagem da variante
+        var varSrc = variantImages[variant.id].replace(/\?.*/, '');
+        document.querySelectorAll('.thumb-item').forEach(function(t, i) {
+          var tSrc = (allImages[i] || '').replace(/\?.*/, '');
+          t.classList.toggle('active', tSrc === varSrc);
+        });
+      }
     }
 
     // Atualiza disponibilidade de todas as opções com base na seleção atual
