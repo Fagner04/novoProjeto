@@ -144,9 +144,9 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .mmhelp-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; color: var(--muted-foreground); margin-bottom: 0.75rem; }
 .mmhelp-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; font-size: 0.875rem; font-weight: 500; color: var(--foreground); text-decoration: none; border-bottom: 1px solid var(--border); }
 .mmhelp-item:last-child { border-bottom: none; }
-.mmhelp-icon { width: 30px; height: 30px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mmhelp-icon { width: 36px; height: 36px; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .mmhelp-icon--wa { background: #25D366; }
-.mmhelp-icon--ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.mmhelp-icon--ig { background: transparent; }
 
 /* Footer actions */
 .mm-footer-actions { display: flex; gap: 0.5rem; padding: 0.75rem 1rem 1.25rem; }
