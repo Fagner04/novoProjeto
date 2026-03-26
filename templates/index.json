@@ -134,6 +134,14 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
+        "badge_Kzt8jV": {
+          "type": "badge",
+          "settings": {
+            "icon": "heart",
+            "title": "Satisfação ou Reembolso",
+            "text": "Caso haja algo, devolvemos seu dinheiro"
+          }
+        },
         "badge_4gYrdq": {
           "type": "badge",
           "settings": {
@@ -176,6 +184,7 @@
         }
       },
       "block_order": [
+        "badge_Kzt8jV",
         "badge_4gYrdq",
         "badge_zbmixA",
         "badge_CDMyc8",
