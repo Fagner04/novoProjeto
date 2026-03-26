@@ -27,17 +27,8 @@
 
     <!-- Aviso de mínimo de acessórios para atacado -->
     {% if settings.atacado_acessorio_enabled %}
-    <div id="cart-acessorio-warning" style="display:none;margin-bottom:0.75rem;padding:0.75rem 1rem;background:#FFF7ED;border-radius:0.75rem;border-left:3px solid #F97316;">
-      <div style="display:flex;align-items:flex-start;gap:0.5rem;">
-        <span style="font-size:1.1rem;flex-shrink:0;">🏷️</span>
-        <div>
-          <p id="cart-acessorio-msg" style="font-size:0.8rem;font-weight:600;color:#9A3412;margin:0 0 0.4rem;"></p>
-          <div style="background:#fed7aa;border-radius:9999px;height:6px;overflow:hidden;">
-            <div id="cart-acessorio-bar" style="height:100%;background:#F97316;border-radius:9999px;transition:width 0.4s;width:0%;"></div>
-          </div>
-          <p id="cart-acessorio-sub" style="font-size:0.72rem;color:#C2410C;margin:0.3rem 0 0;"></p>
-        </div>
-      </div>
+    <div id="cart-acessorio-warning" style="display:none;margin-bottom:0.75rem;">
+      <div id="cart-acessorio-items"></div>
     </div>
     {% endif %}
 
@@ -58,64 +49,61 @@
 <script>
 (function(){
   var ACESSORIO_TAG = {{ settings.atacado_acessorio_tag | json }};
-  var ACESSORIO_MIN = {{ settings.atacado_acessorio_min_qty | default: 6 }};
-  var ACESSORIO_MSG = {{ settings.atacado_acessorio_msg | default: 'Para comprar acessórios no atacado, o mínimo é {min} unidades de acessórios.' | json }};
+  var ACESSORIO_MIN_VALUE = parseFloat({{ settings.atacado_acessorio_min_value | default: '100.00' | json }}) * 100; // em centavos
+  var ACESSORIO_MSG = {{ settings.atacado_acessorio_msg | default: 'Valor mínimo deste produto' | json }};
   var IS_WHOLESALE = {{ customer.tags contains 'atacadista' | json }};
 
   function checkAcessorioRule(cartItems) {
     if (!IS_WHOLESALE) return;
 
-    var warning = document.getElementById('cart-acessorio-warning');
-    var msgEl = document.getElementById('cart-acessorio-msg');
-    var barEl = document.getElementById('cart-acessorio-bar');
-    var subEl = document.getElementById('cart-acessorio-sub');
-    var checkoutBtn = document.getElementById('cart-checkout-btn');
-    if (!warning) return;
-
-    // Conta acessórios no carrinho
-    var acessorioQty = 0;
-    var hasAcessorio = false;
+    // Agrupa acessórios por produto
+    var acessoriosByProduct = {};
     cartItems.forEach(function(item) {
       var tags = (item.product_tags || item.tags || '').split(',').map(function(t){ return t.trim().toLowerCase(); });
       if (tags.indexOf(ACESSORIO_TAG.toLowerCase()) > -1) {
-        hasAcessorio = true;
-        acessorioQty += item.quantity;
+        var handle = item.handle;
+        if (!acessoriosByProduct[handle]) {
+          acessoriosByProduct[handle] = { title: item.product_title, qty: 0, total: 0, price: item.final_price };
+        }
+        acessoriosByProduct[handle].qty += item.quantity;
+        acessoriosByProduct[handle].total += item.final_price * item.quantity;
       }
     });
 
-    if (!hasAcessorio) {
+    var warning = document.getElementById('cart-acessorio-warning');
+    var container = document.getElementById('cart-acessorio-items');
+    if (!warning || !container) return;
+
+    var handles = Object.keys(acessoriosByProduct);
+    if (handles.length === 0) {
       warning.style.display = 'none';
-      if (checkoutBtn) { checkoutBtn.style.opacity = ''; checkoutBtn.style.pointerEvents = ''; checkoutBtn.textContent = 'Finalizar Compra'; }
       return;
     }
 
-    var pct = Math.min(100, Math.round((acessorioQty / ACESSORIO_MIN) * 100));
-    var faltam = Math.max(0, ACESSORIO_MIN - acessorioQty);
-    var msg = ACESSORIO_MSG.replace('{min}', ACESSORIO_MIN);
-
     warning.style.display = 'block';
-    msgEl.textContent = msg;
-    barEl.style.width = pct + '%';
+    container.innerHTML = '';
 
-    if (faltam > 0) {
-      subEl.textContent = 'Faltam ' + faltam + ' unidade' + (faltam > 1 ? 's' : '') + ' de acessórios (' + acessorioQty + '/' + ACESSORIO_MIN + ')';
-      if (checkoutBtn) {
-        checkoutBtn.style.opacity = '0.5';
-        checkoutBtn.style.pointerEvents = 'none';
-        checkoutBtn.textContent = 'Mínimo de acessórios não atingido';
-      }
-    } else {
-      subEl.textContent = '✅ Mínimo atingido! (' + acessorioQty + ' unidades)';
-      barEl.style.background = '#16a34a';
-      if (checkoutBtn) {
-        checkoutBtn.style.opacity = '';
-        checkoutBtn.style.pointerEvents = '';
-        checkoutBtn.textContent = 'Finalizar Compra';
-      }
-    }
+    handles.forEach(function(handle) {
+      var prod = acessoriosByProduct[handle];
+      var pct = Math.min(100, Math.round((prod.total / ACESSORIO_MIN_VALUE) * 100));
+      var faltam = Math.max(0, ACESSORIO_MIN_VALUE - prod.total);
+      var atingiu = faltam === 0;
+
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:0.625rem;padding:0.625rem 0.875rem;background:#FFF7ED;border-radius:0.75rem;border-left:3px solid ' + (atingiu ? '#16a34a' : '#F97316') + ';';
+      div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">'
+        + '<span style="font-size:0.78rem;font-weight:600;color:#9A3412;">' + ACESSORIO_MSG + '</span>'
+        + '<span style="font-size:0.78rem;font-weight:700;color:' + (atingiu ? '#16a34a' : '#F97316') + ';">'
+        + (atingiu ? '✅ Atacado ativo' : 'Faltam R$ ' + (faltam/100).toFixed(2).replace('.',','))
+        + '</span></div>'
+        + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
+        + '<div style="height:100%;background:' + (atingiu ? '#16a34a' : '#F97316') + ';border-radius:9999px;width:' + pct + '%;transition:width 0.4s;"></div>'
+        + '</div>'
+        + (!atingiu ? '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do mínimo: preço de varejo aplicado</p>' : '');
+      container.appendChild(div);
+    });
   }
 
-  // Expõe para ser chamado pelo renderCart do theme.js
   window.checkAcessorioRule = checkAcessorioRule;
 })();
 </script>
