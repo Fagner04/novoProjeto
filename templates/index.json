@@ -124,71 +124,35 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
-        "badge_RnPBL3": {
-          "type": "badge",
-          "settings": {
-            "icon": "chat",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
         "badge_CDMyc8": {
           "type": "badge",
           "settings": {
             "icon": "refresh",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
+            "title": "Atacado",
+            "text": "mínimo 12  peças"
           }
         },
         "badge_GPWWW6": {
           "type": "badge",
           "settings": {
-            "icon": "star",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
+            "icon": "heart",
+            "title": "Parcelamento",
+            "text": "Em até 6x"
           }
         },
         "badge_YjcbiL": {
           "type": "badge",
           "settings": {
-            "icon": "heart",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_3tBTtV": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_mmCQrr": {
-          "type": "badge",
-          "settings": {
-            "icon": "truck",
-            "title": "Primeira troca grátis",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_qkdpUt": {
-          "type": "badge",
-          "settings": {
-            "icon": "lock",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
+            "icon": "star",
+            "title": "Ganhe",
+            "text": "5% de Desconto Varejo"
           }
         }
       },
       "block_order": [
-        "badge_RnPBL3",
         "badge_CDMyc8",
         "badge_GPWWW6",
-        "badge_YjcbiL",
-        "badge_3tBTtV",
-        "badge_mmCQrr",
-        "badge_qkdpUt"
+        "badge_YjcbiL"
       ],
       "settings": {}
     },
