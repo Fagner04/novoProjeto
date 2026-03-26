@@ -146,7 +146,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .mmhelp-item:last-child { border-bottom: none; }
 .mmhelp-icon { width: 36px; height: 36px; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .mmhelp-icon--wa { background: #25D366; }
-.mmhelp-icon--ig { background: transparent; }
+.mmhelp-icon--ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
 
 /* Footer actions */
 .mm-footer-actions { display: flex; gap: 0.5rem; padding: 0.75rem 1rem 1.25rem; }
