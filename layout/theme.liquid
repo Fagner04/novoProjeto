@@ -173,6 +173,22 @@
       enabled: {{ settings.conectwhats_atacado_enabled | json }},
       min_qty: {{ settings.conectwhats_atacado_min_qty | default: 6 }}
     };
+    window.__cwAcessorio = {
+      enabled: {{ settings.atacado_acessorio_enabled | json }},
+      tag: {{ settings.atacado_acessorio_tag | default: 'acessorio' | json }},
+      min_value: parseFloat({{ settings.atacado_acessorio_min_value | default: '100.00' | json }}) * 100
+    };
+    window._tagsCache = {};
+    window.getProductTags = function(handle) {
+      if (window._tagsCache[handle] !== undefined) return Promise.resolve(window._tagsCache[handle]);
+      return fetch('/products/' + handle + '.js')
+        .then(function(r){ return r.json(); })
+        .then(function(p){
+          window._tagsCache[handle] = (p.tags || []).map(function(t){ return t.toLowerCase().trim(); });
+          return window._tagsCache[handle];
+        })
+        .catch(function(){ window._tagsCache[handle] = []; return []; });
+    };
   </script>
 </body>
 </html>

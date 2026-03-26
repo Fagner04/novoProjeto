@@ -48,81 +48,8 @@
 {% if settings.atacado_acessorio_enabled %}
 <script>
 (function(){
-  var ACESSORIO_TAG = {{ settings.atacado_acessorio_tag | json }};
-  var ACESSORIO_MIN_VALUE = parseFloat({{ settings.atacado_acessorio_min_value | default: '100.00' | json }}) * 100;
-  var ACESSORIO_MSG = {{ settings.atacado_acessorio_msg | default: 'Valor mínimo deste produto' | json }};
-
-  // Cache de tags por handle buscadas via API
-  var _tagsCache = {};
-
-  function getProductTags(handle) {
-    if (_tagsCache[handle] !== undefined) return Promise.resolve(_tagsCache[handle]);
-    return fetch('/products/' + handle + '.js')
-      .then(function(r){ return r.json(); })
-      .then(function(p){
-        _tagsCache[handle] = (p.tags || []).map(function(t){ return t.toLowerCase().trim(); });
-        return _tagsCache[handle];
-      })
-      .catch(function(){ _tagsCache[handle] = []; return []; });
-  }
-
-  function checkAcessorioRule(cartItems) {
-    console.log('[ACESSORIO] TAG buscada:', ACESSORIO_TAG);
-    console.log('[ACESSORIO] MIN_VALUE (centavos):', ACESSORIO_MIN_VALUE);
-    console.log('[ACESSORIO] cartItems:', cartItems.map(function(i){ return {handle: i.handle, title: i.product_title}; }));
-
-    var warning = document.getElementById('cart-acessorio-warning');
-    var container = document.getElementById('cart-acessorio-items');
-    if (!warning || !container) return;
-
-    // Busca tags de todos os produtos únicos
-    var handles = [...new Set(cartItems.map(function(i){ return i.handle; }))];
-    Promise.all(handles.map(getProductTags)).then(function() {
-      console.log('[ACESSORIO] Tags cache:', JSON.stringify(_tagsCache));
-      var acessoriosByProduct = {};
-      cartItems.forEach(function(item) {
-        var tags = _tagsCache[item.handle] || [];
-        if (tags.indexOf(ACESSORIO_TAG.toLowerCase()) > -1) {
-          if (!acessoriosByProduct[item.handle]) {
-            acessoriosByProduct[item.handle] = { title: item.product_title, qty: 0, total: 0 };
-          }
-          acessoriosByProduct[item.handle].qty += item.quantity;
-          acessoriosByProduct[item.handle].total += item.final_price * item.quantity;
-        }
-      });
-
-      var productHandles = Object.keys(acessoriosByProduct);
-      if (productHandles.length === 0) {
-        warning.style.display = 'none';
-        return;
-      }
-
-      warning.style.display = 'block';
-      container.innerHTML = '';
-
-      productHandles.forEach(function(handle) {
-        var prod = acessoriosByProduct[handle];
-        var pct = Math.min(100, Math.round((prod.total / ACESSORIO_MIN_VALUE) * 100));
-        var faltam = Math.max(0, ACESSORIO_MIN_VALUE - prod.total);
-        var atingiu = faltam === 0;
-
-        var div = document.createElement('div');
-        div.style.cssText = 'margin-bottom:0.625rem;padding:0.75rem 0.875rem;background:#FFF7ED;border-radius:0.75rem;border-left:3px solid ' + (atingiu ? '#16a34a' : '#F97316') + ';';
-        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">'
-          + '<span style="font-size:0.78rem;font-weight:600;color:#9A3412;">🏷️ ' + ACESSORIO_MSG + '</span>'
-          + '<span style="font-size:0.78rem;font-weight:700;color:' + (atingiu ? '#16a34a' : '#F97316') + ';">'
-          + (atingiu ? '✅ Atacado ativo' : 'Faltam R$ ' + (faltam/100).toFixed(2).replace('.',','))
-          + '</span></div>'
-          + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
-          + '<div style="height:100%;background:' + (atingiu ? '#16a34a' : '#F97316') + ';border-radius:9999px;width:' + pct + '%;transition:width 0.4s;"></div>'
-          + '</div>'
-          + (!atingiu ? '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do mínimo: preço de varejo aplicado</p>' : '');
-        container.appendChild(div);
-      });
-    });
-  }
-
-  window.checkAcessorioRule = checkAcessorioRule;
+  // checkAcessorioRule mantido para compatibilidade mas lógica principal está no renderCart
+  window.checkAcessorioRule = function(){};
 })();
 </script>
 {% endif %}
