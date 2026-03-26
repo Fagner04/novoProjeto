@@ -149,13 +149,19 @@
         <div class="footer-col" {{ block.shopify_attributes }}>
           <h4>{{ block.settings.title | default: 'Newsletter' }}</h4>
           <p style="font-size:0.875rem;color:rgba(24,24,27,0.7);margin-bottom:1rem;">{{ block.settings.description | default: 'Receba novidades e ofertas exclusivas' }}</p>
-          <form class="footer-newsletter" action="/contact#newsletter" method="post" accept-charset="UTF-8">
-            <input type="hidden" name="form_type" value="customer">
-            <input type="hidden" name="utf8" value="✓">
-            <input type="hidden" name="contact[tags]" value="newsletter">
-            <input type="email" name="contact[email]" placeholder="Seu e-mail" required>
-            <button type="submit">{{ block.settings.btn_label | default: 'Inscrever' }}</button>
-          </form>
+          {% form 'customer', id: 'footer-newsletter-form' %}
+            <input type="hidden" name="contact[tags]" value="newsletter,email-subscriber">
+            <input type="hidden" name="contact[accepts_marketing]" value="true">
+            <div class="footer-newsletter">
+              <input type="email" name="contact[email]" placeholder="Seu e-mail" required autocomplete="email">
+              <button type="submit">{{ block.settings.btn_label | default: 'Inscrever' }}</button>
+            </div>
+            {%- if form.posted_successfully? -%}
+              <p style="color:#16a34a;font-size:0.8rem;margin-top:0.5rem;">✅ Inscrito com sucesso!</p>
+            {%- elsif form.errors -%}
+              <p style="color:#dc2626;font-size:0.8rem;margin-top:0.5rem;">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</p>
+            {%- endif -%}
+          {% endform %}
         </div>
 
         {% elsif block.type == 'payment' %}
