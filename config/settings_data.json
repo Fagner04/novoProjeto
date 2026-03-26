@@ -58,6 +58,7 @@
         "settings": {
           "logo": "shopify://shop_images/Musas_club_2.png",
           "menu": "menu",
+          "menu_mobile": "main-menu",
           "nav_hover_color": "#fe7e41",
           "nav_active_color": "#fe7e41",
           "nav_active_underline": "#fe7e41",
