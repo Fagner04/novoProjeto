@@ -102,7 +102,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .mobile-menu { display: none; position: fixed; inset: 0; background: #fff; z-index: 100; flex-direction: column; overflow-y: auto; }
 .mobile-menu.open { display: flex; }
 
-.mobile-menu-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: var(--brand-purple); }
+.mobile-menu-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: var(--brand-purple); }
 .mobile-menu-logo { display: flex; align-items: center; }
 .mobile-menu-logo span { font-family: 'Merriweather', serif; font-size: 1.25rem; font-weight: 700; color: #fff; }
 .mobile-menu-logo img { filter: brightness(0) invert(1); }
@@ -122,7 +122,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .mobile-menu-divider { height: 6px; background: var(--background); margin: 0.5rem 0; }
 
 /* Mobile menu cards style */
-.mobile-menu-nav-cards { display: flex; flex-direction: column; gap: 0.375rem; padding: 0.75rem 1rem; }
+.mobile-menu-nav-cards { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.5rem 1rem; }
 .mmcard { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1rem; background: linear-gradient(135deg, #fce8e0 0%, #fdf0ec 100%); border-radius: 0.875rem; text-decoration: none; color: var(--foreground); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.02em; transition: filter 0.15s, transform 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 .mmcard:hover { filter: brightness(0.96); transform: translateX(3px); }
 .mmcard--highlight { background: linear-gradient(135deg, #fee2e2 0%, #fef3c7 100%); }
@@ -132,8 +132,8 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .mmcard-chevron { color: #bbb; flex-shrink: 0; }
 
 /* Saudação */
-.mm-greeting { padding: 0.75rem 1.25rem 0.25rem; }
-.mm-greeting-text { font-size: 0.875rem; color: var(--muted-foreground); }
+.mm-greeting { padding: 0.5rem 1.25rem 0; }
+.mm-greeting-text { font-size: 0.8rem; color: var(--muted-foreground); }
 .mm-greeting-text strong { color: var(--foreground); }
 
 /* Divisor */
