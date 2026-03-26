@@ -121,7 +121,13 @@
     "settings": [
       { "type": "header", "content": "Configurações de Atacado" },
       { "type": "checkbox", "id": "conectwhats_atacado_enabled", "label": "Ativar barra de progresso de atacado", "default": false },
-      { "type": "number", "id": "conectwhats_atacado_min_qty", "label": "Quantidade mínima para atacado", "default": 6 }
+      { "type": "number", "id": "conectwhats_atacado_min_qty", "label": "Quantidade mínima para atacado", "default": 6 },
+      { "type": "header", "content": "Regra de Acessórios no Atacado" },
+      { "type": "paragraph", "content": "Impede que atacadistas usem acessórios baratos para atingir o valor mínimo de atacado. Produtos com a tag definida abaixo terão quantidade mínima separada." },
+      { "type": "checkbox", "id": "atacado_acessorio_enabled", "label": "Ativar regra de mínimo para acessórios", "default": false },
+      { "type": "text", "id": "atacado_acessorio_tag", "label": "Tag dos produtos acessórios", "default": "acessorio", "info": "Adicione esta tag nos produtos que são acessórios no painel do Shopify" },
+      { "type": "number", "id": "atacado_acessorio_min_qty", "label": "Quantidade mínima de acessórios", "default": 6, "info": "Ex: 6 = o cliente precisa comprar pelo menos 6 unidades de acessórios" },
+      { "type": "text", "id": "atacado_acessorio_msg", "label": "Mensagem de aviso no carrinho", "default": "Para comprar acessórios no atacado, o mínimo é {min} unidades de acessórios." }
     ]
   },
   {

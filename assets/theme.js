@@ -112,6 +112,10 @@ async function renderCart() {
   });
   document.getElementById('cart-total-price').textContent = formatMoney(cart.total_price);
   await renderWholesaleProgress(cart);
+  // Verifica regra de mínimo de acessórios para atacado
+  if (typeof window.checkAcessorioRule === 'function') {
+    window.checkAcessorioRule(cart.items);
+  }
 }
 
 async function changeItemLine(line, qty) {
