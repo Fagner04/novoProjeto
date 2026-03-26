@@ -103,8 +103,9 @@
         "collection_item_imzaxM": {
           "type": "collection_item",
           "settings": {
-            "collection": "",
-            "label": "coleção em breve"
+            "collection": "acessorios",
+            "label": "AACESSORIOS",
+            "image": "shopify://shop_images/6233034F-9000-4AB0-B23C-F2151912F927_JPG.jpg"
           }
         }
       },
