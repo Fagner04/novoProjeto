@@ -134,6 +134,14 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
+        "badge_4gYrdq": {
+          "type": "badge",
+          "settings": {
+            "icon": "lock",
+            "title": "Compra Segura",
+            "text": "Ambiente seguro para pagamentos online"
+          }
+        },
         "badge_zbmixA": {
           "type": "badge",
           "settings": {
@@ -168,6 +176,7 @@
         }
       },
       "block_order": [
+        "badge_4gYrdq",
         "badge_zbmixA",
         "badge_CDMyc8",
         "badge_GPWWW6",
