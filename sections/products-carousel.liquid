@@ -58,6 +58,12 @@
                 </div>
                 <div class="carousel-card-info">
                   <h3>{{ product.title | upcase }}</h3>
+                  {%- if product.metafields.custom.wholesale_price -%}
+                  <div class="carousel-wholesale-badge">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    Atacado: <strong>{{ product.metafields.custom.wholesale_price.value | money }}</strong>
+                  </div>
+                  {%- endif -%}
                   <div class="carousel-price-row">
                     <span class="carousel-price-pix">{% render 'pix-icon', size: '14' %}{{ product.price | times: 0.95 | money }}</span>
                     <span class="carousel-pix-badge">5%</span>
@@ -88,6 +94,12 @@
                     </div>
                     <div class="carousel-card-info">
                       <h3>{{ product.title | upcase }}</h3>
+                      {%- if product.metafields.custom.wholesale_price -%}
+                      <div class="carousel-wholesale-badge">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        Atacado: <strong>{{ product.metafields.custom.wholesale_price.value | money }}</strong>
+                      </div>
+                      {%- endif -%}
                       <div class="carousel-price-row">
                         <span class="carousel-price-pix">{% render 'pix-icon', size: '14' %}{{ product.price | times: 0.95 | money }}</span>
                         <span class="carousel-pix-badge">5%</span>
@@ -169,6 +181,7 @@ window.addEventListener('resize', updatePosition);
 
 var autoT;
 function startAutoplay() {
+  if (window.innerWidth < 640) return; // mobile usa scroll nativo
   autoT = setInterval(function() {
     var cards = getActiveCards();
     var max = Math.max(0, cards.length - getVisibleCount());
