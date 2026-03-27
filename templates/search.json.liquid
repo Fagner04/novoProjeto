@@ -7,7 +7,7 @@
       "title": {{ product.title | json }},
       "url": {{ product.url | json }},
       "handle": {{ product.handle | json }},
-      "price": {{ product.price }},
+      "price_formatted": {{ product.price | money_without_currency | json }},
       "featured_image": {{ product.featured_image | image_url: width: 120 | json }}
     }{% unless forloop.last %},{% endunless %}
     {%- endif -%}

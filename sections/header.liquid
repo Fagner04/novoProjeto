@@ -218,7 +218,6 @@
 
           var html = '<div class="search-ac-section">PRODUTOS</div>';
           products.forEach(function(p) {
-            // Suporta tanto featured_image (string) quanto objeto com src
             var rawImg = p.featured_image || (p.image && p.image.src) || '';
             if (typeof rawImg === 'object' && rawImg !== null) rawImg = rawImg.src || '';
             var imgSrc = rawImg ? rawImg.split('?')[0] + '?width=120' : '';
@@ -227,9 +226,13 @@
               ? '<img src="' + imgSrc + '" alt="' + (p.title || '').replace(/"/g,'&quot;') + '" loading="lazy">'
               : '<div class="search-ac-noimg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
 
-            var price = p.price
-              ? '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.', ',') + '</span>'
-              : '';
+            // Usa price_formatted (do fallback Liquid) ou calcula a partir de price (da API suggest)
+            var price = '';
+            if (p.price_formatted) {
+              price = '<span class="search-ac-price">R$ ' + p.price_formatted + '</span>';
+            } else if (p.price) {
+              price = '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.', ',') + '</span>';
+            }
 
             var url = p.url || ('/products/' + p.handle);
             html += '<a href="' + url + '">' + img
