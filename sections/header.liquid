@@ -178,7 +178,7 @@
         });
 
         function fetchSuggestions(q){
-          fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=6&resources[options][fields]=title,product_type,variants.title,vendor&resources[options][unavailable_products]=last')
+          fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=6&resources[options][unavailable_products]=last')
             .then(function(r){ return r.json(); })
             .then(function(data){
               var products = (data.resources && data.resources.results && data.resources.results.products) || [];
