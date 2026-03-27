@@ -150,5 +150,13 @@
       },
       { "type": "text", "id": "rastreio_custom_url", "label": "URL personalizada de rastreio", "info": "Use {codigo} como placeholder. Ex: https://minhalogistica.com/rastrear/{codigo}" }
     ]
+  },
+  {
+    "name": "Licença do Tema",
+    "settings": [
+      { "type": "header", "content": "Ativação" },
+      { "type": "paragraph", "content": "Cole aqui o token de ativação fornecido pelo desenvolvedor. O tema será liberado automaticamente para todos os visitantes." },
+      { "type": "text", "id": "theme_activation_token", "label": "Token de ativação", "info": "Após colar o token e salvar, o tema será ativado permanentemente nesta loja." }
+    ]
   }
 ]
