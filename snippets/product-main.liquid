@@ -158,15 +158,6 @@
           {% endfor %}
         </div>
 
-        <!-- Description box below images -->
-        <div class="product-desc-box">
-          <h4>📋 DESCRIÇÃO DO PRODUTO</h4>
-          <p class="desc-size-guide">🏷️ Guia de Medidas</p>
-          <div class="product-desc-content" id="desc-content">
-            {{ product.description }}
-          </div>
-          <button class="desc-toggle-btn" id="desc-toggle" onclick="toggleDesc()">+ Ver mais</button>
-        </div>
       </div>
 
       <!-- RIGHT: Product info -->
@@ -302,14 +293,14 @@
         </div>
         {% endif %}
 
-        <!-- Descrição do produto — visível apenas no mobile, abaixo da calculadora de frete -->
-        <div class="product-desc-box product-desc-mobile-only">
+        <!-- Descrição do produto — abaixo da calculadora de frete -->
+        <div class="product-desc-box">
           <h4>📋 DESCRIÇÃO DO PRODUTO</h4>
           <p class="desc-size-guide">🏷️ Guia de Medidas</p>
-          <div class="product-desc-content" id="desc-content-mobile">
+          <div class="product-desc-content" id="desc-content">
             {{ product.description }}
           </div>
-          <button class="desc-toggle-btn" id="desc-toggle-mobile" onclick="toggleDescMobile()">+ Ver mais</button>
+          <button class="desc-toggle-btn" id="desc-toggle" onclick="toggleDesc()">+ Ver mais</button>
         </div>
       </div>
 
@@ -565,13 +556,6 @@
   function toggleDesc() {
     var content = document.getElementById('desc-content');
     var btn = document.getElementById('desc-toggle');
-    var expanded = content.classList.toggle('expanded');
-    btn.textContent = expanded ? '− Ver menos' : '+ Ver mais';
-  }
-
-  function toggleDescMobile() {
-    var content = document.getElementById('desc-content-mobile');
-    var btn = document.getElementById('desc-toggle-mobile');
     var expanded = content.classList.toggle('expanded');
     btn.textContent = expanded ? '− Ver menos' : '+ Ver mais';
   }
