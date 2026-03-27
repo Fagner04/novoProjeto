@@ -53,9 +53,9 @@
         "height_desktop": 740,
         "height_mobile": 500,
         "promo_enabled": true,
-        "promo_badge": "✨ OFERTA ESPECIAL ✨",
-        "promo_title": "Feliz dia das mulheres 😍",
-        "promo_text": "Cada peça é um presente de força e beleza!",
+        "promo_badge": "✨ COLEÇÃO NOVA✨",
+        "promo_title": "Atacado hoje 6 peças 24hs😍",
+        "promo_text": "Atacado mínimo encera em breve ,aproveite a nova coleção Blusinhas da Poc!!",
         "promo_btn_text": "Ver Oferta",
         "promo_btn_link": "",
         "promo_bg": "#ffffff",
@@ -68,6 +68,14 @@
     "collections_carousel_qrWhkd": {
       "type": "collections-carousel",
       "blocks": {
+        "collection_item_nfiKxV": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "fitnes",
+            "label": "BLUSINHAS POC",
+            "image": "shopify://shop_images/IMG_3495_0ffcaeeb-8714-4f14-8271-bb6e5e0325de.jpg"
+          }
+        },
         "collection_item_RJBU4G": {
           "type": "collection_item",
           "settings": {
@@ -80,68 +88,42 @@
           "type": "collection_item",
           "settings": {
             "collection": "macacao",
-            "label": "Macacões",
-            "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png"
-          }
-        },
-        "collection_item_zxJTgY": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "macacao",
-            "label": "Macacões",
+            "label": "MACAÇÃO",
             "image": "shopify://shop_images/Gemini_Generated_Image_i572bei572bei572.png"
           }
         },
         "collection_item_7dWE8H": {
           "type": "collection_item",
           "settings": {
-            "collection": "",
-            "label": "Tops",
+            "collection": "blusa",
+            "label": "BLUSA",
             "image": "shopify://shop_images/Gemini_Generated_Image_t8c0tut8c0tut8c0.png"
           }
         },
         "collection_item_amCGyW": {
           "type": "collection_item",
           "settings": {
-            "collection": "",
-            "label": "Leggings",
+            "collection": "conjunto-fitness",
+            "label": "CONJUNTO",
             "image": "shopify://shop_images/IMG_7335.jpg"
           }
         },
-        "collection_item_fqPbnM": {
+        "collection_item_imzaxM": {
           "type": "collection_item",
           "settings": {
-            "collection": "",
-            "label": "Leggings",
-            "image": "shopify://shop_images/IMG_7335.jpg"
-          }
-        },
-        "collection_item_J9UqpA": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "label": "Leggings",
-            "image": "shopify://shop_images/IMG_7335.jpg"
-          }
-        },
-        "collection_item_EpWJhE": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "label": "Leggings",
-            "image": "shopify://shop_images/IMG_7335.jpg"
+            "collection": "acessorios",
+            "label": "AACESSORIOS",
+            "image": "shopify://shop_images/6233034F-9000-4AB0-B23C-F2151912F927_JPG.jpg"
           }
         }
       },
       "block_order": [
+        "collection_item_nfiKxV",
         "collection_item_RJBU4G",
         "collection_item_6WHtpL",
-        "collection_item_zxJTgY",
         "collection_item_7dWE8H",
         "collection_item_amCGyW",
-        "collection_item_fqPbnM",
-        "collection_item_J9UqpA",
-        "collection_item_EpWJhE"
+        "collection_item_imzaxM"
       ],
       "name": "Carrossel de Coleções",
       "settings": {
@@ -152,71 +134,62 @@
     "trust": {
       "type": "trust-badges",
       "blocks": {
-        "badge_RnPBL3": {
+        "badge_Kzt8jV": {
           "type": "badge",
           "settings": {
-            "icon": "chat",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
+            "icon": "heart",
+            "title": "Satisfação ou Reembolso",
+            "text": "Caso haja algo, devolvemos seu dinheiro"
+          }
+        },
+        "badge_4gYrdq": {
+          "type": "badge",
+          "settings": {
+            "icon": "lock",
+            "title": "Compra Segura",
+            "text": "Ambiente seguro para pagamentos online"
+          }
+        },
+        "badge_zbmixA": {
+          "type": "badge",
+          "settings": {
+            "icon": "screen",
+            "title": "Produção Própria",
+            "text": "Criação exclusiva, produção limitada"
           }
         },
         "badge_CDMyc8": {
           "type": "badge",
           "settings": {
             "icon": "refresh",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
+            "title": "Atacado",
+            "text": "mínimo 12  peças"
           }
         },
         "badge_GPWWW6": {
           "type": "badge",
           "settings": {
-            "icon": "star",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
+            "icon": "heart",
+            "title": "Parcelamento",
+            "text": "Em até 6x"
           }
         },
         "badge_YjcbiL": {
           "type": "badge",
           "settings": {
-            "icon": "heart",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_3tBTtV": {
-          "type": "badge",
-          "settings": {
-            "icon": "shield",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_mmCQrr": {
-          "type": "badge",
-          "settings": {
-            "icon": "truck",
-            "title": "Primeira troca grátis",
-            "text": "Descrição do selo"
-          }
-        },
-        "badge_qkdpUt": {
-          "type": "badge",
-          "settings": {
-            "icon": "lock",
-            "title": "Título do selo",
-            "text": "Descrição do selo"
+            "icon": "star",
+            "title": "Ganhe",
+            "text": "5% de Desconto Varejo"
           }
         }
       },
       "block_order": [
-        "badge_RnPBL3",
+        "badge_Kzt8jV",
+        "badge_4gYrdq",
+        "badge_zbmixA",
         "badge_CDMyc8",
         "badge_GPWWW6",
-        "badge_YjcbiL",
-        "badge_3tBTtV",
-        "badge_mmCQrr",
-        "badge_qkdpUt"
+        "badge_YjcbiL"
       ],
       "settings": {}
     },

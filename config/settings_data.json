@@ -26,7 +26,7 @@
     "color_pix": "#b5a1ff",
     "font_heading": "acme_n4",
     "font_body": "acme_n4",
-    "social_instagram": "https://www.instagram.com/musasclubfit",
+    "social_instagram": "https://www.instagram.com/musasclubfit?igsh=MWJjeTFibWxuczVodg%3D%3D",
     "social_facebook": "https://www.instagram.com/musasclubfit",
     "social_tiktok": "https://www.instagram.com/musasclubfit",
     "social_whatsapp": "https://wa.me/5562994319090",
@@ -112,9 +112,9 @@
               "show_pix": true,
               "show_visa": true,
               "show_mastercard": true,
-              "show_amex": true,
+              "show_amex": false,
               "show_elo": true,
-              "show_hipercard": true,
+              "show_hipercard": false,
               "installments": "Em até 6x sem juros no cartão"
             }
           }
