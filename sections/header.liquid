@@ -90,6 +90,15 @@
         max-height: 420px;
         overflow-y: auto;
       }
+      .search-ac-section {
+        padding: 0.6rem 1rem 0.4rem;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: #71717a;
+        background: #f9f9fb;
+        border-bottom: 1px solid #f0f0f2;
+      }
       .search-autocomplete a {
         display: flex;
         align-items: center;
@@ -104,15 +113,22 @@
       .search-autocomplete a:last-child { border-bottom: none; }
       .search-autocomplete a:hover { background: #f9f9fb; }
       .search-autocomplete img {
-        width: 44px; height: 44px;
+        width: 56px; height: 56px;
         object-fit: cover;
         border-radius: 0.5rem;
         flex-shrink: 0;
         background: #f4f4f5;
       }
-      .search-ac-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
-      .search-ac-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .search-ac-price { font-size: 0.8rem; color: #71449b; font-weight: 700; }
+      .search-ac-noimg {
+        width: 56px; height: 56px;
+        border-radius: 0.5rem;
+        background: #f4f4f5;
+        flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .search-ac-info { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+      .search-ac-title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.02em; }
+      .search-ac-price { font-size: 0.85rem; color: #7c3aed; font-weight: 700; }
       .search-ac-empty { padding: 1rem; text-align: center; color: #71717a; font-size: 0.875rem; }
       .search-ac-loading { padding: 1rem; text-align: center; color: #a1a1aa; font-size: 0.8rem; }
       .search-ac-viewall {
@@ -141,10 +157,10 @@
         function tryFetch() {
           clearTimeout(timer);
           var q = input.value.trim();
-          if(q.length < 2){ box.style.display='none'; return; }
+          if(q.length < 1){ box.style.display='none'; return; }
           box.innerHTML = '<div class="search-ac-loading">Buscando...</div>';
           box.style.display = 'block';
-          timer = setTimeout(function(){ fetchSuggestions(q); }, 280);
+          timer = setTimeout(function(){ fetchSuggestions(q); }, 200);
         }
 
         input.addEventListener('input', tryFetch);
@@ -176,13 +192,14 @@
                 return;
               }
 
-              box.innerHTML = products.map(function(p){
+              box.innerHTML = '<div class="search-ac-section">PRODUTOS</div>'
+                + products.map(function(p){
                 var imgSrc = p.featured_image
-                  ? (p.featured_image.indexOf('?') > -1 ? p.featured_image + '&width=100' : p.featured_image + '?width=100')
+                  ? (p.featured_image.indexOf('?') > -1 ? p.featured_image + '&width=120' : p.featured_image + '?width=120')
                   : '';
                 var img = imgSrc
                   ? '<img src="' + imgSrc + '" alt="' + p.title.replace(/"/g,'&quot;') + '" loading="lazy">'
-                  : '<div style="width:44px;height:44px;border-radius:8px;background:#f4f4f5;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
+                  : '<div class="search-ac-noimg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
                 var price = p.price ? '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.',',') + '</span>' : '';
                 return '<a href="' + p.url + '">' + img + '<span class="search-ac-info"><span class="search-ac-title">' + p.title + '</span>' + price + '</span></a>';
               }).join('') + viewAll;
