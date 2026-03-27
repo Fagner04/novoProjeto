@@ -206,6 +206,7 @@
         }
 
         function renderResults(q, products) {
+          console.log('[Search] produtos recebidos:', JSON.stringify(products[0] || {}));
           var viewAll = '<a href="/search?q=' + encodeURIComponent(q) + '&type=product" class="search-ac-viewall">'
             + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>'
             + 'Ver todos os resultados para "' + q + '"</a>';
@@ -218,10 +219,18 @@
 
           var html = '<div class="search-ac-section">PRODUTOS</div>';
           products.forEach(function(p) {
-            // price_str vem formatado do Liquid (ex: "R$ 159,90"), price da API suggest em centavos
+            // Corrige preço: Shopify retorna em centavos (16000 = R$160,00)
+            // Se price_raw < 1000 provavelmente já está em reais (bug de algumas versões)
             var price = '';
-            if (p.price_str) {
-              price = '<span class="search-ac-price">' + p.price_str + '</span>';
+            if (p.price_str && p.price_raw) {
+              var raw = parseFloat(p.price_raw);
+              if (raw < 1000) {
+                // valor em reais direto (ex: 160 = R$160,00)
+                price = '<span class="search-ac-price">R$ ' + raw.toFixed(2).replace('.', ',') + '</span>';
+              } else {
+                // valor em centavos (ex: 16000 = R$160,00)
+                price = '<span class="search-ac-price">' + p.price_str + '</span>';
+              }
             } else if (p.price) {
               price = '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.', ',') + '</span>';
             }
