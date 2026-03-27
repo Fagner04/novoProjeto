@@ -39,6 +39,13 @@
       --pix-color: {{ settings.color_pix }};
       --badge-bg: {{ settings.color_badge_bg }};
     }
+
+    /* Prevent iOS Safari auto-zoom on input focus */
+    @media (max-width: 1023px) {
+      input, textarea, select {
+        font-size: 16px !important;
+      }
+    }
   </style>
 </head>
 <body>
