@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "theme_activation_token": "",
     "color_primary": "#71449b",
     "color_secondary": "#ffffff",
     "color_background": "#f7f7f7",
