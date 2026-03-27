@@ -1,0 +1,15 @@
+{%- layout none -%}
+{%- assign search_results = search.results -%}
+[
+  {%- for product in search_results limit: 6 -%}
+    {%- if product.object_type == 'product' -%}
+    {
+      "title": {{ product.title | json }},
+      "url": {{ product.url | json }},
+      "handle": {{ product.handle | json }},
+      "price": {{ product.price }},
+      "featured_image": {{ product.featured_image | image_url: width: 120 | json }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endif -%}
+  {%- endfor -%}
+]
