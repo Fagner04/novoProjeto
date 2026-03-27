@@ -459,12 +459,11 @@
 
   // --- Gallery: show pair of images ---
   function setMainImages(index) {
-    // Update thumbs active
+    // Update thumbs active (desktop e mobile)
     document.querySelectorAll('.thumb-item').forEach(function(t, i) {
       t.classList.toggle('active', i === index);
     });
 
-    // Show clicked image as first, next as second
     var img0 = document.getElementById('main-img-0');
     var img1 = document.getElementById('main-img-1');
     if (!img0) return;
