@@ -104,7 +104,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 .mobile-menu { display: none; position: fixed; inset: 0; background: #fff; z-index: 100; flex-direction: column; overflow-y: auto; }
 .mobile-menu.open { display: flex; }
 
-.mobile-menu-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; background: var(--brand-purple); }
+.mobile-menu-header { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1rem; padding-top: calc(0.5rem + env(safe-area-inset-top, 0px)); background: var(--brand-purple); min-height: 52px; }
 .mobile-menu-logo { display: flex; align-items: center; }
 .mobile-menu-logo span { font-family: 'Merriweather', serif; font-size: 1.25rem; font-weight: 700; color: #fff; }
 .mobile-menu-logo img { filter: brightness(0) invert(1); }
