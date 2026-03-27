@@ -206,7 +206,6 @@
         }
 
         function renderResults(q, products) {
-          console.log('[Search] produtos recebidos:', JSON.stringify(products[0] || {}));
           var viewAll = '<a href="/search?q=' + encodeURIComponent(q) + '&type=product" class="search-ac-viewall">'
             + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>'
             + 'Ver todos os resultados para "' + q + '"</a>';
@@ -219,36 +218,32 @@
 
           var html = '<div class="search-ac-section">PRODUTOS</div>';
           products.forEach(function(p) {
-            // Corrige preço: Shopify retorna em centavos (16000 = R$160,00)
-            // Se price_raw < 1000 provavelmente já está em reais (bug de algumas versões)
-            var price = '';
-            if (p.price_str && p.price_raw) {
-              var raw = parseFloat(p.price_raw);
-              if (raw < 1000) {
-                // valor em reais direto (ex: 160 = R$160,00)
-                price = '<span class="search-ac-price">R$ ' + raw.toFixed(2).replace('.', ',') + '</span>';
-              } else {
-                // valor em centavos (ex: 16000 = R$160,00)
-                price = '<span class="search-ac-price">' + p.price_str + '</span>';
-              }
-            } else if (p.price) {
-              price = '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.', ',') + '</span>';
+            // Imagem: objeto {url:...} ou string
+            var imgSrc = '';
+            if (p.featured_image && typeof p.featured_image === 'object') {
+              imgSrc = p.featured_image.url || p.featured_image.src || '';
+            } else if (typeof p.featured_image === 'string') {
+              imgSrc = p.featured_image;
+            } else if (p.image) {
+              imgSrc = typeof p.image === 'string' ? p.image : (p.image.url || p.image.src || '');
             }
-
-            var rawImg = p.featured_image || '';
-            if (typeof rawImg === 'object' && rawImg !== null) rawImg = rawImg.src || '';
-            // URL do Liquid já vem completa (ex: //cdn.shopify.com/...); da API suggest pode ser relativa
-            var imgSrc = rawImg
-              ? (rawImg.indexOf('//') === 0 ? 'https:' + rawImg : rawImg)
-              : '';
-            // Garante que não duplica parâmetros de width
             if (imgSrc) imgSrc = imgSrc.split('?')[0] + '?width=120';
 
             var img = imgSrc
               ? '<img src="' + imgSrc + '" alt="' + (p.title || '').replace(/"/g,'&quot;') + '" loading="lazy">'
               : '<div class="search-ac-noimg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
 
-            var url = p.url || ('/products/' + p.handle);
+            // Preço vem como string "159.90" em reais (não centavos)
+            var price = '';
+            var rawPrice = p.price || p.price_min || '';
+            if (rawPrice) {
+              var num = parseFloat(String(rawPrice).replace(',', '.'));
+              if (!isNaN(num)) {
+                price = '<span class="search-ac-price">R$ ' + num.toFixed(2).replace('.', ',') + '</span>';
+              }
+            }
+
+            var url = (p.url || '/products/' + p.handle).split('?')[0];
             html += '<a href="' + url + '">' + img
               + '<span class="search-ac-info"><span class="search-ac-title">' + (p.title || '') + '</span>' + price + '</span></a>';
           });
