@@ -137,6 +137,18 @@
           {% endfor %}
         </div>
 
+        <!-- Thumbnails horizontais mobile -->
+        <div class="mobile-thumbs" id="mobile-thumbs">
+          {% for image in product.images %}
+            <img
+              src="{{ image | image_url: width: 200 }}"
+              alt="{{ image.alt | escape }}"
+              class="thumb-item {% if forloop.first %}active{% endif %}"
+              onclick="setMainImages({{ forloop.index0 }})"
+              loading="lazy" width="200" height="267">
+          {% endfor %}
+        </div>
+
         <!-- Description box below images -->
         <div class="product-desc-box">
           <h4>📋 DESCRIÇÃO DO PRODUTO</h4>
