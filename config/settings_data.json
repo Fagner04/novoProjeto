@@ -9,7 +9,6 @@
  */
 {
   "current": {
-    "theme_activation_token": "",
     "color_primary": "#71449b",
     "color_secondary": "#ffffff",
     "color_background": "#f7f7f7",
@@ -45,6 +44,7 @@
     "frete_planilha_enabled": true,
     "frete_planilha_url": "https://script.google.com/macros/s/AKfycbxyzFKs_KlPjq4cl2aEuQmdLHReNgvRp3L6pqg1vA6ZL8IIRsSphBJ_cCtgkfIVCYryPA/exec",
     "rastreio_enabled": false,
+    "theme_activation_token": "i3nUJahlhntLCjaFiXFYHQYu",
     "color_header_icon_bg": "#c1434300",
     "color_header_icon_border": "#a0181800",
     "sections": {
