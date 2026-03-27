@@ -47,10 +47,10 @@
         "slide_Awni3z"
       ],
       "settings": {
-        "margin_top_extra": -72,
+        "margin_top_extra": -74,
         "margin_top_extra_mobile": -110,
         "height_mode": "custom",
-        "height_desktop": 630,
+        "height_desktop": 650,
         "height_mobile": 550,
         "promo_enabled": true,
         "promo_badge": "✨ COLEÇÃO NOVA✨",
@@ -71,9 +71,9 @@
         "collection_item_nfiKxV": {
           "type": "collection_item",
           "settings": {
-            "collection": "fitnes",
+            "collection": "ultimas-novidades",
             "label": "BLUSINHAS POC",
-            "image": "shopify://shop_images/IMG_3495_0ffcaeeb-8714-4f14-8271-bb6e5e0325de.jpg"
+            "image": "shopify://shop_images/IMG_5881.jpg"
           }
         },
         "collection_item_RJBU4G": {
@@ -97,7 +97,7 @@
           "settings": {
             "collection": "blusa",
             "label": "BLUSA",
-            "image": "shopify://shop_images/Gemini_Generated_Image_t8c0tut8c0tut8c0.png"
+            "image": "shopify://shop_images/IMG_2650.heic"
           }
         },
         "collection_item_amCGyW": {
@@ -105,7 +105,7 @@
           "settings": {
             "collection": "conjunto-fitness",
             "label": "CONJUNTO",
-            "image": "shopify://shop_images/IMG_7335.jpg"
+            "image": "shopify://shop_images/IMG_1095.heic"
           }
         },
         "collection_item_imzaxM": {
