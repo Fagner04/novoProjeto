@@ -181,7 +181,6 @@ window.addEventListener('resize', updatePosition);
 
 var autoT;
 function startAutoplay() {
-  if (window.innerWidth < 640) return; // mobile usa scroll nativo
   autoT = setInterval(function() {
     var cards = getActiveCards();
     var max = Math.max(0, cards.length - getVisibleCount());

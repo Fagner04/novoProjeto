@@ -176,7 +176,7 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
   overflow: hidden;
   border-radius: 0;
   height: var(--hero-h-mobile, 100dvh);
-  margin-top: calc(var(--header-h, 64px) + var(--hero-margin-extra-mobile, 0px));
+  margin-top: calc(var(--header-only-h, 60px) + var(--hero-margin-extra-mobile, 0px));
 }
 @media (min-width: 768px) {
   .hero-carousel-wrap {

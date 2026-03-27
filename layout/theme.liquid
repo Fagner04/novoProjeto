@@ -180,6 +180,7 @@
       var annH=ann?ann.offsetHeight:0;
       var hdrH=hdr?hdr.offsetHeight:0;
       document.documentElement.style.setProperty('--header-h',(annH+hdrH)+'px');
+      document.documentElement.style.setProperty('--header-only-h',hdrH+'px');
     }
     document.addEventListener('DOMContentLoaded',setHeaderHeight);
     window.addEventListener('resize',setHeaderHeight);
