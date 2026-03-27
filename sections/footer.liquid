@@ -209,23 +209,15 @@
 
             {% if block.settings.show_elo %}
             <div class="pay-chip" title="Elo" style="background:#000;">
-              <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
-                <!--
-                  Centro: 130,160  Raio: 85
-                  Círculo dividido em 3 arcos de 110° cada, com gap de 10°
-                  Ângulos (0° = direita, sentido horário):
-                  Amarelo: -60° a  50°  (topo)
-                  Vermelho: 70° a 180°  (baixo-direita)
-                  Azul:   200° a 310°  (baixo-esquerda / esquerda)
-                -->
-                <!-- Amarelo: topo -->
-                <path d="M 172.5 75.7 A 85 85 0 0 1 213.5 203.5" fill="none" stroke="#FFC20E" stroke-width="26" stroke-linecap="round"/>
-                <!-- Vermelho: baixo-direita -->
-                <path d="M 213.5 203.5 A 85 85 0 0 1 86.5 216.5" fill="none" stroke="#EE3124" stroke-width="26" stroke-linecap="round"/>
-                <!-- Azul: esquerda -->
-                <path d="M 72.5 190.0 A 85 85 0 0 1 172.5 75.7" fill="none" stroke="#00AEEF" stroke-width="26" stroke-linecap="round"/>
+              <svg viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0h750v471H0z" fill="#000"/>
+                <!-- Símbolo Elo: círculo tricolor -->
+                <circle cx="220" cy="236" r="130" fill="none" stroke="#FFC20E" stroke-width="40" stroke-dasharray="272 136" stroke-dashoffset="0"/>
+                <circle cx="220" cy="236" r="130" fill="none" stroke="#EE3124" stroke-width="40" stroke-dasharray="136 272" stroke-dashoffset="-272"/>
+                <circle cx="220" cy="236" r="130" fill="none" stroke="#00AEEF" stroke-width="40" stroke-dasharray="136 272" stroke-dashoffset="-136"/>
+                <circle cx="220" cy="236" r="70" fill="#000"/>
                 <!-- texto elo -->
-                <text x="240" y="195" font-family="Arial,sans-serif" font-weight="700" font-size="110" fill="#fff">elo</text>
+                <text x="420" y="300" font-family="Arial,sans-serif" font-weight="900" font-size="160" fill="#fff">elo</text>
               </svg>
             </div>
             {% endif %}
@@ -251,7 +243,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© {{ 'now' | date: '%Y' }} {{ shop.name }}.2026 Musas. Todos os direitos reservados. Parceria EmporioBody & Musas Club.</p>
+      <p>© 2026 Musas. Todos os direitos reservados. Parceria EmporioBody & Musas Club.</p>
       <p>{{ section.settings.cnpj }}</p>
       <p style="font-size:0.7rem;color:rgba(24,24,27,0.45);">Desenvolvido por <a href="https://fagner-dev.vercel.app" target="_blank" rel="noopener" style="color:rgba(24,24,27,0.55);text-decoration:underline;font-weight:600;">Mundo.dev</a></p>
     </div>
