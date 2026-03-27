@@ -271,6 +271,12 @@
 
     <!-- Actions -->
     <div class="header-actions">
+      <!-- Mobile search toggle -->
+      <button class="header-icon-btn mobile-search-btn" onclick="toggleMobileSearch()" aria-label="Buscar" id="mobile-search-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
       <a href="/pages/favoritos" class="header-icon-btn" aria-label="Favoritos" style="position:relative;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -300,6 +306,87 @@
 
 
 </header>
+
+<!-- Mobile Search Overlay -->
+<div id="mobile-search-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:200;" onclick="closeMobileSearch()"></div>
+<div id="mobile-search-bar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:201;background:var(--header-bg,#fff);padding:0.75rem 1rem;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <form action="/search" method="get" autocomplete="off" style="display:flex;align-items:center;gap:0.5rem;background:#f4f4f5;border-radius:9999px;padding:0.5rem 1rem;">
+    <input type="hidden" name="type" value="product">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" style="flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="search" name="q" id="mobile-search-input" placeholder="Pesquisar produtos..." autocomplete="off"
+      style="border:none;outline:none;background:transparent;flex:1;font-size:1rem;color:var(--foreground);"
+      oninput="mobileSearchFetch(this.value)" onkeydown="if(event.key==='Escape')closeMobileSearch()">
+    <button type="button" onclick="closeMobileSearch()" style="background:none;border:none;cursor:pointer;padding:0;color:#888;display:flex;align-items:center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </form>
+  <div id="mobile-search-results" style="max-height:60vh;overflow-y:auto;background:#fff;border-radius:1rem;margin-top:0.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.1);display:none;"></div>
+</div>
+
+<script>
+function toggleMobileSearch() {
+  var bar = document.getElementById('mobile-search-bar');
+  var overlay = document.getElementById('mobile-search-overlay');
+  bar.style.display = 'block';
+  overlay.style.display = 'block';
+  setTimeout(function(){ document.getElementById('mobile-search-input').focus(); }, 50);
+}
+function closeMobileSearch() {
+  document.getElementById('mobile-search-bar').style.display = 'none';
+  document.getElementById('mobile-search-overlay').style.display = 'none';
+  document.getElementById('mobile-search-results').style.display = 'none';
+}
+var _mobileTimer;
+function mobileSearchFetch(q) {
+  clearTimeout(_mobileTimer);
+  var box = document.getElementById('mobile-search-results');
+  q = q.trim();
+  if (q.length < 1) { box.style.display = 'none'; return; }
+  box.innerHTML = '<div style="padding:1rem;text-align:center;color:#aaa;font-size:0.8rem;">Buscando...</div>';
+  box.style.display = 'block';
+  _mobileTimer = setTimeout(function() {
+    fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=6')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var products = (data.resources && data.resources.results && data.resources.results.products) || [];
+        if (products.length === 0) {
+          return fetch('/search?q=' + encodeURIComponent(q) + '&type=product&view=json')
+            .then(function(r){ return r.json(); })
+            .then(function(arr){ renderMobile(q, arr || []); });
+        }
+        renderMobile(q, products);
+      })
+      .catch(function(){ renderMobile(q, []); });
+  }, 200);
+}
+function renderMobile(q, products) {
+  var box = document.getElementById('mobile-search-results');
+  var viewAll = '<a href="/search?q=' + encodeURIComponent(q) + '&type=product" style="display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;font-size:0.875rem;font-weight:700;color:#7c3aed;text-decoration:none;background:#faf5ff;border-top:1px solid #f0f0f2;" onclick="closeMobileSearch()">'
+    + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>'
+    + 'Ver todos os resultados para "' + q + '"</a>';
+  if (!products.length) { box.innerHTML = viewAll; return; }
+  var html = '<div style="padding:0.5rem 1rem 0.3rem;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;color:#71717a;background:#f9f9fb;border-bottom:1px solid #f0f0f2;">PRODUTOS</div>';
+  products.forEach(function(p) {
+    var imgSrc = '';
+    if (p.featured_image && typeof p.featured_image === 'object') imgSrc = p.featured_image.url || p.featured_image.src || '';
+    else if (typeof p.featured_image === 'string') imgSrc = p.featured_image;
+    else if (p.image) imgSrc = typeof p.image === 'string' ? p.image : (p.image.url || p.image.src || '');
+    if (imgSrc) imgSrc = imgSrc.split('?')[0] + '?width=120';
+    var img = imgSrc
+      ? '<img src="' + imgSrc + '" style="width:48px;height:48px;object-fit:cover;border-radius:0.5rem;flex-shrink:0;" loading="lazy">'
+      : '<div style="width:48px;height:48px;border-radius:0.5rem;background:#f4f4f5;flex-shrink:0;"></div>';
+    var rawPrice = p.price || p.price_min || '';
+    var price = '';
+    if (rawPrice) { var n = parseFloat(String(rawPrice).replace(',','.')); if (!isNaN(n)) price = '<span style="font-size:0.85rem;color:#7c3aed;font-weight:700;">R$ ' + n.toFixed(2).replace('.',',') + '</span>'; }
+    var url = (p.url || '/products/' + p.handle).split('?')[0];
+    html += '<a href="' + url + '" onclick="closeMobileSearch()" style="display:flex;align-items:center;gap:0.75rem;padding:0.65rem 1rem;text-decoration:none;color:#18181b;border-bottom:1px solid #f4f4f5;">'
+      + img + '<span style="display:flex;flex-direction:column;gap:0.15rem;min-width:0;">'
+      + '<span style="font-weight:700;font-size:0.8rem;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (p.title || '') + '</span>'
+      + price + '</span></a>';
+  });
+  box.innerHTML = html + viewAll;
+}
+</script>
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobile-menu">
