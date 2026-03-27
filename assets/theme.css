@@ -572,9 +572,10 @@ input, textarea, select { font-size: 16px; font-family: inherit; }
 
 /* Desktop: mantém grid 2 colunas */
 @media (min-width: 1024px) {
-  .prod-img-carousel { aspect-ratio: unset; }
-  .prod-img-track { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; transform: none !important; }
-  .prod-img-slide { aspect-ratio: 3/4; }
+  .prod-img-carousel { aspect-ratio: unset; overflow: visible; background: none; border-radius: 0; }
+  .prod-img-track { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0.75rem; transform: none !important; transition: none; height: auto; }
+  .prod-img-slide { aspect-ratio: 3/4; border-radius: 0.75rem; overflow: hidden; }
+  .prod-img-slide:nth-child(n+3) { display: none; }
   .prod-img-dots { display: none; }
   .product-thumbs-col { display: flex; }
   .mobile-thumbs { display: none; }
