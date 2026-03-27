@@ -7,8 +7,8 @@
       "title": {{ product.title | json }},
       "url": {{ product.url | json }},
       "handle": {{ product.handle | json }},
-      "price_cents": {{ product.price }},
-      "featured_image": {{ product.featured_image | image_url: width: 200 | json }}
+      "price_str": {{ product.price | money | json }},
+      "featured_image": {{ product.featured_image | image_url: width: 200 | prepend: 'https:' | json }}
     }{% unless forloop.last %},{% endunless %}
     {%- endif -%}
   {%- endfor -%}

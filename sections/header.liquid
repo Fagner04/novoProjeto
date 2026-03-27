@@ -218,11 +218,13 @@
 
           var html = '<div class="search-ac-section">PRODUTOS</div>';
           products.forEach(function(p) {
-            // price_cents vem do fallback Liquid (centavos), price vem da API suggest (centavos)
-            var cents = p.price_cents || p.price || 0;
-            var price = cents
-              ? '<span class="search-ac-price">R$ ' + (cents / 100).toFixed(2).replace('.', ',') + '</span>'
-              : '';
+            // price_str vem formatado do Liquid (ex: "R$ 159,90"), price da API suggest em centavos
+            var price = '';
+            if (p.price_str) {
+              price = '<span class="search-ac-price">' + p.price_str + '</span>';
+            } else if (p.price) {
+              price = '<span class="search-ac-price">R$ ' + (p.price / 100).toFixed(2).replace('.', ',') + '</span>';
+            }
 
             var rawImg = p.featured_image || '';
             if (typeof rawImg === 'object' && rawImg !== null) rawImg = rawImg.src || '';
