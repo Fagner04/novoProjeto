@@ -44,9 +44,33 @@
 <body>
 
 <!-- THEME ACTIVATION GATE -->
-<div id="_ag" style="display:none;position:fixed;inset:0;background:#f4f4f5;z-index:99999;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;">
+<script>
+(function(){
+  var KEY='_theme_activated';
+  var API='https://conectwhats.vercel.app/api/activate';
+  var DOMAIN=location.hostname;
 
-  <!-- Formulário -->
+  // Já ativado localmente — libera direto
+  if(localStorage.getItem(KEY)==='1'){return;}
+
+  // Verifica automaticamente se o domínio já está ativado
+  fetch(API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:'__domain_check__',domain:DOMAIN})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok || d.domain_active){
+      localStorage.setItem(KEY,'1');
+    }
+  }).catch(function(){});
+
+  // Mostra o bloqueio
+  var gate=document.getElementById('_ag');
+  if(gate){gate.style.display='flex';document.body.style.overflow='hidden';}
+})();
+</script>
+
+<div id="_ag" style="display:none;position:fixed;inset:0;background:#f4f4f5;z-index:99999;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;">
   <div id="_af" style="background:#fff;border-radius:1.25rem;padding:2.5rem 2rem;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.12);text-align:center;">
     <div style="font-size:2.5rem;margin-bottom:1rem;">🔑</div>
     <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem;color:#18181b;">Theme Activation Required</h2>
@@ -59,22 +83,15 @@
     </button>
     <p id="_ae" style="display:none;margin-top:.7rem;color:#ef4444;font-size:.8rem;background:#fef2f2;border-radius:.5rem;padding:.5rem .75rem;"></p>
   </div>
-
-  <!-- Tela de sucesso -->
   <div id="_as" style="display:none;background:#fff;border-radius:1.25rem;padding:2.5rem 2rem;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.12);text-align:center;border-top:4px solid #22c55e;">
     <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
     <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem;color:#18181b;">Parabéns! Tema Ativado!</h2>
     <p style="color:#52525b;font-size:.875rem;margin-bottom:1.5rem;">Seu tema está online e pronto para uso.</p>
-    <div style="background:#f4f4f5;border-radius:.75rem;padding:1rem;margin-bottom:1.5rem;">
-      <p style="font-size:.75rem;color:#71717a;margin-bottom:.25rem;">Desenvolvido por</p>
-      <p style="font-size:1rem;font-weight:700;color:#18181b;">fagner.dev</p>
-    </div>
     <button onclick="_ac()"
       style="width:100%;padding:.85rem;background:#22c55e;color:#fff;border:none;border-radius:9999px;font-size:.9rem;font-weight:600;cursor:pointer;">
       Acessar minha loja →
     </button>
   </div>
-
 </div>
 
 <script>
@@ -82,55 +99,52 @@
   var KEY='_theme_activated';
   var API='https://conectwhats.vercel.app/api/activate';
 
-  // Já ativado — libera direto
   if(localStorage.getItem(KEY)==='1'){return;}
 
-  // Mostra o bloqueio
   var gate=document.getElementById('_ag');
   gate.style.display='flex';
   document.body.style.overflow='hidden';
+
+  // Tenta verificar domínio automaticamente
+  fetch(API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:'__domain_check__',domain:location.hostname})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.ok || d.domain_active){
+      localStorage.setItem(KEY,'1');
+      gate.style.display='none';
+      document.body.style.overflow='';
+    }
+  }).catch(function(){});
 
   window._av=async function(){
     var t=document.getElementById('_at').value.trim();
     var b=document.getElementById('_ab');
     var e=document.getElementById('_ae');
-    if(!t){_ae('Please enter your activation token.');return;}
+    if(!t){_showErr('Please enter your activation token.');return;}
     b.disabled=true;b.textContent='Activating...';e.style.display='none';
     try{
-      var r=await fetch(API,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({token:t,domain:location.hostname})
-      });
+      var r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:t,domain:location.hostname})});
       var d=await r.json();
-      if(!r.ok){_ae(d.error||'Invalid token.');return;}
+      if(!r.ok){_showErr(d.error||'Invalid token.');return;}
       localStorage.setItem(KEY,'1');
-      // Mostra tela de sucesso por 3 segundos
       document.getElementById('_af').style.display='none';
       document.getElementById('_as').style.display='block';
-      setTimeout(function(){
-        gate.style.display='none';
-        document.body.style.overflow='';
-      },3000);
-    }catch(x){_ae('Connection error. Please try again.');}
+      setTimeout(function(){gate.style.display='none';document.body.style.overflow='';},3000);
+    }catch(x){_showErr('Connection error. Please try again.');}
     finally{b.disabled=false;b.textContent='Activate Theme';}
   };
 
-  function _ae(m){
+  function _showErr(m){
     var e=document.getElementById('_ae');
     e.textContent=m;e.style.display='block';
     document.getElementById('_ab').disabled=false;
     document.getElementById('_ab').textContent='Activate Theme';
   }
 
-  window._ac=function(){
-    document.getElementById('_ag').style.display='none';
-    document.body.style.overflow='';
-  };
-
-  document.getElementById('_at').addEventListener('keydown',function(e){
-    if(e.key==='Enter')_av();
-  });
+  window._ac=function(){gate.style.display='none';document.body.style.overflow='';};
+  document.getElementById('_at').addEventListener('keydown',function(e){if(e.key==='Enter')_av();});
 })();
 </script>
 <!-- END ACTIVATION GATE -->
