@@ -42,7 +42,7 @@
     "atacado_acessorio_min_value": "100.00",
     "atacado_acessorio_msg": "Valor mínimo deste produto",
     "frete_planilha_enabled": true,
-    "frete_planilha_url": "https://script.google.com/macros/s/AKfycbxyzFKs_KlPjq4cl2aEuQmdLHReNgvRp3L6pqg1vA6ZL8IIRsSphBJ_cCtgkfIVCYryPA/exec",
+    "frete_planilha_url": "https://script.google.com/macros/s/AKfycbyQveVKYExD4FCnaddJSyhU2sZZ4_kZEscqh-wwut8NnvW1QoM2AFGqnO3xaiX07h4Zlw/exec",
     "rastreio_enabled": false,
     "theme_activation_token": "i3nUJahlhntLCjaFiXFYHQYu",
     "color_header_icon_bg": "#c1434300",
