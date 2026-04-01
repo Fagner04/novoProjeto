@@ -1,0 +1,230 @@
+<div class="updates-page">
+  <div class="updates-hero">
+    <p class="updates-label">MUSAS CLUB</p>
+    <h1 class="updates-title">Atualizações do Site</h1>
+    <p class="updates-subtitle">Acompanhe tudo que foi melhorado na sua loja</p>
+  </div>
+
+  <div class="updates-container">
+
+    <div class="updates-timeline">
+
+      <div class="update-item">
+        <div class="update-dot new"></div>
+        <div class="update-card">
+          <div class="update-header">
+            <span class="update-version">v1.1.0</span>
+            <span class="update-date">01 Abr 2026</span>
+            <span class="update-badge new">Atual</span>
+          </div>
+          <h3 class="update-name">Vitrine, Rastreio & Frete Inteligente</h3>
+          <ul class="update-list">
+            <li>✨ Nova seção <strong>Vitrine de Produtos</strong> com cards horizontais e preço de atacado</li>
+            <li>📦 <strong>Rastreio de pedidos</strong> integrado no chat WhatsApp</li>
+            <li>🚚 <strong>Cálculo de frete</strong> via Google Sheets com endereço automático pelo CEP</li>
+            <li>🕐 <strong>Status online/offline</strong> automático por horário de atendimento no chat</li>
+            <li>🔍 Busca com <strong>imagens dos produtos</strong> no autocomplete do header</li>
+            <li>🛍️ <strong>Produtos Relacionados</strong> na página de produto via API de recomendações</li>
+            <li>🔑 Página de <strong>manutenção personalizada</strong> com identidade visual Musas</li>
+            <li>🍪 Banner de cookies <strong>centralizado</strong> no desktop</li>
+            <li>🐛 Correção do texto "ÇP" solto no rodapé</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="update-item">
+        <div class="update-dot"></div>
+        <div class="update-card">
+          <div class="update-header">
+            <span class="update-version">v1.0.5</span>
+            <span class="update-date">19 Mar 2026</span>
+          </div>
+          <h3 class="update-name">Carrinho, Atacado & Produto</h3>
+          <ul class="update-list">
+            <li>🛒 <strong>Carrinho popover</strong> ancorado abaixo da sacola com z-index acima do WhatsApp</li>
+            <li>💰 <strong>Preço de atacado</strong> no carrinho com barra de progresso em tempo real</li>
+            <li>📊 Total atualizado automaticamente ao atingir quantidade mínima de atacado</li>
+            <li>📦 <strong>Estoque real</strong> nas variantes — bloqueia botão ao esgotar</li>
+            <li>🎨 Seletor de tamanhos com combinações disponíveis por cor</li>
+            <li>🏷️ Badge <strong>"Novidade"</strong> em roxo na página de produto</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="update-item">
+        <div class="update-dot"></div>
+        <div class="update-card">
+          <div class="update-header">
+            <span class="update-version">v1.0.0</span>
+            <span class="update-date">14 Mar 2026</span>
+          </div>
+          <h3 class="update-name">Lançamento Inicial</h3>
+          <ul class="update-list">
+            <li>🚀 Tema <strong>Musas Club</strong> lançado do zero</li>
+            <li>💳 Ícones de pagamento no footer (Pix, Visa, Mastercard, Elo, Hipercard)</li>
+            <li>🔗 Ícones automáticos nos links do footer por palavra-chave</li>
+            <li>✨ Nome MUSAS com <strong>gradiente animado</strong> no rodapé</li>
+            <li>💬 Chat WhatsApp com botões de ação rápida</li>
+            <li>⚙️ Configurações de frete via planilha Google Sheets na engrenagem</li>
+            <li>📖 Seção <strong>"Pouco De Nós"</strong> na home</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="updates-sidebar">
+      <div class="sidebar-card">
+        <h4>📊 Resumo</h4>
+        <div class="stat-row"><span>Versão atual</span><strong>1.1.0</strong></div>
+        <div class="stat-row"><span>Total de updates</span><strong>3</strong></div>
+        <div class="stat-row"><span>Última atualização</span><strong>01/04/2026</strong></div>
+        <div class="stat-row"><span>Status</span><strong style="color:#16a34a;">✅ Online</strong></div>
+      </div>
+
+      <div class="sidebar-card">
+        <h4>🔗 Links Rápidos</h4>
+        <a href="/" class="sidebar-link">🏠 Página inicial</a>
+        <a href="/collections/all" class="sidebar-link">🛍️ Ver produtos</a>
+        <a href="https://wa.me/5562994319090" target="_blank" class="sidebar-link">💬 Suporte WhatsApp</a>
+        <a href="https://github.com/Fagner04/novoProjeto" target="_blank" class="sidebar-link">⚙️ Repositório GitHub</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.updates-page { background: #f8f8fa; min-height: 100vh; padding-bottom: 4rem; }
+
+.updates-hero {
+  background: linear-gradient(135deg, #7c3aed, #fe7e41);
+  color: #fff;
+  text-align: center;
+  padding: 4rem 1.5rem 3rem;
+}
+.updates-label { font-size: .75rem; font-weight: 700; letter-spacing: .2em; opacity: .8; margin-bottom: .5rem; }
+.updates-title { font-size: clamp(1.75rem, 5vw, 2.75rem); font-weight: 700; margin-bottom: .75rem; }
+.updates-subtitle { font-size: 1rem; opacity: .85; }
+
+.updates-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2rem;
+  align-items: start;
+}
+@media(max-width: 768px) {
+  .updates-container { grid-template-columns: 1fr; }
+  .updates-sidebar { order: -1; }
+}
+
+/* Timeline */
+.updates-timeline { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.update-item { display: flex; gap: 1rem; position: relative; }
+.update-item::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 28px;
+  bottom: -1.5rem;
+  width: 2px;
+  background: #e4e4e7;
+}
+.update-item:last-child::before { display: none; }
+
+.update-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  background: #e4e4e7;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #e4e4e7;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.update-dot.new {
+  background: linear-gradient(135deg, #7c3aed, #fe7e41);
+  box-shadow: 0 0 0 2px #7c3aed44;
+}
+
+.update-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  flex: 1;
+  border: 1px solid #f0f0f0;
+}
+
+.update-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+  margin-bottom: .75rem;
+}
+.update-version {
+  font-size: .75rem;
+  font-weight: 700;
+  background: #f4f4f5;
+  color: #52525b;
+  padding: .2rem .6rem;
+  border-radius: 9999px;
+}
+.update-date { font-size: .75rem; color: #a1a1aa; }
+.update-badge {
+  font-size: .65rem;
+  font-weight: 700;
+  padding: .2rem .6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.update-badge.new { background: #dcfce7; color: #16a34a; }
+
+.update-name { font-size: 1rem; font-weight: 700; color: #18181b; margin-bottom: .75rem; }
+
+.update-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .45rem; }
+.update-list li { font-size: .875rem; color: #52525b; line-height: 1.5; padding-left: .25rem; }
+.update-list li strong { color: #18181b; }
+
+/* Sidebar */
+.updates-sidebar { display: flex; flex-direction: column; gap: 1rem; position: sticky; top: 100px; }
+
+.sidebar-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  border: 1px solid #f0f0f0;
+}
+.sidebar-card h4 { font-size: .875rem; font-weight: 700; color: #18181b; margin-bottom: 1rem; }
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .4rem 0;
+  border-bottom: 1px solid #f4f4f5;
+  font-size: .8rem;
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-row span { color: #71717a; }
+.stat-row strong { color: #18181b; }
+
+.sidebar-link {
+  display: block;
+  padding: .5rem .25rem;
+  font-size: .8rem;
+  color: #52525b;
+  text-decoration: none;
+  border-bottom: 1px solid #f4f4f5;
+  transition: color .2s;
+}
+.sidebar-link:last-child { border-bottom: none; }
+.sidebar-link:hover { color: #7c3aed; }
+</style>
