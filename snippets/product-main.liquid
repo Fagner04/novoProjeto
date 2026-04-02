@@ -372,8 +372,16 @@
       document.getElementById('price-card').textContent = formatMoney(price);
       document.getElementById('price-installments').textContent = 'ou 6x de ' + formatMoney(Math.round(price / 6)) + ' sem juros';
       var addBtn = document.getElementById('add-to-cart-btn');
-      addBtn.disabled = !variant.available;
-      addBtn.textContent = variant.available ? 'Adicionar ao Carrinho' : 'Esgotado';
+
+      // Verifica lock ativo para esta variante
+      var locked = window._cwLocks && window._cwLocks[String(variant.id)] || 0;
+      var inv = variantInventory[String(variant.id)];
+      var realAvailable = variant.available;
+      if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
+        realAvailable = (inv.qty - locked) > 0;
+      }
+      addBtn.disabled = !realAvailable;
+      addBtn.textContent = realAvailable ? 'Adicionar ao Carrinho' : (locked > 0 ? '⏳ Reservado — tente em instantes' : 'Esgotado');
 
       // Troca imagem principal se a variante tiver imagem própria
       if (variantImages[variant.id]) {
@@ -691,6 +699,7 @@
 
     // Mapa de locks ativos: { variantId: locked_quantity }
     var _cwLocks = {};
+    window._cwLocks = _cwLocks;
 
     function applyLocks() {
       document.querySelectorAll('.option-buttons').forEach(function(group) {
@@ -757,6 +766,7 @@
       .then(function(data) {
         if (!data || !data.locks) return;
         _cwLocks = {};
+        window._cwLocks = _cwLocks;
         Object.keys(data.locks).forEach(function(id) {
           if (data.locks[id].locked) {
             _cwLocks[id] = data.locks[id].locked_quantity || 0;
