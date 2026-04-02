@@ -701,7 +701,11 @@
     var _cwLocks = {};
     window._cwLocks = _cwLocks;
 
-    function applyLocks() {
+    function applyLocks(cartItems) {
+      // cartItems: array de { variant_id, quantity } do carrinho do próprio cliente
+      var ownCart = {};
+      (cartItems || []).forEach(function(i) { ownCart[String(i.variant_id)] = i.quantity; });
+
       document.querySelectorAll('.option-buttons').forEach(function(group) {
         var optionIndex = null;
         group.querySelectorAll('.option-btn').forEach(function(btn) {
@@ -743,12 +747,15 @@
         var locked = _cwLocks[String(currentVariant.id)] || 0;
         var inv = variantInventory[String(currentVariant.id)];
         var addBtn = document.getElementById('add-to-cart-btn');
+        var ownQty = ownCart[String(currentVariant.id)] || 0;
         if (addBtn && addBtn.textContent !== 'Adicionando...' && addBtn.textContent !== 'Verificando estoque...') {
           if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
             var realQty = inv.qty - locked;
             if (realQty <= 0) {
               addBtn.disabled = true;
-              addBtn.textContent = '🔒 Outro cliente reservou — aguarde';
+              addBtn.textContent = ownQty >= inv.qty
+                ? '🛒 Você já adicionou todo o estoque disponível'
+                : '🔒 Outro cliente reservou — aguarde';
             } else if (locked > 0) {
               addBtn.disabled = false;
               addBtn.textContent = 'Adicionar ao Carrinho (apenas ' + realQty + ' disponível)';
@@ -771,18 +778,21 @@
       var apiKey = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
       var url    = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
       if (!apiKey || !url) return;
-      fetch(url + '?variant_ids=' + variantIds.join(','), {
-        headers: { 'x-api-key': apiKey }
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
+      // Busca locks e carrinho em paralelo
+      Promise.all([
+        fetch(url + '?variant_ids=' + variantIds.join(','), { headers: { 'x-api-key': apiKey } }).then(function(r) { return r.json(); }),
+        fetch('/cart.js').then(function(r) { return r.json(); })
+      ])
+      .then(function(results) {
+        var data = results[0];
+        var cart = results[1];
         if (!data || !data.locks) return;
         _cwLocks = {};
         window._cwLocks = _cwLocks;
         Object.keys(data.locks).forEach(function(id) {
           if (data.locks[id].locked) _cwLocks[id] = data.locks[id].locked_quantity || 0;
         });
-        applyLocks();
+        applyLocks(cart.items || []);
       })
       .catch(function() {});
     }
