@@ -718,11 +718,13 @@
               if (i === optionIndex) return opt === btn.dataset.optionValue;
               return opt === selectedOptions[i];
             })) return false;
-            // Desconta lock — se ainda tem estoque real > 0, está disponível
+            // Desconta lock — só locks de outros clientes bloqueiam
             var locked = _cwLocks[String(v.id)] || 0;
+            var ownQtyV = ownCart[String(v.id)] || 0;
+            var lockedByOthers = Math.max(0, locked - ownQtyV);
             var inv = variantInventory[String(v.id)];
             if (!inv || !inv.management || inv.policy === 'continue') return true;
-            return (inv.qty - locked) > 0;
+            return (inv.qty - lockedByOthers) > 0;
           });
 
           if (!inStock) {
@@ -750,13 +752,14 @@
         var ownQty = ownCart[String(currentVariant.id)] || 0;
         if (addBtn && addBtn.textContent !== 'Adicionando...' && addBtn.textContent !== 'Verificando estoque...') {
           if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
-            var realQty = inv.qty - locked;
+            var lockedByOthers = Math.max(0, locked - ownQty);
+            var realQty = inv.qty - lockedByOthers;
             if (realQty <= 0) {
               addBtn.disabled = true;
               addBtn.textContent = ownQty >= inv.qty
                 ? '🛒 Você já adicionou todo o estoque disponível'
                 : '🔒 Outro cliente reservou — aguarde';
-            } else if (locked > 0) {
+            } else if (lockedByOthers > 0) {
               addBtn.disabled = false;
               addBtn.textContent = 'Adicionar ao Carrinho (apenas ' + realQty + ' disponível)';
             } else {

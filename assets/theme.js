@@ -233,10 +233,16 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
     var locks = await checkStockLocks([String(variantId)]);
     var lock = locks[String(variantId)];
     if (lock && lock.locked) {
-      // Calcula estoque real disponível (estoque Shopify - quantidade reservada)
+      // Desconta o que o próprio cliente já tem no carrinho (lock dele mesmo)
+      var cartResp = await fetch('/cart.js');
+      var cart = await cartResp.json();
+      var alreadyInCart = cart.items ? cart.items.reduce(function(sum, item) {
+        return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
+      }, 0) : 0;
+
       var shopifyQty = variant.inventory_quantity || 0;
-      var lockedQty = lock.locked_quantity || 0;
-      var realAvailable = shopifyQty - lockedQty;
+      var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - alreadyInCart);
+      var realAvailable = shopifyQty - lockedByOthers;
       if (realAvailable < qtyWanted) {
         return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable) };
       }
