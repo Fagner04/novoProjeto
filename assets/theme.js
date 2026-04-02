@@ -45,6 +45,84 @@ async function fetchCart() { return (await fetch('/cart.js')).json(); }
 async function addToCart(id, qty) {
   return (await fetch('/cart/add.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, quantity: qty}) })).json();
 }
+
+// ===== RESERVA DE CARRINHO (timer estilo iFood) =====
+var _cartReserveTimer = null;
+var CART_RESERVE_MINUTES = 5;
+
+function cartReserveKey() { return 'cart_reserve_expires'; }
+
+function startCartReserve() {
+  var expires = Date.now() + CART_RESERVE_MINUTES * 60 * 1000;
+  try { localStorage.setItem(cartReserveKey(), expires); } catch(e) {}
+  renderCartTimer();
+}
+
+function clearCartReserve() {
+  try { localStorage.removeItem(cartReserveKey()); } catch(e) {}
+  if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
+  var el = document.getElementById('cart-reserve-timer');
+  if (el) el.style.display = 'none';
+}
+
+function getCartReserveRemaining() {
+  try {
+    var exp = parseInt(localStorage.getItem(cartReserveKey()) || '0');
+    return Math.max(0, exp - Date.now());
+  } catch(e) { return 0; }
+}
+
+function renderCartTimer() {
+  var el = document.getElementById('cart-reserve-timer');
+  if (!el) return;
+
+  if (_cartReserveTimer) clearInterval(_cartReserveTimer);
+
+  function tick() {
+    var ms = getCartReserveRemaining();
+    if (ms <= 0) {
+      clearCartReserve();
+      // Remove todos os itens do carrinho
+      fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+        renderCart();
+        var msg = document.getElementById('cart-reserve-expired-msg');
+        if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 5000); }
+      });
+      return;
+    }
+    var totalSec = Math.ceil(ms / 1000);
+    var min = Math.floor(totalSec / 60);
+    var sec = totalSec % 60;
+    var timeStr = min + ':' + (sec < 10 ? '0' : '') + sec;
+    el.style.display = 'flex';
+    var timeEl = document.getElementById('cart-reserve-countdown');
+    if (timeEl) timeEl.textContent = timeStr;
+    // Muda cor para vermelho nos últimos 60s
+    el.style.background = ms < 60000 ? 'linear-gradient(135deg,#FEF2F2,#FEE2E2)' : 'linear-gradient(135deg,#EFF6FF,#DBEAFE)';
+    el.style.borderColor = ms < 60000 ? '#FCA5A5' : '#93C5FD';
+    var icon = document.getElementById('cart-reserve-icon');
+    if (icon) icon.textContent = ms < 60000 ? '⚠️' : '⏱️';
+  }
+
+  tick();
+  _cartReserveTimer = setInterval(tick, 1000);
+}
+
+// Valida estoque em tempo real via API do Shopify
+async function validateStockRealtime(handle, variantId, qtyWanted) {
+  try {
+    var r = await fetch('/products/' + handle + '.js');
+    var product = await r.json();
+    var variant = product.variants.find(function(v) { return String(v.id) === String(variantId); });
+    if (!variant) return { ok: true, available: 99 };
+    if (!variant.inventory_management) return { ok: true, available: 99 };
+    if (variant.inventory_policy === 'continue') return { ok: true, available: 99 };
+    var available = variant.inventory_quantity;
+    return { ok: available >= qtyWanted, available: available };
+  } catch(e) {
+    return { ok: true, available: 99 }; // em caso de erro, deixa o Shopify decidir
+  }
+}
 async function updateCartItem(id, qty) {
   return (await fetch('/cart/change.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, quantity: qty}) })).json();
 }
@@ -59,9 +137,14 @@ async function renderCart() {
   if (badge) { badge.textContent = cart.item_count; badge.style.display = cart.item_count > 0 ? 'flex' : 'none'; }
   if (cart.item_count === 0) {
     empty.style.display = 'flex'; footer.style.display = 'none';
-    list.querySelectorAll('.cart-item').forEach(i => i.remove()); return;
+    list.querySelectorAll('.cart-item').forEach(i => i.remove());
+    clearCartReserve();
+    return;
   }
   empty.style.display = 'none'; footer.style.display = 'block';
+  // Inicia timer se ainda não existe reserva ativa
+  if (getCartReserveRemaining() <= 0) startCartReserve();
+  else renderCartTimer();
   list.querySelectorAll('.cart-item').forEach(i => i.remove());
 
   var cfg = window.__cwAtacado;
@@ -352,9 +435,22 @@ document.addEventListener('DOMContentLoaded', function() {
       const btn = document.getElementById('add-to-cart-btn');
       const variantId = document.getElementById('variant-id').value;
       const qty = parseInt(document.getElementById('qty-input').value) || 1;
-      btn.disabled = true; btn.textContent = 'Adicionando...';
+      btn.disabled = true; btn.textContent = 'Verificando estoque...';
       try {
-        // Verifica estoque disponível vs quantidade já no carrinho
+        // Valida estoque em tempo real (não usa valor estático da página)
+        var handle = typeof productHandle !== 'undefined' ? productHandle : null;
+        if (handle) {
+          var stock = await validateStockRealtime(handle, variantId, qty);
+          if (!stock.ok) {
+            btn.disabled = false;
+            btn.textContent = stock.available === 0 ? 'Esgotado' : 'Quantidade indisponível (máx. ' + stock.available + ')';
+            setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
+            return;
+          }
+        }
+
+        btn.textContent = 'Adicionando...';
+        // Verifica quantidade já no carrinho
         const cart = await fetchCart();
         const inCart = cart.items.reduce(function(sum, item) {
           return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
