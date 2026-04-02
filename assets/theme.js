@@ -137,6 +137,9 @@ function getCwSessionId() {
 async function createStockLock(variantId, quantity, expiresIn) {
   var key = getCwApiKey();
   if (!key) return;
+  // Invalida cache para forçar leitura fresca na próxima verificação
+  delete _stockLockCache[String(variantId)];
+  delete _stockLockCacheTime[String(variantId)];
   try {
     // Sempre libera o lock anterior antes de criar um novo para evitar duplicação
     // caso a API não faça upsert por (session_id, variant_id)
@@ -163,6 +166,9 @@ async function createStockLock(variantId, quantity, expiresIn) {
 async function releaseStockLock(variantId) {
   var key = getCwApiKey();
   if (!key) return;
+  // Invalida cache para forçar leitura fresca
+  delete _stockLockCache[String(variantId)];
+  delete _stockLockCacheTime[String(variantId)];
   try {
     await fetch(CW_RELEASE_LOCK_API, {
       method: 'POST',
