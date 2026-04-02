@@ -455,10 +455,15 @@ function toggleFav(btn, handle) {
 // ===== SCROLL EFFECTS (desktop only) =====
 document.addEventListener('DOMContentLoaded', function() {
 
-  // Init cart badge
+  // Init cart badge + retoma timer de reserva se ainda válido
   fetchCart().then(cart => {
     const badge = document.getElementById('cart-count');
     if (badge && cart.item_count > 0) { badge.textContent = cart.item_count; badge.style.display = 'flex'; }
+    if (cart.item_count > 0 && getCartReserveRemaining() > 0) {
+      renderCartTimer();
+    } else if (cart.item_count === 0) {
+      clearCartReserve();
+    }
   });
 
   // Init favorites badge
