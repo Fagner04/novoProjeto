@@ -115,15 +115,11 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
     var product = await r.json();
     var variant = product.variants.find(function(v) { return String(v.id) === String(variantId); });
     if (!variant) return { ok: true, available: 99 };
-    if (!variant.inventory_management) return { ok: true, available: 99 };
-    if (variant.inventory_policy === 'continue') return { ok: true, available: 99 };
-    var available = variant.inventory_quantity;
-    // Se available for null/undefined/negativo, trata como sem estoque mas sem mostrar número
-    if (available === null || available === undefined) return { ok: false, available: 0 };
-    if (available <= 0) return { ok: false, available: 0 };
-    return { ok: available >= qtyWanted, available: available };
+    // Usa o campo available que é confiável na API pública
+    if (!variant.available) return { ok: false, available: 0 };
+    return { ok: true, available: 99 };
   } catch(e) {
-    return { ok: true, available: 99 }; // em caso de erro, deixa o Shopify decidir
+    return { ok: true, available: 99 };
   }
 }
 async function updateCartItem(id, qty) {
