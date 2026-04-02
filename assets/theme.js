@@ -239,7 +239,7 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
     var locks = await checkStockLocks([String(variantId)]);
     var lock = locks[String(variantId)];
     if (lock && lock.locked) {
-      // Desconta o que o próprio cliente já tem no carrinho (lock dele mesmo)
+      // Desconta o que o próprio cliente já tem no carrinho + o que está tentando adicionar agora
       var cartResp = await fetch('/cart.js');
       var cart = await cartResp.json();
       var alreadyInCart = cart.items ? cart.items.reduce(function(sum, item) {
@@ -247,11 +247,24 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
       }, 0) : 0;
 
       var shopifyQty = variant.inventory_quantity || 0;
-      var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - alreadyInCart);
+
+      // Shopify não expõe inventory_quantity na API pública (retorna 0)
+      // Nesse caso usa o variantInventory do Liquid (carregado no page load) se disponível
+      if (shopifyQty === 0 && typeof variantInventory !== 'undefined' && variantInventory[String(variantId)]) {
+        shopifyQty = variantInventory[String(variantId)].qty || 0;
+      }
+
+      // Se ainda 0 mas variant.available=true, o Shopify não controla estoque aqui — não bloqueia
+      if (shopifyQty === 0) {
+        return { ok: true, locked: false };
+      }
+
+      var totalOwnAfterAdd = alreadyInCart + qtyWanted;
+      var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - totalOwnAfterAdd);
       var realAvailable = shopifyQty - lockedByOthers;
-      console.log('[stock-debug] variant=' + variantId + ' shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable + ' qtyWanted=' + qtyWanted);
+      console.log('[stock-debug] shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' qtyWanted=' + qtyWanted + ' totalOwnAfterAdd=' + totalOwnAfterAdd + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable);
       if (realAvailable < qtyWanted) {
-        return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable) };
+        return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable - alreadyInCart) };
       }
     }
 
