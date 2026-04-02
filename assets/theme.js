@@ -419,10 +419,8 @@ async function renderCart() {
       + '<p class="cart-item-variant">' + (item.variant_title !== 'Default Title' ? item.variant_title : '') + '</p>'
       + priceHtml
       + acessorioHtml
-      + '<div class="cart-qty">'
-      + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity-1) + ')">−</button>'
-      + '<span>' + item.quantity + '</span>'
-      + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity+1) + ')"' + (atMax ? ' disabled style="opacity:0.4;cursor:not-allowed;"' : '') + '>+</button>'
+      + '<div class="cart-qty" style="pointer-events:none;opacity:0.7;">'
+      + '<span style="padding:0 0.5rem;font-weight:600;">' + item.quantity + 'x</span>'
       + '</div></div>'
       + '<button type="button" class="cart-remove" onclick="changeItemLine(' + lineIndex + ',0)" aria-label="Remover">'
       + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
