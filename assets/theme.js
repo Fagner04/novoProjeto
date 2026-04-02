@@ -118,6 +118,9 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
     if (!variant.inventory_management) return { ok: true, available: 99 };
     if (variant.inventory_policy === 'continue') return { ok: true, available: 99 };
     var available = variant.inventory_quantity;
+    // Se available for null/undefined/negativo, trata como sem estoque mas sem mostrar número
+    if (available === null || available === undefined) return { ok: false, available: 0 };
+    if (available <= 0) return { ok: false, available: 0 };
     return { ok: available >= qtyWanted, available: available };
   } catch(e) {
     return { ok: true, available: 99 }; // em caso de erro, deixa o Shopify decidir
@@ -443,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
           var stock = await validateStockRealtime(handle, variantId, qty);
           if (!stock.ok) {
             btn.disabled = false;
-            btn.textContent = stock.available === 0 ? 'Esgotado' : 'Quantidade indisponível (máx. ' + stock.available + ')';
+            btn.textContent = stock.available > 0 ? 'Máx. ' + stock.available + ' unidade(s)' : 'Esgotado';
             setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
             return;
           }
