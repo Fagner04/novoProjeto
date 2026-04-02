@@ -475,8 +475,28 @@
     var lockedByOthers = Math.max(0, locked - ownQty);
 
     // Máximo que ainda pode adicionar = estoque - reservado por outros - já no carrinho
-    var canStillAdd = Math.max(1, inv.qty - lockedByOthers - ownQty);
-    return canStillAdd;
+    var canStillAdd = inv.qty - lockedByOthers - ownQty;
+    return canStillAdd; // pode ser 0 ou negativo — changeQty trata isso
+  }
+
+  function changeQty(delta) {
+    var max = getMaxQty();
+    var qtyRow = document.querySelector('.product-qty-row');
+
+    if (max <= 0) {
+      // Sem estoque disponível para adicionar — esconde seletor
+      if (qtyRow) qtyRow.style.display = 'none';
+      qty = 0;
+      document.getElementById('qty-input').value = 0;
+      return;
+    }
+
+    if (qtyRow) qtyRow.style.display = '';
+    qty = Math.min(max, Math.max(1, qty + delta));
+    document.getElementById('qty-display').textContent = qty;
+    document.getElementById('qty-input').value = qty;
+    document.querySelector('.product-qty-row .cart-qty button:first-child').disabled = qty <= 1;
+    document.querySelector('.product-qty-row .cart-qty button:last-child').disabled = qty >= max;
   }
 
   function changeQty(delta) {
@@ -742,12 +762,18 @@
               matchedVariant = v; realQtyForBtn = 9999; lockedByOthersForBtn = lockedByOthers;
               return true;
             }
-            var rq = inv.qty - lockedByOthers;
-            if (rq > 0) {
-              matchedVariant = v; realQtyForBtn = rq; lockedByOthersForBtn = lockedByOthers;
-              return true;
+            // Estoque disponível para OUTROS comprarem (exclui o que você já tem)
+            var rqForOthers = inv.qty - lockedByOthers - ownQtyV;
+            // Estoque disponível desconsiderando o que você já tem (para riscar o botão)
+            var rqTotal = inv.qty - lockedByOthers;
+            if (rqTotal > 0) {
+              matchedVariant = v;
+              // Badge mostra quanto ainda dá pra adicionar (pode ser 0 se você já tem tudo)
+              realQtyForBtn = Math.max(0, rqForOthers);
+              lockedByOthersForBtn = lockedByOthers;
+              return true; // não risca — estoque existe, só você já pegou
             }
-            return false;
+            return false; // risca — outro cliente reservou tudo
           });
 
           // Remove badge anterior
