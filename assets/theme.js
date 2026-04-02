@@ -33,6 +33,9 @@ function openCart() {
   document.getElementById('cart-drawer').classList.add('open');
   var waRoot = document.querySelector('.wac-root, .wa-fab-simple');
   if (waRoot) waRoot.style.display = 'none';
+  // Esconde mini timer do header quando carrinho abre
+  var headerTimer = document.getElementById('header-reserve-timer');
+  if (headerTimer) headerTimer.style.display = 'none';
   renderCart();
 }
 function closeCart() {
@@ -40,6 +43,11 @@ function closeCart() {
   document.getElementById('cart-drawer').classList.remove('open');
   var waRoot = document.querySelector('.wac-root, .wa-fab-simple');
   if (waRoot) waRoot.style.display = '';
+  // Mostra mini timer no header se reserva ainda ativa
+  if (getCartReserveRemaining() > 0) {
+    var headerTimer = document.getElementById('header-reserve-timer');
+    if (headerTimer) headerTimer.style.display = 'inline-block';
+  }
 }
 async function fetchCart() { return (await fetch('/cart.js')).json(); }
 async function addToCart(id, qty) {
@@ -97,14 +105,30 @@ function renderCartTimer() {
     var min = Math.floor(totalSec / 60);
     var sec = totalSec % 60;
     var timeStr = min + ':' + (sec < 10 ? '0' : '') + sec;
+
+    // Timer dentro do carrinho
     el.style.display = 'flex';
     var timeEl = document.getElementById('cart-reserve-countdown');
     if (timeEl) timeEl.textContent = timeStr;
-    // Muda cor para vermelho nos últimos 60s
     el.style.background = ms < 60000 ? 'linear-gradient(135deg,#FEF2F2,#FEE2E2)' : 'linear-gradient(135deg,#EFF6FF,#DBEAFE)';
     el.style.borderColor = ms < 60000 ? '#FCA5A5' : '#93C5FD';
     var icon = document.getElementById('cart-reserve-icon');
     if (icon) icon.textContent = ms < 60000 ? '⚠️' : '⏱️';
+
+    // Mini timer no header (só quando carrinho está fechado)
+    var headerTimer = document.getElementById('header-reserve-timer');
+    var headerCountdown = document.getElementById('header-reserve-countdown');
+    var cartDrawer = document.getElementById('cart-drawer');
+    var cartOpen = cartDrawer && cartDrawer.classList.contains('open');
+    if (headerTimer && headerCountdown) {
+      if (!cartOpen) {
+        headerTimer.style.display = 'inline-block';
+        headerTimer.style.background = ms < 60000 ? '#dc2626' : '#1e40af';
+        headerCountdown.textContent = timeStr;
+      } else {
+        headerTimer.style.display = 'none';
+      }
+    }
   }
 
   tick();
