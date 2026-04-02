@@ -385,9 +385,11 @@ async function changeItemLine(line, qty) {
     // Atualiza lock: libera se removeu, recria com nova qty se alterou
     if (item) {
       if (qty <= 0) {
-        releaseStockLock(item.variant_id);
+        await releaseStockLock(item.variant_id);
       } else {
-        createStockLock(item.variant_id, qty);
+        // Libera primeiro para evitar duplicidade, depois recria com nova qty
+        await releaseStockLock(item.variant_id);
+        await createStockLock(item.variant_id, qty);
       }
     }
     await renderCart();
