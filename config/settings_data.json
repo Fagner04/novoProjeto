@@ -35,6 +35,7 @@
     "popup_repeat_after": 16,
     "wa_bubble_messages": "Precisa rastrear seu pedido?  \nTroca fácil em até 7dias!  \nCupom CAMI10",
     "wa_repeat_after": 120,
+    "conectwhats_api_key": "ff582c4bbd49d7f61a1bc1771af68c693c63509c18c057af126a5e55f8805228",
     "conectwhats_atacado_enabled": true,
     "conectwhats_atacado_min_qty": 6,
     "atacado_acessorio_enabled": true,
