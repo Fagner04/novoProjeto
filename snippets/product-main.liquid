@@ -781,6 +781,13 @@
       var apiKey = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
       var url    = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
       if (!apiKey || !url) return;
+      // Invalida cache do theme.js para garantir dados frescos
+      if (window._stockLockCache) {
+        variantIds.forEach(function(id) {
+          delete window._stockLockCache[id];
+          if (window._stockLockCacheTime) delete window._stockLockCacheTime[id];
+        });
+      }
       // Busca locks e carrinho em paralelo
       Promise.all([
         fetch(url + '?variant_ids=' + variantIds.join(','), { headers: { 'x-api-key': apiKey } }).then(function(r) { return r.json(); }),
