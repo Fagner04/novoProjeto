@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (stock.locked && stock.available > 0) {
               btn.textContent = 'Apenas ' + stock.available + ' disponível(is)';
             } else if (stock.locked) {
-              btn.textContent = '⏳ Reservado — tente em instantes';
+              btn.textContent = '🔒 Outro cliente reservou — aguarde';
             } else {
               btn.textContent = 'Esgotado';
             }
