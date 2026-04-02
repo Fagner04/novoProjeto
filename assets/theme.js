@@ -149,23 +149,29 @@ async function checkStockLocks(variantIds) {
 
 async function validateStockRealtime(handle, variantId, qtyWanted) {
   try {
-    // 1. Verifica se está disponível no Shopify
+    // 1. Verifica disponibilidade no Shopify
     var r = await fetch('/products/' + handle + '.js');
     var product = await r.json();
     var variant = product.variants.find(function(v) { return String(v.id) === String(variantId); });
     if (!variant) return { ok: true, locked: false };
     if (!variant.available) return { ok: false, locked: false, reason: 'esgotado' };
 
-    // 2. Verifica se está reservado no ConectWhats
+    // 2. Verifica reservas ativas no ConectWhats
     var locks = await checkStockLocks([String(variantId)]);
     var lock = locks[String(variantId)];
     if (lock && lock.locked) {
-      return { ok: false, locked: true, reason: 'reservado' };
+      // Calcula estoque real disponível (estoque Shopify - quantidade reservada)
+      var shopifyQty = variant.inventory_quantity || 0;
+      var lockedQty = lock.locked_quantity || 0;
+      var realAvailable = shopifyQty - lockedQty;
+      if (realAvailable < qtyWanted) {
+        return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable) };
+      }
     }
 
     return { ok: true, locked: false };
   } catch(e) {
-    return { ok: true, locked: false }; // em caso de erro, não bloqueia
+    return { ok: true, locked: false };
   }
 }
 async function updateCartItem(id, qty) {
@@ -488,7 +494,13 @@ document.addEventListener('DOMContentLoaded', function() {
           var stock = await validateStockRealtime(handle, variantId, qty);
           if (!stock.ok) {
             btn.disabled = false;
-            btn.textContent = stock.locked ? '⏳ Reservado — tente em instantes' : 'Esgotado';
+            if (stock.locked && stock.available > 0) {
+              btn.textContent = 'Apenas ' + stock.available + ' disponível(is)';
+            } else if (stock.locked) {
+              btn.textContent = '⏳ Reservado — tente em instantes';
+            } else {
+              btn.textContent = 'Esgotado';
+            }
             setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
             return;
           }
