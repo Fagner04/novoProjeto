@@ -138,6 +138,15 @@ async function createStockLock(variantId, quantity, expiresIn) {
   var key = getCwApiKey();
   if (!key) return;
   try {
+    // Sempre libera o lock anterior antes de criar um novo para evitar duplicação
+    // caso a API não faça upsert por (session_id, variant_id)
+    await fetch(CW_RELEASE_LOCK_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({ variant_id: String(variantId), session_id: getCwSessionId() })
+    });
+  } catch(e) {}
+  try {
     await fetch(CW_CREATE_LOCK_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': key },
@@ -636,8 +645,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const qtyToAdd = Math.min(qty, canAdd);
         await addToCart(variantId, qtyToAdd);
-        // Registra lock na API do ConectWhats
-        await createStockLock(variantId, qtyToAdd);
+        // Registra lock com a quantidade TOTAL no carrinho (inCart + adicionado agora)
+        await createStockLock(variantId, inCart + qtyToAdd);
         btn.textContent = 'Adicionado ✓';
         // Verifica se esgotou após adicionar
         var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
