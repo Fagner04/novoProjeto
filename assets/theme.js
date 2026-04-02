@@ -56,7 +56,7 @@ async function addToCart(id, qty) {
 
 // ===== RESERVA DE CARRINHO (timer estilo iFood) =====
 var _cartReserveTimer = null;
-var CART_RESERVE_MINUTES = 5;
+var CART_RESERVE_MINUTES = 20;
 
 function cartReserveKey() { return 'cart_reserve_expires'; }
 
