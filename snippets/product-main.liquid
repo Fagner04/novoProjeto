@@ -711,32 +711,56 @@
         group.querySelectorAll('.option-btn').forEach(function(btn) {
           if (optionIndex === null) optionIndex = parseInt(btn.dataset.optionIndex);
 
-          // Verifica se existe variante disponível (estoque Shopify - locks)
+          // Encontra a variante correspondente a este botão
+          var matchedVariant = null;
+          var realQtyForBtn = 9999;
+          var lockedByOthersForBtn = 0;
+
           var inStock = productVariants.some(function(v) {
             if (!v.available) return false;
             if (!v.options.every(function(opt, i) {
               if (i === optionIndex) return opt === btn.dataset.optionValue;
               return opt === selectedOptions[i];
             })) return false;
-            // Desconta lock — só locks de outros clientes bloqueiam
             var locked = _cwLocks[String(v.id)] || 0;
             var ownQtyV = ownCart[String(v.id)] || 0;
             var lockedByOthers = Math.max(0, locked - ownQtyV);
             var inv = variantInventory[String(v.id)];
-            if (!inv || !inv.management || inv.policy === 'continue') return true;
-            return (inv.qty - lockedByOthers) > 0;
+            if (!inv || !inv.management || inv.policy === 'continue') {
+              matchedVariant = v; realQtyForBtn = 9999; lockedByOthersForBtn = lockedByOthers;
+              return true;
+            }
+            var rq = inv.qty - lockedByOthers;
+            if (rq > 0) {
+              matchedVariant = v; realQtyForBtn = rq; lockedByOthersForBtn = lockedByOthers;
+              return true;
+            }
+            return false;
           });
+
+          // Remove badge anterior
+          var oldBadge = btn.querySelector('.stock-badge');
+          if (oldBadge) oldBadge.remove();
 
           if (!inStock) {
             btn.classList.add('unavailable');
-            btn.setAttribute('title', 'Esgotado');
             btn.style.opacity = '0.45';
             btn.style.textDecoration = 'line-through';
+            btn.setAttribute('title', lockedByOthersForBtn > 0 ? '🔒 Reservado' : 'Esgotado');
           } else {
             btn.classList.remove('unavailable');
-            btn.removeAttribute('title');
             btn.style.opacity = '';
             btn.style.textDecoration = '';
+            btn.removeAttribute('title');
+            // Badge "últimas X" quando restam poucas unidades (≤3) reservadas por outros
+            if (realQtyForBtn <= 3 && realQtyForBtn < 9999) {
+              var badge = document.createElement('span');
+              badge.className = 'stock-badge';
+              badge.textContent = realQtyForBtn === 1 ? 'última' : realQtyForBtn + ' un.';
+              badge.style.cssText = 'position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;font-size:9px;font-weight:700;padding:1px 4px;border-radius:9999px;line-height:1.4;pointer-events:none;';
+              btn.style.position = 'relative';
+              btn.appendChild(badge);
+            }
           }
         });
       });
