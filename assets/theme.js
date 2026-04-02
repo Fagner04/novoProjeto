@@ -399,9 +399,16 @@ async function renderCart() {
     // Calcula estoque máximo para este item no carrinho
     var itemLockData = _stockLockCache[String(item.variant_id)];
     var itemLockedByOthers = (itemLockData && itemLockData.locked) ? Math.max(0, (itemLockData.locked_quantity || 0) - item.quantity) : 0;
-    var itemInv = item.inventory_quantity !== undefined ? item.inventory_quantity : 9999;
+    // item.inventory_quantity vem 0 da API pública da Shopify — usa o cache de locks ou sem limite
+    var itemInv = (item.inventory_quantity && item.inventory_quantity > 0) ? item.inventory_quantity : 9999;
+    // Se temos dado de lock, podemos inferir o estoque mínimo (locked_quantity + disponível)
+    if (itemInv === 9999 && itemLockData && itemLockData.locked_quantity > 0) {
+      // Não sabemos o estoque total, mas sabemos que tem pelo menos locked_quantity disponível
+      // Permite aumentar se não há locks de outros
+      itemInv = itemLockedByOthers > 0 ? item.quantity + Math.max(0, (itemLockData.locked_quantity || 0) - item.quantity) : 9999;
+    }
     var itemMax = Math.max(item.quantity, itemInv - itemLockedByOthers);
-    var atMax = item.quantity >= itemMax;
+    var atMax = itemLockedByOthers > 0 && item.quantity >= itemMax;
 
     el.innerHTML = '<div style="position:relative;flex-shrink:0;">'
       + '<img class="cart-item-image" src="' + item.image + '" alt="' + item.title + '">'
