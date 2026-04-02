@@ -877,8 +877,8 @@
     // Carga inicial
     fetchAndApplyLocks();
 
-    // Polling garantido a cada 10s (independente do Realtime)
-    setInterval(fetchAndApplyLocks, 10000);
+    // Polling a cada 3s — garante atualização mesmo sem Realtime
+    setInterval(fetchAndApplyLocks, 3000);
 
     // Supabase Realtime — atualização instantânea (complementar ao polling)
     function initRealtime() {
