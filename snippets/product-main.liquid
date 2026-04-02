@@ -714,7 +714,7 @@
               if (i === optionIndex) return opt === btn.dataset.optionValue;
               return opt === selectedOptions[i];
             })) return false;
-            // Desconta lock
+            // Desconta lock — se ainda tem estoque real > 0, está disponível
             var locked = _cwLocks[String(v.id)] || 0;
             var inv = variantInventory[String(v.id)];
             if (!inv || !inv.management || inv.policy === 'continue') return true;
@@ -744,12 +744,28 @@
         var inv = variantInventory[String(currentVariant.id)];
         var realAvailable = currentVariant.available;
         if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
-          realAvailable = (inv.qty - locked) > 0;
-        }
-        var addBtn = document.getElementById('add-to-cart-btn');
-        if (addBtn && !addBtn.disabled) {
-          addBtn.disabled = !realAvailable;
-          addBtn.textContent = realAvailable ? 'Adicionar ao Carrinho' : '🔒 Outro cliente reservou — aguarde';
+          var realQty = inv.qty - locked;
+          realAvailable = realQty > 0;
+          // Se tem estoque parcial disponível, mostra quantos restam
+          var addBtn = document.getElementById('add-to-cart-btn');
+          if (addBtn && !addBtn.disabled) {
+            if (!realAvailable) {
+              addBtn.disabled = true;
+              addBtn.textContent = '🔒 Outro cliente reservou — aguarde';
+            } else if (locked > 0 && realQty < inv.qty) {
+              addBtn.disabled = false;
+              addBtn.textContent = 'Adicionar ao Carrinho (apenas ' + realQty + ' disponível)';
+            } else {
+              addBtn.disabled = false;
+              addBtn.textContent = 'Adicionar ao Carrinho';
+            }
+          }
+        } else {
+          var addBtn = document.getElementById('add-to-cart-btn');
+          if (addBtn && !addBtn.disabled && !realAvailable) {
+            addBtn.disabled = true;
+            addBtn.textContent = '🔒 Outro cliente reservou — aguarde';
+          }
         }
       }
     }
@@ -777,9 +793,9 @@
       .catch(function() {});
     }
 
-    // Roda imediatamente e depois a cada 8 segundos
+    // Roda imediatamente e depois a cada 5 segundos (limite do cache da API)
     pollLocks();
-    setInterval(pollLocks, 8000);
+    setInterval(pollLocks, 5000);
   })();
 </script>
 

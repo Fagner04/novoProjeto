@@ -593,11 +593,15 @@ document.addEventListener('DOMContentLoaded', function() {
           return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
         }, 0);
         const maxQty = typeof getMaxQty === 'function' ? getMaxQty() : 99;
-        const canAdd = maxQty - inCart;
+        // Desconta locks ativos de outros clientes do máximo disponível
+        var lockData = _stockLockCache[String(variantId)];
+        var lockedByOthers = (lockData && lockData.locked) ? (lockData.locked_quantity || 0) : 0;
+        var effectiveMax = Math.max(0, maxQty - lockedByOthers);
+        const canAdd = effectiveMax - inCart;
         if (canAdd <= 0) {
           btn.disabled = false;
-          btn.textContent = 'Estoque esgotado';
-          setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; }, 2000);
+          btn.textContent = lockedByOthers > 0 ? '🔒 Outro cliente reservou — aguarde' : 'Estoque esgotado';
+          setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
           openCart();
           return;
         }
