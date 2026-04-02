@@ -58,11 +58,12 @@ function startCartReserve() {
   renderCartTimer();
 }
 
-function clearCartReserve() {
+function clearCartReserve(releaseLocks) {
   try { localStorage.removeItem(cartReserveKey()); } catch(e) {}
   if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
   var el = document.getElementById('cart-reserve-timer');
   if (el) el.style.display = 'none';
+  if (releaseLocks) releaseAllCartLocks();
 }
 
 function getCartReserveRemaining() {
@@ -81,12 +82,14 @@ function renderCartTimer() {
   function tick() {
     var ms = getCartReserveRemaining();
     if (ms <= 0) {
-      clearCartReserve();
-      // Remove todos os itens do carrinho
-      fetch('/cart/clear.js', { method: 'POST' }).then(function() {
-        renderCart();
-        var msg = document.getElementById('cart-reserve-expired-msg');
-        if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 5000); }
+      clearCartReserve(false);
+      // Libera locks na API antes de limpar o carrinho
+      releaseAllCartLocks().finally(function() {
+        fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+          renderCart();
+          var msg = document.getElementById('cart-reserve-expired-msg');
+          if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 5000); }
+        });
       });
       return;
     }
@@ -109,8 +112,63 @@ function renderCartTimer() {
 }
 
 // ===== INTEGRAÇÃO CHECK-STOCK-LOCKS (ConectWhats) =====
-var CW_STOCK_API = (window.__cwStockAPI && window.__cwStockAPI.url) || 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks';
-var CW_API_KEY   = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
+var CW_STOCK_API         = (window.__cwStockAPI && window.__cwStockAPI.url) || 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks';
+var CW_CREATE_LOCK_API   = 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/create-stock-lock';
+var CW_RELEASE_LOCK_API  = 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/release-stock-lock';
+var CW_API_KEY           = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
+
+// Gera ou recupera session_id único por visitante
+function getCwSessionId() {
+  var key = 'cw_session_id';
+  try {
+    var id = localStorage.getItem(key);
+    if (!id) {
+      id = 'sess-' + Math.random().toString(36).slice(2) + '-' + Date.now();
+      localStorage.setItem(key, id);
+    }
+    return id;
+  } catch(e) { return 'sess-' + Date.now(); }
+}
+
+async function createStockLock(variantId, quantity, expiresIn) {
+  if (!CW_API_KEY) return;
+  try {
+    await fetch(CW_CREATE_LOCK_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': CW_API_KEY },
+      body: JSON.stringify({
+        variant_id: String(variantId),
+        quantity: quantity,
+        session_id: getCwSessionId(),
+        expires_in: expiresIn || CART_RESERVE_MINUTES * 60
+      })
+    });
+  } catch(e) {}
+}
+
+async function releaseStockLock(variantId) {
+  if (!CW_API_KEY) return;
+  try {
+    await fetch(CW_RELEASE_LOCK_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': CW_API_KEY },
+      body: JSON.stringify({
+        variant_id: String(variantId),
+        session_id: getCwSessionId()
+      })
+    });
+  } catch(e) {}
+}
+
+async function releaseAllCartLocks() {
+  try {
+    var cart = await fetchCart();
+    if (!cart.items || cart.items.length === 0) return;
+    await Promise.all(cart.items.map(function(item) {
+      return releaseStockLock(item.variant_id);
+    }));
+  } catch(e) {}
+}
 
 // Cache curto (5s) para não spammar a API em cliques rápidos
 var _stockLockCache = {};
@@ -310,11 +368,22 @@ async function renderCart() {
 async function changeItemLine(line, qty) {
   _cartInteracting = true;
   try {
+    // Captura variant_id antes de alterar
+    var cartBefore = await fetchCart();
+    var item = cartBefore.items[line - 1];
     await fetch('/cart/change.js', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ line: line, quantity: qty })
     });
+    // Atualiza lock: libera se removeu, recria com nova qty se alterou
+    if (item) {
+      if (qty <= 0) {
+        releaseStockLock(item.variant_id);
+      } else {
+        createStockLock(item.variant_id, qty);
+      }
+    }
     await renderCart();
   } finally {
     _cartInteracting = false;
@@ -528,6 +597,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const qtyToAdd = Math.min(qty, canAdd);
         await addToCart(variantId, qtyToAdd);
+        // Registra lock na API do ConectWhats
+        await createStockLock(variantId, qtyToAdd);
         btn.textContent = 'Adicionado ✓';
         // Verifica se esgotou após adicionar
         var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
