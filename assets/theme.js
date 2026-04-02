@@ -680,15 +680,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const inCart = cart.items.reduce(function(sum, item) {
           return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
         }, 0);
-        const maxQty = typeof getMaxQty === 'function' ? getMaxQty() : 99;
-        // Usa dados frescos do validateStockRealtime (já consultou Shopify + locks)
-        var lockData = _stockLockCache[String(variantId)];
-        var lockedByOthers = (lockData && lockData.locked) ? Math.max(0, (lockData.locked_quantity || 0) - inCart) : 0;
-        var effectiveMax = Math.max(0, maxQty - lockedByOthers);
-        const canAdd = effectiveMax - inCart;
+        // canAdd = quanto ainda dá pra adicionar (já desconta inCart e locks de outros)
+        const canAdd = typeof getMaxQty === 'function' ? getMaxQty() : 99;
         if (canAdd <= 0) {
           btn.disabled = false;
-          btn.textContent = lockedByOthers > 0 ? '🔒 Outro cliente reservou — aguarde' : 'Estoque esgotado';
+          var lockData2 = _stockLockCache[String(variantId)];
+          var hasOtherLock = lockData2 && lockData2.locked && (lockData2.locked_quantity || 0) > inCart;
+          btn.textContent = hasOtherLock ? '🔒 Outro cliente reservou — aguarde' : '🛒 Você já adicionou todo o estoque disponível';
           setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
           openCart();
           return;
