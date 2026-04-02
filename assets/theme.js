@@ -249,6 +249,7 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
       var shopifyQty = variant.inventory_quantity || 0;
       var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - alreadyInCart);
       var realAvailable = shopifyQty - lockedByOthers;
+      console.log('[stock-debug] variant=' + variantId + ' shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable + ' qtyWanted=' + qtyWanted);
       if (realAvailable < qtyWanted) {
         return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable) };
       }
