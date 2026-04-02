@@ -112,9 +112,9 @@ function renderCartTimer() {
 }
 
 // ===== INTEGRAÇÃO CHECK-STOCK-LOCKS (ConectWhats) =====
-var CW_STOCK_API         = (window.__cwStockAPI && window.__cwStockAPI.url) || 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks';
-var CW_CREATE_LOCK_API   = 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/create-stock-lock';
-var CW_RELEASE_LOCK_API  = 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/release-stock-lock';
+var CW_STOCK_API         = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
+var CW_CREATE_LOCK_API   = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'create-stock-lock') : '';
+var CW_RELEASE_LOCK_API  = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'release-stock-lock') : '';
 var CW_API_KEY           = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
 
 function getCwApiKey() {

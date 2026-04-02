@@ -748,7 +748,8 @@
     function pollLocks() {
       var apiKey = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
       if (!apiKey) return;
-      var url = (window.__cwStockAPI && window.__cwStockAPI.url) || 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks';
+      var url = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
+      if (!url) return;
       fetch(url + '?variant_ids=' + variantIds.join(','), {
         headers: { 'x-api-key': apiKey }
       })
