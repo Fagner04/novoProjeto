@@ -742,29 +742,23 @@
       if (currentVariant) {
         var locked = _cwLocks[String(currentVariant.id)] || 0;
         var inv = variantInventory[String(currentVariant.id)];
-        var realAvailable = currentVariant.available;
-        if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
-          var realQty = inv.qty - locked;
-          realAvailable = realQty > 0;
-          // Se tem estoque parcial disponível, mostra quantos restam
-          var addBtn = document.getElementById('add-to-cart-btn');
-          if (addBtn && !addBtn.disabled) {
-            if (!realAvailable) {
+        var addBtn = document.getElementById('add-to-cart-btn');
+        if (addBtn && addBtn.textContent !== 'Adicionando...' && addBtn.textContent !== 'Verificando estoque...') {
+          if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
+            var realQty = inv.qty - locked;
+            if (realQty <= 0) {
               addBtn.disabled = true;
               addBtn.textContent = '🔒 Outro cliente reservou — aguarde';
-            } else if (locked > 0 && realQty < inv.qty) {
+            } else if (locked > 0) {
               addBtn.disabled = false;
               addBtn.textContent = 'Adicionar ao Carrinho (apenas ' + realQty + ' disponível)';
             } else {
-              addBtn.disabled = false;
-              addBtn.textContent = 'Adicionar ao Carrinho';
+              addBtn.disabled = !currentVariant.available;
+              addBtn.textContent = currentVariant.available ? 'Adicionar ao Carrinho' : 'Esgotado';
             }
-          }
-        } else {
-          var addBtn = document.getElementById('add-to-cart-btn');
-          if (addBtn && !addBtn.disabled && !realAvailable) {
+          } else if (!currentVariant.available) {
             addBtn.disabled = true;
-            addBtn.textContent = '🔒 Outro cliente reservou — aguarde';
+            addBtn.textContent = 'Esgotado';
           }
         }
       }

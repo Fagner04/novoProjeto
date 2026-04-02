@@ -622,9 +622,9 @@ document.addEventListener('DOMContentLoaded', function() {
           return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
         }, 0);
         const maxQty = typeof getMaxQty === 'function' ? getMaxQty() : 99;
-        // Desconta locks ativos de outros clientes do máximo disponível
+        // Usa dados frescos do validateStockRealtime (já consultou Shopify + locks)
         var lockData = _stockLockCache[String(variantId)];
-        var lockedByOthers = (lockData && lockData.locked) ? (lockData.locked_quantity || 0) : 0;
+        var lockedByOthers = (lockData && lockData.locked) ? Math.max(0, (lockData.locked_quantity || 0) - inCart) : 0;
         var effectiveMax = Math.max(0, maxQty - lockedByOthers);
         const canAdd = effectiveMax - inCart;
         if (canAdd <= 0) {
