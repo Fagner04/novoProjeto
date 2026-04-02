@@ -890,7 +890,8 @@
             event: '*',
             schema: 'public',
             table: 'checkout_stock_locks'
-          }, function() {
+          }, function(payload) {
+            console.log('[realtime] mudança detectada:', payload);
             fetchAndApplyLocks();
           })
           .subscribe(function(status) {
