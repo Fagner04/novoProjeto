@@ -770,11 +770,13 @@
       }
     }
 
-    function pollLocks() {
+    var CW_SUPABASE_URL = 'https://kgjtweydkggbbfncnpxc.supabase.co';
+    var CW_ANON_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnanR3ZXlka2dnYmJmbmNucHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyMTk4OTUsImV4cCI6MjA3Nzc5NTg5NX0.mCKl3iLyPXMhrK3I1UOOFxjoojm88KCIR4RYPFzHEsY';
+
+    function fetchAndApplyLocks() {
       var apiKey = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
-      if (!apiKey) return;
-      var url = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
-      if (!url) return;
+      var url    = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
+      if (!apiKey || !url) return;
       fetch(url + '?variant_ids=' + variantIds.join(','), {
         headers: { 'x-api-key': apiKey }
       })
@@ -784,18 +786,37 @@
         _cwLocks = {};
         window._cwLocks = _cwLocks;
         Object.keys(data.locks).forEach(function(id) {
-          if (data.locks[id].locked) {
-            _cwLocks[id] = data.locks[id].locked_quantity || 0;
-          }
+          if (data.locks[id].locked) _cwLocks[id] = data.locks[id].locked_quantity || 0;
         });
         applyLocks();
       })
       .catch(function() {});
     }
 
-    // Roda imediatamente e depois a cada 5 segundos (limite do cache da API)
-    pollLocks();
-    setInterval(pollLocks, 5000);
+    // Carga inicial
+    fetchAndApplyLocks();
+
+    // Supabase Realtime — atualização instantânea
+    function initRealtime() {
+      if (!window.supabase) { setTimeout(initRealtime, 500); return; }
+      var client = window.supabase.createClient(CW_SUPABASE_URL, CW_ANON_KEY);
+      client.channel('cw-stock-{{ product.id }}')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'checkout_stock_locks'
+        }, function() {
+          fetchAndApplyLocks();
+        })
+        .subscribe(function(status) {
+          if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            // Fallback polling se Realtime falhar
+            setInterval(fetchAndApplyLocks, 5000);
+          }
+        });
+    }
+    initRealtime();
+
   })();
 </script>
 
