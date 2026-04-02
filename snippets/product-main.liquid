@@ -683,6 +683,93 @@
         if (btn) { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }
       });
   }
+
+  // --- Polling de locks da API ConectWhats (atualiza botões em tempo real) ---
+  (function() {
+    var variantIds = productVariants.map(function(v) { return String(v.id); });
+    if (!variantIds.length) return;
+
+    // Mapa de locks ativos: { variantId: locked_quantity }
+    var _cwLocks = {};
+
+    function applyLocks() {
+      document.querySelectorAll('.option-buttons').forEach(function(group) {
+        var optionIndex = null;
+        group.querySelectorAll('.option-btn').forEach(function(btn) {
+          if (optionIndex === null) optionIndex = parseInt(btn.dataset.optionIndex);
+
+          // Verifica se existe variante disponível (estoque Shopify - locks)
+          var inStock = productVariants.some(function(v) {
+            if (!v.available) return false;
+            if (!v.options.every(function(opt, i) {
+              if (i === optionIndex) return opt === btn.dataset.optionValue;
+              return opt === selectedOptions[i];
+            })) return false;
+            // Desconta lock
+            var locked = _cwLocks[String(v.id)] || 0;
+            var inv = variantInventory[String(v.id)];
+            if (!inv || !inv.management || inv.policy === 'continue') return true;
+            return (inv.qty - locked) > 0;
+          });
+
+          if (!inStock) {
+            btn.classList.add('unavailable');
+            btn.setAttribute('title', 'Esgotado');
+            btn.style.opacity = '0.45';
+            btn.style.textDecoration = 'line-through';
+          } else {
+            btn.classList.remove('unavailable');
+            btn.removeAttribute('title');
+            btn.style.opacity = '';
+            btn.style.textDecoration = '';
+          }
+        });
+      });
+
+      // Atualiza botão principal com a variante selecionada
+      var currentVariant = productVariants.find(function(v) {
+        return v.options.every(function(opt, i) { return opt === selectedOptions[i]; });
+      });
+      if (currentVariant) {
+        var locked = _cwLocks[String(currentVariant.id)] || 0;
+        var inv = variantInventory[String(currentVariant.id)];
+        var realAvailable = currentVariant.available;
+        if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
+          realAvailable = (inv.qty - locked) > 0;
+        }
+        var addBtn = document.getElementById('add-to-cart-btn');
+        if (addBtn && !addBtn.disabled) {
+          addBtn.disabled = !realAvailable;
+          addBtn.textContent = realAvailable ? 'Adicionar ao Carrinho' : '⏳ Reservado — tente em instantes';
+        }
+      }
+    }
+
+    function pollLocks() {
+      var apiKey = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
+      if (!apiKey) return;
+      var url = (window.__cwStockAPI && window.__cwStockAPI.url) || 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks';
+      fetch(url + '?variant_ids=' + variantIds.join(','), {
+        headers: { 'x-api-key': apiKey }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data || !data.locks) return;
+        _cwLocks = {};
+        Object.keys(data.locks).forEach(function(id) {
+          if (data.locks[id].locked) {
+            _cwLocks[id] = data.locks[id].locked_quantity || 0;
+          }
+        });
+        applyLocks();
+      })
+      .catch(function() {});
+    }
+
+    // Roda imediatamente e depois a cada 8 segundos
+    pollLocks();
+    setInterval(pollLocks, 8000);
+  })();
 </script>
 
 
