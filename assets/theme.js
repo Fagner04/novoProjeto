@@ -108,18 +108,64 @@ function renderCartTimer() {
   _cartReserveTimer = setInterval(tick, 1000);
 }
 
-// Valida estoque em tempo real via API do Shopify
+// ===== INTEGRAÇÃO CHECK-STOCK-LOCKS (ConectWhats) =====
+var CW_STOCK_API = (window.__cwStockAPI && window.__cwStockAPI.url) || 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks';
+var CW_API_KEY   = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
+
+// Cache curto (5s) para não spammar a API em cliques rápidos
+var _stockLockCache = {};
+var _stockLockCacheTime = {};
+var STOCK_CACHE_TTL = 5000;
+
+async function checkStockLocks(variantIds) {
+  var now = Date.now();
+  var toFetch = variantIds.filter(function(id) {
+    return !_stockLockCacheTime[id] || (now - _stockLockCacheTime[id]) > STOCK_CACHE_TTL;
+  });
+
+  if (toFetch.length > 0) {
+    try {
+      var r = await fetch(CW_STOCK_API + '?variant_ids=' + toFetch.join(','), {
+        headers: { 'x-api-key': CW_API_KEY }
+      });
+      var data = await r.json();
+      if (data && data.locks) {
+        Object.keys(data.locks).forEach(function(id) {
+          _stockLockCache[id] = data.locks[id];
+          _stockLockCacheTime[id] = now;
+        });
+      }
+    } catch(e) {
+      // Em caso de erro na API, não bloqueia o cliente
+      toFetch.forEach(function(id) {
+        _stockLockCache[id] = { locked: false, locked_quantity: 0 };
+        _stockLockCacheTime[id] = now;
+      });
+    }
+  }
+
+  return _stockLockCache;
+}
+
 async function validateStockRealtime(handle, variantId, qtyWanted) {
   try {
+    // 1. Verifica se está disponível no Shopify
     var r = await fetch('/products/' + handle + '.js');
     var product = await r.json();
     var variant = product.variants.find(function(v) { return String(v.id) === String(variantId); });
-    if (!variant) return { ok: true, available: 99 };
-    // Usa o campo available que é confiável na API pública
-    if (!variant.available) return { ok: false, available: 0 };
-    return { ok: true, available: 99 };
+    if (!variant) return { ok: true, locked: false };
+    if (!variant.available) return { ok: false, locked: false, reason: 'esgotado' };
+
+    // 2. Verifica se está reservado no ConectWhats
+    var locks = await checkStockLocks([String(variantId)]);
+    var lock = locks[String(variantId)];
+    if (lock && lock.locked) {
+      return { ok: false, locked: true, reason: 'reservado' };
+    }
+
+    return { ok: true, locked: false };
   } catch(e) {
-    return { ok: true, available: 99 };
+    return { ok: true, locked: false }; // em caso de erro, não bloqueia
   }
 }
 async function updateCartItem(id, qty) {
@@ -442,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
           var stock = await validateStockRealtime(handle, variantId, qty);
           if (!stock.ok) {
             btn.disabled = false;
-            btn.textContent = stock.available > 0 ? 'Máx. ' + stock.available + ' unidade(s)' : 'Esgotado';
+            btn.textContent = stock.locked ? '⏳ Reservado — tente em instantes' : 'Esgotado';
             setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
             return;
           }

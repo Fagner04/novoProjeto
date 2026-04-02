@@ -119,6 +119,10 @@
   {
     "name": "Atacado (ConectWhats)",
     "settings": [
+      { "type": "header", "content": "Integração ConectWhats" },
+      { "type": "paragraph", "content": "Configure a API do ConectWhats para validação de estoque em tempo real. A chave de API é fornecida pelo suporte do ConectWhats." },
+      { "type": "text", "id": "conectwhats_api_key", "label": "Chave de API (x-api-key)", "info": "Cole aqui a chave fornecida pelo ConectWhats" },
+      { "type": "text", "id": "conectwhats_stock_api_url", "label": "URL da API de estoque", "default": "https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks", "info": "Não altere salvo orientação do suporte" },
       { "type": "header", "content": "Configurações de Atacado" },
       { "type": "checkbox", "id": "conectwhats_atacado_enabled", "label": "Ativar barra de progresso de atacado", "default": false },
       { "type": "number", "id": "conectwhats_atacado_min_qty", "label": "Quantidade mínima para atacado", "default": 6 },

@@ -195,6 +195,10 @@
       tag: {{ settings.atacado_acessorio_tag | default: 'acessorio' | json }},
       min_value: parseFloat({{ settings.atacado_acessorio_min_value | default: '100.00' | json }}) * 100
     };
+    window.__cwStockAPI = {
+      url: {{ settings.conectwhats_stock_api_url | default: 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/check-stock-locks' | json }},
+      key: {{ settings.conectwhats_api_key | default: '' | json }}
+    };
     window._tagsCache = {};
     window.getProductTags = function(handle) {
       if (window._tagsCache[handle] !== undefined) return Promise.resolve(window._tagsCache[handle]);
