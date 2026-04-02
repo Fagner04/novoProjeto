@@ -877,24 +877,26 @@
     // Carga inicial
     fetchAndApplyLocks();
 
-    // Supabase Realtime — atualização instantânea
+    // Polling garantido a cada 10s (independente do Realtime)
+    setInterval(fetchAndApplyLocks, 10000);
+
+    // Supabase Realtime — atualização instantânea (complementar ao polling)
     function initRealtime() {
       if (!window.supabase) { setTimeout(initRealtime, 500); return; }
-      var client = window.supabase.createClient(CW_SUPABASE_URL, CW_ANON_KEY);
-      client.channel('cw-stock-{{ product.id }}')
-        .on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'checkout_stock_locks'
-        }, function() {
-          fetchAndApplyLocks();
-        })
-        .subscribe(function(status) {
-          if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-            // Fallback polling se Realtime falhar
-            setInterval(fetchAndApplyLocks, 5000);
-          }
-        });
+      try {
+        var client = window.supabase.createClient(CW_SUPABASE_URL, CW_ANON_KEY);
+        client.channel('cw-stock-{{ product.id }}')
+          .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'checkout_stock_locks'
+          }, function() {
+            fetchAndApplyLocks();
+          })
+          .subscribe(function(status) {
+            console.log('[realtime] status:', status);
+          });
+      } catch(e) {}
     }
     initRealtime();
 
