@@ -117,6 +117,10 @@ var CW_CREATE_LOCK_API   = 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v
 var CW_RELEASE_LOCK_API  = 'https://kgjtweydkggbbfncnpxc.supabase.co/functions/v1/release-stock-lock';
 var CW_API_KEY           = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
 
+function getCwApiKey() {
+  return (window.__cwStockAPI && window.__cwStockAPI.key) || CW_API_KEY || '';
+}
+
 // Gera ou recupera session_id único por visitante
 function getCwSessionId() {
   var key = 'cw_session_id';
@@ -131,11 +135,12 @@ function getCwSessionId() {
 }
 
 async function createStockLock(variantId, quantity, expiresIn) {
-  if (!CW_API_KEY) return;
+  var key = getCwApiKey();
+  if (!key) return;
   try {
     await fetch(CW_CREATE_LOCK_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': CW_API_KEY },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
       body: JSON.stringify({
         variant_id: String(variantId),
         quantity: quantity,
@@ -147,11 +152,12 @@ async function createStockLock(variantId, quantity, expiresIn) {
 }
 
 async function releaseStockLock(variantId) {
-  if (!CW_API_KEY) return;
+  var key = getCwApiKey();
+  if (!key) return;
   try {
     await fetch(CW_RELEASE_LOCK_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': CW_API_KEY },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
       body: JSON.stringify({
         variant_id: String(variantId),
         session_id: getCwSessionId()
@@ -184,7 +190,7 @@ async function checkStockLocks(variantIds) {
   if (toFetch.length > 0) {
     try {
       var r = await fetch(CW_STOCK_API + '?variant_ids=' + toFetch.join(','), {
-        headers: { 'x-api-key': CW_API_KEY }
+        headers: { 'x-api-key': getCwApiKey() }
       });
       var data = await r.json();
       if (data && data.locks) {
