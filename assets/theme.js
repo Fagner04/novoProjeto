@@ -346,6 +346,13 @@ async function renderCart() {
     const el = document.createElement('div');
     el.className = 'cart-item';
     if (itemBorder) el.style.cssText = itemBorder;
+    // Calcula estoque máximo para este item no carrinho
+    var itemLockData = _stockLockCache[String(item.variant_id)];
+    var itemLockedByOthers = (itemLockData && itemLockData.locked) ? Math.max(0, (itemLockData.locked_quantity || 0) - item.quantity) : 0;
+    var itemInv = item.inventory_quantity !== undefined ? item.inventory_quantity : 9999;
+    var itemMax = Math.max(item.quantity, itemInv - itemLockedByOthers);
+    var atMax = item.quantity >= itemMax;
+
     el.innerHTML = '<div style="position:relative;flex-shrink:0;">'
       + '<img class="cart-item-image" src="' + item.image + '" alt="' + item.title + '">'
       + badgeHtml
@@ -358,7 +365,7 @@ async function renderCart() {
       + '<div class="cart-qty">'
       + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity-1) + ')">−</button>'
       + '<span>' + item.quantity + '</span>'
-      + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity+1) + ')">+</button>'
+      + '<button type="button" onclick="changeItemLine(' + lineIndex + ',' + (item.quantity+1) + ')"' + (atMax ? ' disabled style="opacity:0.4;cursor:not-allowed;"' : '') + '>+</button>'
       + '</div></div>'
       + '<button type="button" class="cart-remove" onclick="changeItemLine(' + lineIndex + ',0)" aria-label="Remover">'
       + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
@@ -374,21 +381,41 @@ async function renderCart() {
 async function changeItemLine(line, qty) {
   _cartInteracting = true;
   try {
-    // Captura variant_id antes de alterar
     var cartBefore = await fetchCart();
     var item = cartBefore.items[line - 1];
+
+    // Limita qty ao estoque real disponível (Shopify - locks de outros)
+    if (item && qty > 0) {
+      var lockData = _stockLockCache[String(item.variant_id)];
+      var lockedByOthers = (lockData && lockData.locked) ? (lockData.locked_quantity || 0) : 0;
+      // Desconta apenas locks de outros (não o próprio item atual)
+      var currentQty = item.quantity;
+      var inv = null;
+      try {
+        var r = await fetch('/products/' + item.handle + '.js');
+        var p = await r.json();
+        var v = p.variants.find(function(v) { return String(v.id) === String(item.variant_id); });
+        if (v && v.inventory_management && v.inventory_policy !== 'continue') {
+          inv = v.inventory_quantity;
+        }
+      } catch(e) {}
+      if (inv !== null) {
+        // Estoque disponível = total - locks de outros clientes
+        var maxAllowed = Math.max(0, inv - Math.max(0, lockedByOthers - currentQty));
+        qty = Math.min(qty, maxAllowed);
+        if (qty <= 0) { _cartInteracting = false; return; }
+      }
+    }
+
     await fetch('/cart/change.js', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ line: line, quantity: qty })
     });
-    // Atualiza lock: libera se removeu, recria com nova qty se alterou
     if (item) {
       if (qty <= 0) {
         await releaseStockLock(item.variant_id);
       } else {
-        // Libera primeiro para evitar duplicidade, depois recria com nova qty
-        await releaseStockLock(item.variant_id);
         await createStockLock(item.variant_id, qty);
       }
     }
