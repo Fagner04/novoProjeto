@@ -459,11 +459,24 @@
     });
     if (!variant) return 99;
     var inv = variantInventory[variant.id];
-    // Sem controle de estoque ou política "continue" = sem limite
     if (!inv || !inv.management || inv.policy === 'continue') return 99;
-    // Estoque zerado ou negativo = sem limite (evita bloquear o botão)
     if (!inv.qty || inv.qty <= 0) return 99;
-    return inv.qty;
+
+    // Quanto o próprio cliente já tem no carrinho
+    var ownQty = 0;
+    try {
+      (window._lastCartItems || []).forEach(function(i) {
+        if (String(i.variant_id) === String(variant.id)) ownQty += i.quantity;
+      });
+    } catch(e) {}
+
+    // Locks de outros clientes (exclui o próprio)
+    var locked = (window._cwLocks && window._cwLocks[String(variant.id)]) || 0;
+    var lockedByOthers = Math.max(0, locked - ownQty);
+
+    // Máximo que ainda pode adicionar = estoque - reservado por outros - já no carrinho
+    var canStillAdd = Math.max(1, inv.qty - lockedByOthers - ownQty);
+    return canStillAdd;
   }
 
   function changeQty(delta) {
@@ -471,7 +484,6 @@
     qty = Math.min(max, Math.max(1, qty + delta));
     document.getElementById('qty-display').textContent = qty;
     document.getElementById('qty-input').value = qty;
-    // Atualiza visual dos botões
     document.querySelector('.product-qty-row .cart-qty button:first-child').disabled = qty <= 1;
     document.querySelector('.product-qty-row .cart-qty button:last-child').disabled = qty >= max;
   }
@@ -796,6 +808,9 @@
           }
         }
       }
+
+      // Atualiza seletor de quantidade com o limite real de estoque
+      if (typeof changeQty === 'function') changeQty(0);
     }
 
     var CW_SUPABASE_URL = 'https://kgjtweydkggbbfncnpxc.supabase.co';
@@ -821,6 +836,8 @@
         var data = results[0];
         var cart = results[1];
         if (!data || !data.locks) return;
+        // Salva itens do carrinho para uso no getMaxQty
+        window._lastCartItems = cart.items || [];
         _cwLocks = {};
         window._cwLocks = _cwLocks;
         Object.keys(data.locks).forEach(function(id) {
