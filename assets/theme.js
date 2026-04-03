@@ -3,8 +3,20 @@
 // ---- Mobile Menu ----
 function toggleMobileMenu() {
   const menu = document.getElementById('mobile-menu');
-  menu.classList.toggle('open');
-  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  const overlay = document.getElementById('mobile-menu-overlay');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    menu.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  } else {
+    menu.style.display = 'flex';
+    requestAnimationFrame(function() {
+      menu.classList.add('open');
+      if (overlay) overlay.classList.add('open');
+    });
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 // ---- Search ----
