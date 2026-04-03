@@ -482,21 +482,26 @@
   function changeQty(delta) {
     var max = getMaxQty();
     var qtyRow = document.querySelector('.product-qty-row');
+    var addBtn = document.getElementById('add-to-cart-btn');
 
     if (max <= 0) {
-      // Sem estoque disponível para adicionar — esconde seletor
       if (qtyRow) qtyRow.style.display = 'none';
-      qty = 0;
-      document.getElementById('qty-input').value = 0;
+      qty = 1;
+      var inp = document.getElementById('qty-input');
+      if (inp) inp.value = 1;
       return;
     }
 
     if (qtyRow) qtyRow.style.display = '';
     qty = Math.min(max, Math.max(1, qty + delta));
-    document.getElementById('qty-display').textContent = qty;
-    document.getElementById('qty-input').value = qty;
-    document.querySelector('.product-qty-row .cart-qty button:first-child').disabled = qty <= 1;
-    document.querySelector('.product-qty-row .cart-qty button:last-child').disabled = qty >= max;
+    var disp = document.getElementById('qty-display');
+    var inp2 = document.getElementById('qty-input');
+    if (disp) disp.textContent = qty;
+    if (inp2) inp2.value = qty;
+    var btnMinus = document.querySelector('.product-qty-row .cart-qty button:first-child');
+    var btnPlus = document.querySelector('.product-qty-row .cart-qty button:last-child');
+    if (btnMinus) btnMinus.disabled = qty <= 1;
+    if (btnPlus) btnPlus.disabled = qty >= max;
   }
 
   function changeQty(delta) {
