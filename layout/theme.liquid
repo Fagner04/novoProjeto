@@ -25,6 +25,8 @@
       });
     })();
   </script>  <meta name="theme-color" content="{{ settings.color_header_bg }}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>{{ page_title }} - {{ shop.name }}</title>
   <meta name="description" content="{{ page_description | escape }}">
 
@@ -70,6 +72,7 @@
   </style>
 </head>
 <body>
+<div id="ios-status-bar-color" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ settings.color_header_bg }};z-index:99999;pointer-events:none;"></div>
 
 <!-- THEME ACTIVATION GATE -->
 {% assign _tk = settings.theme_activation_token | strip %}
