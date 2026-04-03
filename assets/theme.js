@@ -97,11 +97,15 @@ function renderCartTimer() {
   var el = document.getElementById('cart-reserve-timer');
   if (!el) return;
 
-  if (_cartReserveTimer) clearInterval(_cartReserveTimer);
+  if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
+
+  var _expired = false; // flag para evitar execução dupla ao expirar
 
   function tick() {
     var ms = getCartReserveRemaining();
     if (ms <= 0) {
+      if (_expired) return; // já tratou a expiração
+      _expired = true;
       clearCartReserve(false);
       // Libera locks na API antes de limpar o carrinho
       releaseAllCartLocks().finally(function() {
@@ -647,7 +651,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const badge = document.getElementById('cart-count');
     if (badge && cart.item_count > 0) { badge.textContent = cart.item_count; badge.style.display = 'flex'; }
     if (cart.item_count > 0 && getCartReserveRemaining() > 0) {
+      // Timer ainda válido — retoma contagem
       renderCartTimer();
+    } else if (cart.item_count > 0 && getCartReserveRemaining() <= 0) {
+      // Carrinho tem itens mas timer expirou — limpa tudo
+      releaseAllCartLocks().finally(function() {
+        fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+          clearCartReserve(false);
+          if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+        });
+      });
     } else if (cart.item_count === 0) {
       clearCartReserve();
     }
