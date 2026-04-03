@@ -357,7 +357,7 @@
   fetch('/cart.js').then(function(r){ return r.json(); }).then(function(cart){
     window._lastCartItems = cart.items || [];
     changeQty(0);
-  }).catch(function(){});
+  }).catch(function(){ changeQty(0); });
   var currentPair = [0, 1];
 
   // --- Variant selection ---
@@ -514,8 +514,8 @@
     if (btnPlus) btnPlus.disabled = qty >= effectiveMax;
   }
 
-  // Inicializa botões de quantidade após declarar tudo
-  changeQty(0);
+  // Inicializa botões de quantidade após carregar o carrinho
+  // (changeQty(0) é chamado dentro do fetch abaixo)
 
   // --- Frete: funções definidas no topo do arquivo ---
 
