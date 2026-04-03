@@ -352,27 +352,6 @@
       }{% unless forloop.last %},{% endunless %}
     {% endfor %}
   };
-
-  // Atualiza estoque real do Shopify via API (evita dados desatualizados do page load)
-  function refreshInventoryFromShopify() {
-    fetch('/products/' + productHandle + '.js')
-      .then(function(r) { return r.json(); })
-      .then(function(p) {
-        if (!p || !p.variants) return;
-        p.variants.forEach(function(v) {
-          if (variantInventory[String(v.id)]) {
-            variantInventory[String(v.id)].qty = v.inventory_quantity || 0;
-          }
-        });
-        // Atualiza o seletor de quantidade com o novo estoque
-        if (typeof changeQty === 'function') changeQty(0);
-      })
-      .catch(function() {});
-  }
-
-  // Atualiza ao carregar e a cada 30s
-  refreshInventoryFromShopify();
-  setInterval(refreshInventoryFromShopify, 30000);
   var currentPair = [0, 1];
 
   // --- Variant selection ---
