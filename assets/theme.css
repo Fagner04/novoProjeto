@@ -20,7 +20,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; overflow-x: hidden; zoom: 0.9; background-color: var(--header-bg, #ffeda9); }
+html { scroll-behavior: smooth; overflow-x: hidden; zoom: 0.9; }
 
 body {
   font-family: 'Poppins', system-ui, sans-serif;
