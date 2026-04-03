@@ -382,6 +382,8 @@
       }
       addBtn.disabled = !realAvailable;
       addBtn.textContent = realAvailable ? 'Adicionar ao Carrinho' : (locked > 0 ? '🔒 Outro cliente reservou — aguarde' : 'Esgotado');
+      var estoqueAviso = document.getElementById('estoque-aviso');
+      if (estoqueAviso) estoqueAviso.remove();
 
       // Troca imagem principal se a variante tiver imagem própria
       if (variantImages[variant.id]) {
@@ -828,14 +830,27 @@
                 : (lockedByOthers > 0 ? '🔒 Outro cliente reservou — aguarde' : 'Esgotado');
             } else if (lockedByOthers > 0) {
               addBtn.disabled = false;
-              addBtn.textContent = 'Adicionar ao Carrinho (apenas ' + realQty + ' disponível)';
+              addBtn.textContent = 'Adicionar ao Carrinho';
+              // Mostra aviso de estoque baixo separado
+              var estoqueAviso = document.getElementById('estoque-aviso');
+              if (!estoqueAviso) {
+                estoqueAviso = document.createElement('p');
+                estoqueAviso.id = 'estoque-aviso';
+                estoqueAviso.style.cssText = 'color:#C2410C;font-size:0.78rem;font-weight:600;margin-top:0.4rem;text-align:center;';
+                addBtn.parentNode.insertBefore(estoqueAviso, addBtn.nextSibling);
+              }
+              estoqueAviso.textContent = '⚠️ Restam apenas ' + realQty + ' unidade(s) em estoque!';
             } else {
               addBtn.disabled = false;
               addBtn.textContent = 'Adicionar ao Carrinho';
+              var estoqueAviso = document.getElementById('estoque-aviso');
+              if (estoqueAviso) estoqueAviso.remove();
             }
           } else if (!currentVariant.available) {
             addBtn.disabled = true;
             addBtn.textContent = 'Esgotado';
+            var estoqueAviso = document.getElementById('estoque-aviso');
+            if (estoqueAviso) estoqueAviso.remove();
           }
         }
       }
