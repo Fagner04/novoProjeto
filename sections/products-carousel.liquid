@@ -140,6 +140,8 @@
 var carouselOffset = 0;
 var currentGroup = 'all';
 
+function isMobile() { return window.innerWidth < 640; }
+
 function getVisibleCount() {
   return window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
 }
@@ -151,10 +153,19 @@ function getActiveCards() {
 }
 
 function updatePosition() {
+  var track = document.getElementById('carousel-track');
+  var outer = document.querySelector('.carousel-track-outer');
   var cards = getActiveCards();
   if (!cards.length) return;
-  var w = cards[0].offsetWidth + 16;
-  document.getElementById('carousel-track').style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
+
+  if (isMobile()) {
+    // Mobile: usa scrollLeft no outer container
+    var cardW = cards[0].offsetWidth + 16;
+    if (outer) outer.scrollLeft = carouselOffset * cardW;
+  } else {
+    var w = cards[0].offsetWidth + 16;
+    track.style.transform = 'translateX(-' + (carouselOffset * w) + 'px)';
+  }
 }
 
 function slideCarousel(dir) {
@@ -169,7 +180,10 @@ function filterCarousel(btn, handle) {
   btn.classList.add('active');
   currentGroup = handle;
   carouselOffset = 0;
-  document.getElementById('carousel-track').style.transform = 'translateX(0)';
+  var track = document.getElementById('carousel-track');
+  var outer = document.querySelector('.carousel-track-outer');
+  track.style.transform = 'translateX(0)';
+  if (outer) outer.scrollLeft = 0;
   document.querySelectorAll('#carousel-track .carousel-card').forEach(function(c) {
     var groups = (c.dataset.groups || '').split(' ');
     c.style.display = groups.indexOf(handle) > -1 ? '' : 'none';
@@ -184,33 +198,41 @@ function startAutoplay() {
   autoT = setInterval(function() {
     var cards = getActiveCards();
     var max = Math.max(0, cards.length - getVisibleCount());
-    carouselOffset = carouselOffset >= max ? 0 : carouselOffset + 1;
+    if (isMobile()) {
+      // No mobile avança sempre, volta ao início ao chegar no fim
+      carouselOffset = carouselOffset >= max ? 0 : carouselOffset + 1;
+    } else {
+      carouselOffset = carouselOffset >= max ? 0 : carouselOffset + 1;
+    }
     updatePosition();
   }, 3000);
 }
 function stopAutoplay() { clearInterval(autoT); }
 
-startAutoplay();
-var wr = document.getElementById('carousel-wrapper');
-if (wr) {
-  wr.addEventListener('mouseenter', stopAutoplay);
-  wr.addEventListener('mouseleave', startAutoplay);
-}
+// Aguarda DOM pronto para garantir que offsetWidth está calculado
+document.addEventListener('DOMContentLoaded', function() {
+  startAutoplay();
+  var wr = document.getElementById('carousel-wrapper');
+  if (wr) {
+    wr.addEventListener('mouseenter', stopAutoplay);
+    wr.addEventListener('mouseleave', startAutoplay);
+  }
 
-// Swipe touch no mobile
-var touchStartX = 0;
-var trackOuter = document.querySelector('.carousel-track-outer');
-if (trackOuter) {
-  trackOuter.addEventListener('touchstart', function(e) {
-    touchStartX = e.touches[0].clientX;
-    stopAutoplay();
-  }, { passive: true });
-  trackOuter.addEventListener('touchend', function(e) {
-    var diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) slideCarousel(diff > 0 ? 1 : -1);
-    startAutoplay();
-  }, { passive: true });
-}
+  // Swipe touch no mobile
+  var touchStartX = 0;
+  var trackOuter = document.querySelector('.carousel-track-outer');
+  if (trackOuter) {
+    trackOuter.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+      stopAutoplay();
+    }, { passive: true });
+    trackOuter.addEventListener('touchend', function(e) {
+      var diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) slideCarousel(diff > 0 ? 1 : -1);
+      startAutoplay();
+    }, { passive: true });
+  }
+});
 </script>
 
 {% schema %}
