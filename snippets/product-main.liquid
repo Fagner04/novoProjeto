@@ -831,7 +831,7 @@
             } else if (lockedByOthers > 0) {
               addBtn.disabled = false;
               addBtn.textContent = 'Adicionar ao Carrinho';
-              // Mostra aviso de estoque baixo separado
+              // Mostra aviso personalizado com quantidade já no carrinho
               var estoqueAviso = document.getElementById('estoque-aviso');
               if (!estoqueAviso) {
                 estoqueAviso = document.createElement('p');
@@ -839,7 +839,10 @@
                 estoqueAviso.style.cssText = 'color:#C2410C;font-size:0.78rem;font-weight:600;margin-top:0.4rem;text-align:center;';
                 addBtn.parentNode.insertBefore(estoqueAviso, addBtn.nextSibling);
               }
-              estoqueAviso.textContent = '⚠️ Restam apenas ' + realQty + ' unidade(s) em estoque!';
+              var noCarrinho = ownQty > 0
+                ? 'Você já reservou ' + ownQty + ' unidade(s) no carrinho.'
+                : '⚠️ Restam apenas ' + realQty + ' unidade(s) em estoque!';
+              estoqueAviso.textContent = noCarrinho;
             } else {
               addBtn.disabled = false;
               addBtn.textContent = 'Adicionar ao Carrinho';
