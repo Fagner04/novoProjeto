@@ -165,6 +165,18 @@ async function createStockLock(variantId, quantity, expiresIn) {
   delete _stockLockCache[String(variantId)];
   delete _stockLockCacheTime[String(variantId)];
   try {
+    // Libera lock anterior da mesma sessão antes de criar novo
+    // Evita duplicação caso a API some ao invés de substituir
+    await fetch(CW_RELEASE_LOCK_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({
+        variant_id: String(variantId),
+        session_id: getCwSessionId()
+      })
+    });
+  } catch(e) {}
+  try {
     await fetch(CW_CREATE_LOCK_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': key },
