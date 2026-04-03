@@ -352,6 +352,12 @@
       }{% unless forloop.last %},{% endunless %}
     {% endfor %}
   };
+
+  // Carrega carrinho imediatamente para que getMaxQty desconte ownQty desde o início
+  fetch('/cart.js').then(function(r){ return r.json(); }).then(function(cart){
+    window._lastCartItems = cart.items || [];
+    changeQty(0);
+  }).catch(function(){});
   var currentPair = [0, 1];
 
   // --- Variant selection ---
