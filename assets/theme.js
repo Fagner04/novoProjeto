@@ -274,12 +274,13 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
         return { ok: true, locked: false };
       }
 
-      var totalOwnAfterAdd = alreadyInCart + qtyWanted;
-      var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - totalOwnAfterAdd);
+      // lockedByOthers = total reservado no banco - o que o próprio cliente já tem reservado (alreadyInCart)
+      // NÃO inclui qtyWanted aqui — o lock do cliente é o que já está no carrinho antes desta adição
+      var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - alreadyInCart);
       var realAvailable = shopifyQty - lockedByOthers;
-      console.log('[stock-debug] shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' qtyWanted=' + qtyWanted + ' totalOwnAfterAdd=' + totalOwnAfterAdd + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable);
+      console.log('[stock-debug] shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' qtyWanted=' + qtyWanted + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable);
       if (realAvailable < qtyWanted) {
-        return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable - alreadyInCart) };
+        return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable) };
       }
     }
 
@@ -469,7 +470,12 @@ async function changeItemLine(line, qty) {
       if (qty <= 0) {
         await releaseStockLock(item.variant_id);
       } else {
-        await createStockLock(item.variant_id, qty);
+        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplicação)
+        const cartAfterChange = await fetchCart();
+        const totalInCartNow = cartAfterChange.items.reduce(function(sum, i) {
+          return sum + (String(i.variant_id) === String(item.variant_id) ? i.quantity : 0);
+        }, 0);
+        await createStockLock(item.variant_id, totalInCartNow);
       }
     }
     await renderCart();
@@ -687,8 +693,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const qtyToAdd = Math.min(qty, canAdd);
         await addToCart(variantId, qtyToAdd);
-        // Registra lock com a quantidade TOTAL no carrinho (inCart + adicionado agora)
-        await createStockLock(variantId, inCart + qtyToAdd);
+        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplicação)
+        const cartAfterAdd = await fetchCart();
+        const totalInCartNow = cartAfterAdd.items.reduce(function(sum, item) {
+          return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
+        }, 0);
+        await createStockLock(variantId, totalInCartNow);
         btn.textContent = 'Adicionado ✓';
         // Verifica se esgotou após adicionar
         var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
