@@ -484,7 +484,6 @@
   function changeQty(delta) {
     var max = getMaxQty();
     var qtyRow = document.querySelector('.product-qty-row');
-    var addBtn = document.getElementById('add-to-cart-btn');
 
     if (max <= 0) {
       if (qtyRow) qtyRow.style.display = 'none';
@@ -494,8 +493,11 @@
       return;
     }
 
+    // Limita max a 99 para evitar valores absurdos quando sem controle de estoque
+    var effectiveMax = Math.min(max, 99);
+
     if (qtyRow) qtyRow.style.display = '';
-    qty = Math.min(max, Math.max(1, qty + delta));
+    qty = Math.min(effectiveMax, Math.max(1, qty + delta));
     var disp = document.getElementById('qty-display');
     var inp2 = document.getElementById('qty-input');
     if (disp) disp.textContent = qty;
@@ -503,16 +505,7 @@
     var btnMinus = document.querySelector('.product-qty-row .cart-qty button:first-child');
     var btnPlus = document.querySelector('.product-qty-row .cart-qty button:last-child');
     if (btnMinus) btnMinus.disabled = qty <= 1;
-    if (btnPlus) btnPlus.disabled = qty >= max;
-  }
-
-  function changeQty(delta) {
-    var max = getMaxQty();
-    qty = Math.min(max, Math.max(1, qty + delta));
-    document.getElementById('qty-display').textContent = qty;
-    document.getElementById('qty-input').value = qty;
-    document.querySelector('.product-qty-row .cart-qty button:first-child').disabled = qty <= 1;
-    document.querySelector('.product-qty-row .cart-qty button:last-child').disabled = qty >= max;
+    if (btnPlus) btnPlus.disabled = qty >= effectiveMax;
   }
 
   // Inicializa botões de quantidade após declarar tudo
