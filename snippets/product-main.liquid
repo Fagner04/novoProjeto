@@ -584,13 +584,18 @@
   (function() {
     var carousel = document.getElementById('prod-img-carousel');
     if (!carousel) return;
-    var startX = 0;
+    var startX = 0, startY = 0;
     carousel.addEventListener('touchstart', function(e) {
       startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
     }, { passive: true });
     carousel.addEventListener('touchend', function(e) {
-      var diff = startX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 40) goToSlide(_slideIndex + (diff > 0 ? 1 : -1));
+      var diffX = startX - e.changedTouches[0].clientX;
+      var diffY = startY - e.changedTouches[0].clientY;
+      // Só considera swipe horizontal se movimento X for maior que Y e maior que 60px
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+        goToSlide(_slideIndex + (diffX > 0 ? 1 : -1));
+      }
     }, { passive: true });
     // Mouse drag (desktop preview)
     var mouseStartX = 0, isDragging = false;
@@ -598,7 +603,7 @@
     carousel.addEventListener('mouseup', function(e) {
       if (!isDragging) return; isDragging = false;
       var diff = mouseStartX - e.clientX;
-      if (Math.abs(diff) > 40) goToSlide(_slideIndex + (diff > 0 ? 1 : -1));
+      if (Math.abs(diff) > 60) goToSlide(_slideIndex + (diff > 0 ? 1 : -1));
     });
   })();
 
