@@ -1,4 +1,4 @@
-﻿/* ===== MUSAS CLUB - Theme JS ===== */
+/* ===== MUSAS CLUB - Theme JS ===== */
 
 // ---- Mobile Menu ----
 function toggleMobileMenu() {
@@ -83,6 +83,7 @@ function clearCartReserve(releaseLocks) {
   if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
   var el = document.getElementById('cart-reserve-timer');
   if (el) el.style.display = 'none';
+  if (releaseLocks) releaseAllCartLocks();
 }
 
 function getCartReserveRemaining() {
@@ -106,10 +107,13 @@ function renderCartTimer() {
       if (_expired) return; // j├í tratou a expira├º├úo
       _expired = true;
       clearCartReserve(false);
-      fetch('/cart/clear.js', { method: 'POST' }).then(function() {
-        renderCart();
-        var msg = document.getElementById('cart-reserve-expired-msg');
-        if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 5000); }
+      // Libera locks na API antes de limpar o carrinho
+      releaseAllCartLocks().finally(function() {
+        fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+          renderCart();
+          var msg = document.getElementById('cart-reserve-expired-msg');
+          if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 5000); }
+        });
       });
       return;
     }
@@ -125,7 +129,7 @@ function renderCartTimer() {
     el.style.background = ms < 60000 ? 'linear-gradient(135deg,#FEF2F2,#FEE2E2)' : 'linear-gradient(135deg,#EFF6FF,#DBEAFE)';
     el.style.borderColor = ms < 60000 ? '#FCA5A5' : '#93C5FD';
     var icon = document.getElementById('cart-reserve-icon');
-    if (icon) icon.textContent = ms < 60000 ? 'ÔÜá´©Å' : 'ÔÅ▒´©Å';
+    if (icon) icon.textContent = ms < 60000 ? '⚠️' : '⏱️';
 
     // Mini timer no header (s├│ quando carrinho est├í fechado)
     var headerTimer = document.getElementById('header-reserve-timer');
@@ -392,13 +396,13 @@ async function renderCart() {
         itemBorder = 'border:1.5px solid #F97316;border-radius:0.75rem;';
         acessorioHtml = '<div style="margin-top:6px;">'
           + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
-          + '<span style="font-size:0.72rem;font-weight:600;color:#F97316;">­ƒÅÀ´©Å Valor m├¡nimo deste produto</span>'
+          + '<span style="font-size:0.72rem;font-weight:600;color:#F97316;">🏷️ Valor mínimo deste produto</span>'
           + '<span style="font-size:0.72rem;font-weight:700;color:#F97316;">Faltam ' + formatMoney(faltam) + '</span>'
           + '</div>'
           + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
           + '<div style="height:100%;background:#F97316;border-radius:9999px;width:' + pct + '%;"></div>'
           + '</div>'
-          + '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do m├¡nimo: pre├ºo de varejo aplicado</p>'
+          + '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do mínimo: preço de varejo aplicado</p>'
           + '</div>';
       }
     }
@@ -490,6 +494,18 @@ async function changeItemLine(line, qty) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ line: line, quantity: qty })
     });
+    if (item) {
+      if (qty <= 0) {
+        await releaseStockLock(item.variant_id);
+      } else {
+        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplica├º├úo)
+        const cartAfterChange = await fetchCart();
+        const totalInCartNow = cartAfterChange.items.reduce(function(sum, i) {
+          return sum + (String(i.variant_id) === String(item.variant_id) ? i.quantity : 0);
+        }, 0);
+        await createStockLock(item.variant_id, totalInCartNow);
+      }
+    }
     await renderCart();
   } finally {
     _cartInteracting = false;
@@ -564,12 +580,12 @@ async function renderWholesaleProgress(cart) {
 
     wholesaleHtml =
       '<div style="display:flex;align-items:center;gap:6px;">' +
-        '<span style="font-size:18px;">­ƒÄë</span>' +
+        '<span style="font-size:18px;">🎉</span>' +
         '<div>' +
-          '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0;">­ƒÅÀ Atacado Ativo!</p>' +
-          '<p style="font-size:11px;color:#166534;margin:2px 0 0;">Ô£ô Voc├¬ est├í economizando com pre├ºos de atacado!</p>' +
+          '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0;">🏷 Atacado Ativo!</p>' +
+          '<p style="font-size:11px;color:#166534;margin:2px 0 0;">✓ Você está economizando com preços de atacado!</p>' +
         '</div>' +
-        '<span style="margin-left:auto;font-size:12px;font-weight:600;color:#15803D;">' + total + '/' + min + ' pe├ºas</span>' +
+        '<span style="margin-left:auto;font-size:12px;font-weight:600;color:#15803D;">' + total + '/' + min + ' peças</span>' +
       '</div>' +
       '<div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">' +
         '<div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>' +
@@ -582,13 +598,13 @@ async function renderWholesaleProgress(cart) {
 
     wholesaleHtml =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-        '<span style="font-size:12px;font-weight:600;color:#92400E;">­ƒøÆ Faltam <strong style="color:#C2410C;">' + remaining + '</strong> pe├ºa(s) para atacado!</span>' +
+        '<span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">' + remaining + '</strong> peça(s) para atacado!</span>' +
         '<span style="font-size:11px;color:#B45309;">' + total + '/' + min + '</span>' +
       '</div>' +
       '<div style="width:100%;height:8px;background:#FDE68A;border-radius:99px;overflow:hidden;">' +
         '<div style="width:' + progress + '%;height:100%;background:linear-gradient(90deg,#F59E0B,#D97706);border-radius:99px;transition:width 0.4s ease;"></div>' +
       '</div>' +
-      '<p style="font-size:10px;color:#92400E;margin:4px 0 0;text-align:center;">Adicione mais itens e pague pre├ºo de atacado ­ƒÆ░</p>';
+      '<p style="font-size:10px;color:#92400E;margin:4px 0 0;text-align:center;">Adicione mais itens e pague preço de atacado 💰</p>';
   }
 
   container.innerHTML = wholesaleHtml
@@ -638,10 +654,12 @@ document.addEventListener('DOMContentLoaded', function() {
       // Timer ainda v├ílido ÔÇö retoma contagem
       renderCartTimer();
     } else if (cart.item_count > 0 && getCartReserveRemaining() <= 0) {
-      // Carrinho tem itens mas timer expirou — limpa
-      fetch('/cart/clear.js', { method: 'POST' }).then(function() {
-        clearCartReserve(false);
-        if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+      // Carrinho tem itens mas timer expirou ÔÇö limpa tudo
+      releaseAllCartLocks().finally(function() {
+        fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+          clearCartReserve(false);
+          if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+        });
       });
     } else if (cart.item_count === 0) {
       clearCartReserve();
@@ -712,8 +730,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const qtyToAdd = Math.min(qty, canAdd);
         await addToCart(variantId, qtyToAdd);
-        btn.textContent = 'Adicionado ✓';
-        setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
+        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplica├º├úo)
+        const cartAfterAdd = await fetchCart();
+        const totalInCartNow = cartAfterAdd.items.reduce(function(sum, item) {
+          return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
+        }, 0);
+        await createStockLock(variantId, totalInCartNow);
+        btn.textContent = 'Adicionado Ô£ô';
+        // Verifica se esgotou ap├│s adicionar
+        var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
+        if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0 && typeof checkStockAfterAdd === 'function') {
+          setTimeout(function() {
+            checkStockAfterAdd(variantId, inv.qty, inv.policy, btn);
+          }, 800);
+        } else {
+          setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
+        }
         openCart();
       } catch(err) {
         btn.disabled = false; btn.textContent = 'Erro - Tente novamente';
@@ -799,5 +831,4 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 });
-
 
