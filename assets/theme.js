@@ -445,7 +445,7 @@ async function renderCart() {
       + '</div>'
       + '<div class="cart-item-info">'
       + '<p class="cart-item-title">' + item.product_title + '</p>'
-      + '<p class="cart-item-variant">' + (item.variant_title !== 'Default Title' ? item.variant_title : '') + ' ┬À <span style="font-weight:600;">' + item.quantity + 'x</span></p>'
+      + '<p class="cart-item-variant">' + (item.variant_title !== 'Default Title' ? item.variant_title : '') + ' &middot; <span style="font-weight:600;">' + item.quantity + 'x</span></p>'
       + priceHtml
       + acessorioHtml
       + '<div style="display:none;"></div></div>'
