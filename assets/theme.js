@@ -71,7 +71,7 @@ function clearCartReserve(releaseLocks) {
   if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
   var el = document.getElementById('cart-reserve-timer');
   if (el) el.style.display = 'none';
-  if (releaseLocks) releaseAllCartLocks();
+  // releaseLocks ignorado — locks removidos
 }
 
 function getCartReserveRemaining() {
@@ -91,13 +91,10 @@ function renderCartTimer() {
     var ms = getCartReserveRemaining();
     if (ms <= 0) {
       clearCartReserve(false);
-      // Libera locks na API antes de limpar o carrinho
-      releaseAllCartLocks().finally(function() {
-        fetch('/cart/clear.js', { method: 'POST' }).then(function() {
-          renderCart();
-          var msg = document.getElementById('cart-reserve-expired-msg');
-          if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 5000); }
-        });
+      fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+        renderCart();
+        var msg = document.getElementById('cart-reserve-expired-msg');
+        if (msg) { msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 5000); }
       });
       return;
     }
@@ -135,158 +132,23 @@ function renderCartTimer() {
   _cartReserveTimer = setInterval(tick, 1000);
 }
 
-// ===== INTEGRAÇÃO CHECK-STOCK-LOCKS (ConectWhats) =====
-var CW_STOCK_API         = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
-var CW_CREATE_LOCK_API   = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'create-stock-lock') : '';
-var CW_RELEASE_LOCK_API  = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'release-stock-lock') : '';
-var CW_API_KEY           = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
-
-function getCwApiKey() {
-  return (window.__cwStockAPI && window.__cwStockAPI.key) || CW_API_KEY || '';
-}
-
-// Gera ou recupera session_id único por visitante
-function getCwSessionId() {
-  var key = 'cw_session_id';
-  try {
-    var id = localStorage.getItem(key);
-    if (!id) {
-      id = 'sess-' + Math.random().toString(36).slice(2) + '-' + Date.now();
-      localStorage.setItem(key, id);
-    }
-    return id;
-  } catch(e) { return 'sess-' + Date.now(); }
-}
-
-async function createStockLock(variantId, quantity, expiresIn) {
-  var key = getCwApiKey();
-  if (!key) return;
-  // Invalida cache para forçar leitura fresca na próxima verificação
-  delete _stockLockCache[String(variantId)];
-  delete _stockLockCacheTime[String(variantId)];
-  try {
-    await fetch(CW_CREATE_LOCK_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
-      body: JSON.stringify({
-        variant_id: String(variantId),
-        quantity: quantity,
-        session_id: getCwSessionId(),
-        expires_in: expiresIn || CART_RESERVE_MINUTES * 60
-      })
-    });
-  } catch(e) {}
-}
-
-async function releaseStockLock(variantId) {
-  var key = getCwApiKey();
-  if (!key) return;
-  // Invalida cache para forçar leitura fresca
-  delete _stockLockCache[String(variantId)];
-  delete _stockLockCacheTime[String(variantId)];
-  try {
-    await fetch(CW_RELEASE_LOCK_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
-      body: JSON.stringify({
-        variant_id: String(variantId),
-        session_id: getCwSessionId()
-      })
-    });
-  } catch(e) {}
-}
-
-async function releaseAllCartLocks() {
-  try {
-    var cart = await fetchCart();
-    if (!cart.items || cart.items.length === 0) return;
-    await Promise.all(cart.items.map(function(item) {
-      return releaseStockLock(item.variant_id);
-    }));
-  } catch(e) {}
-}
-
-// Cache curto (5s) para não spammar a API em cliques rápidos
+// ===== STOCK LOCKS — desativado, gerenciado pelo checkout ConectWhats =====
+function getCwSessionId() { return ''; }
+async function createStockLock() {}
+async function releaseStockLock() {}
+async function releaseAllCartLocks() {}
+async function checkStockLocks() { return {}; }
 var _stockLockCache = {};
 var _stockLockCacheTime = {};
-var STOCK_CACHE_TTL = 5000;
-
-async function checkStockLocks(variantIds) {
-  var now = Date.now();
-  var toFetch = variantIds.filter(function(id) {
-    return !_stockLockCacheTime[id] || (now - _stockLockCacheTime[id]) > STOCK_CACHE_TTL;
-  });
-
-  if (toFetch.length > 0) {
-    try {
-      var r = await fetch(CW_STOCK_API + '?variant_ids=' + toFetch.join(','), {
-        headers: { 'x-api-key': getCwApiKey() }
-      });
-      var data = await r.json();
-      if (data && data.locks) {
-        Object.keys(data.locks).forEach(function(id) {
-          _stockLockCache[id] = data.locks[id];
-          _stockLockCacheTime[id] = now;
-        });
-      }
-    } catch(e) {
-      // Em caso de erro na API, não bloqueia o cliente
-      toFetch.forEach(function(id) {
-        _stockLockCache[id] = { locked: false, locked_quantity: 0 };
-        _stockLockCacheTime[id] = now;
-      });
-    }
-  }
-
-  return _stockLockCache;
-}
-
 async function validateStockRealtime(handle, variantId, qtyWanted) {
   try {
-    // 1. Verifica disponibilidade no Shopify
     var r = await fetch('/products/' + handle + '.js');
     var product = await r.json();
     var variant = product.variants.find(function(v) { return String(v.id) === String(variantId); });
-    if (!variant) return { ok: true, locked: false };
+    if (!variant) return { ok: true };
     if (!variant.available) return { ok: false, locked: false, reason: 'esgotado' };
-
-    // 2. Verifica reservas ativas no ConectWhats
-    var locks = await checkStockLocks([String(variantId)]);
-    var lock = locks[String(variantId)];
-    if (lock && lock.locked) {
-      // Desconta o que o próprio cliente já tem no carrinho + o que está tentando adicionar agora
-      var cartResp = await fetch('/cart.js');
-      var cart = await cartResp.json();
-      var alreadyInCart = cart.items ? cart.items.reduce(function(sum, item) {
-        return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
-      }, 0) : 0;
-
-      var shopifyQty = variant.inventory_quantity || 0;
-
-      // Shopify não expõe inventory_quantity na API pública (retorna 0)
-      // Nesse caso usa o variantInventory do Liquid (carregado no page load) se disponível
-      if (shopifyQty === 0 && typeof variantInventory !== 'undefined' && variantInventory[String(variantId)]) {
-        shopifyQty = variantInventory[String(variantId)].qty || 0;
-      }
-
-      // Se ainda 0 mas variant.available=true, o Shopify não controla estoque aqui — não bloqueia
-      if (shopifyQty === 0) {
-        return { ok: true, locked: false };
-      }
-
-      var totalOwnAfterAdd = alreadyInCart + qtyWanted;
-      var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - totalOwnAfterAdd);
-      var realAvailable = shopifyQty - lockedByOthers;
-      console.log('[stock-debug] shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' qtyWanted=' + qtyWanted + ' totalOwnAfterAdd=' + totalOwnAfterAdd + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable);
-      if (realAvailable < qtyWanted) {
-        return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable - alreadyInCart) };
-      }
-    }
-
-    return { ok: true, locked: false };
-  } catch(e) {
-    return { ok: true, locked: false };
-  }
+    return { ok: true };
+  } catch(e) { return { ok: true }; }
 }
 async function updateCartItem(id, qty) {
   return (await fetch('/cart/change.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, quantity: qty}) })).json();
@@ -434,44 +296,11 @@ async function renderCart() {
 async function changeItemLine(line, qty) {
   _cartInteracting = true;
   try {
-    var cartBefore = await fetchCart();
-    var item = cartBefore.items[line - 1];
-
-    // Limita qty ao estoque real disponível (Shopify - locks de outros)
-    if (item && qty > 0) {
-      var lockData = _stockLockCache[String(item.variant_id)];
-      var lockedByOthers = (lockData && lockData.locked) ? (lockData.locked_quantity || 0) : 0;
-      // Desconta apenas locks de outros (não o próprio item atual)
-      var currentQty = item.quantity;
-      var inv = null;
-      try {
-        var r = await fetch('/products/' + item.handle + '.js');
-        var p = await r.json();
-        var v = p.variants.find(function(v) { return String(v.id) === String(item.variant_id); });
-        if (v && v.inventory_management && v.inventory_policy !== 'continue') {
-          inv = v.inventory_quantity;
-        }
-      } catch(e) {}
-      if (inv !== null) {
-        // Estoque disponível = total - locks de outros clientes
-        var maxAllowed = Math.max(0, inv - Math.max(0, lockedByOthers - currentQty));
-        qty = Math.min(qty, maxAllowed);
-        if (qty <= 0) { _cartInteracting = false; return; }
-      }
-    }
-
     await fetch('/cart/change.js', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ line: line, quantity: qty })
     });
-    if (item) {
-      if (qty <= 0) {
-        await releaseStockLock(item.variant_id);
-      } else {
-        await createStockLock(item.variant_id, qty);
-      }
-    }
     await renderCart();
   } finally {
     _cartInteracting = false;
@@ -669,36 +498,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         btn.textContent = 'Adicionando...';
-        // Verifica quantidade já no carrinho
-        const cart = await fetchCart();
-        const inCart = cart.items.reduce(function(sum, item) {
-          return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
-        }, 0);
-        // canAdd = quanto ainda dá pra adicionar (já desconta inCart e locks de outros)
-        const canAdd = typeof getMaxQty === 'function' ? getMaxQty() : 99;
-        if (canAdd <= 0) {
-          btn.disabled = false;
-          var lockData2 = _stockLockCache[String(variantId)];
-          var hasOtherLock = lockData2 && lockData2.locked && (lockData2.locked_quantity || 0) > inCart;
-          btn.textContent = hasOtherLock ? '🔒 Outro cliente reservou — aguarde' : '🛒 Você já adicionou todo o estoque disponível';
-          setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
-          openCart();
-          return;
-        }
-        const qtyToAdd = Math.min(qty, canAdd);
+        const qtyToAdd = qty;
         await addToCart(variantId, qtyToAdd);
-        // Registra lock com a quantidade TOTAL no carrinho (inCart + adicionado agora)
-        await createStockLock(variantId, inCart + qtyToAdd);
         btn.textContent = 'Adicionado ✓';
-        // Verifica se esgotou após adicionar
-        var inv = typeof variantInventory !== 'undefined' ? variantInventory[variantId] : null;
-        if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0 && typeof checkStockAfterAdd === 'function') {
-          setTimeout(function() {
-            checkStockAfterAdd(variantId, inv.qty, inv.policy, btn);
-          }, 800);
-        } else {
-          setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
-        }
+        setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
         openCart();
       } catch(err) {
         btn.disabled = false; btn.textContent = 'Erro - Tente novamente';
