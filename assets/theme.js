@@ -3,8 +3,20 @@
 // ---- Mobile Menu ----
 function toggleMobileMenu() {
   const menu = document.getElementById('mobile-menu');
-  menu.classList.toggle('open');
-  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  const overlay = document.getElementById('mobile-menu-overlay');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    menu.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  } else {
+    menu.style.display = 'flex';
+    requestAnimationFrame(function() {
+      menu.classList.add('open');
+      if (overlay) overlay.classList.add('open');
+    });
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 // ---- Search ----
@@ -85,11 +97,15 @@ function renderCartTimer() {
   var el = document.getElementById('cart-reserve-timer');
   if (!el) return;
 
-  if (_cartReserveTimer) clearInterval(_cartReserveTimer);
+  if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
+
+  var _expired = false; // flag para evitar execução dupla ao expirar
 
   function tick() {
     var ms = getCartReserveRemaining();
     if (ms <= 0) {
+      if (_expired) return; // já tratou a expiração
+      _expired = true;
       clearCartReserve(false);
       fetch('/cart/clear.js', { method: 'POST' }).then(function() {
         renderCart();
@@ -132,12 +148,99 @@ function renderCartTimer() {
   _cartReserveTimer = setInterval(tick, 1000);
 }
 
+<<<<<<< HEAD
 // ===== STOCK LOCKS — desativado, gerenciado pelo checkout ConectWhats =====
 function getCwSessionId() { return ''; }
 async function createStockLock() {}
 async function releaseStockLock() {}
 async function releaseAllCartLocks() {}
 async function checkStockLocks() { return {}; }
+=======
+// ===== INTEGRAÇÃO CHECK-STOCK-LOCKS (ConectWhats) =====
+var CW_STOCK_API         = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
+var CW_CREATE_LOCK_API   = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'create-stock-lock') : '';
+var CW_RELEASE_LOCK_API  = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'release-stock-lock') : '';
+var CW_API_KEY           = (window.__cwStockAPI && window.__cwStockAPI.key) || '';
+
+function getCwApiKey() {
+  return (window.__cwStockAPI && window.__cwStockAPI.key) || CW_API_KEY || '';
+}
+
+// Gera ou recupera session_id único por visitante
+function getCwSessionId() {
+  var key = 'cw_session_id';
+  try {
+    var id = localStorage.getItem(key);
+    if (!id) {
+      id = 'sess-' + Math.random().toString(36).slice(2) + '-' + Date.now();
+      localStorage.setItem(key, id);
+    }
+    return id;
+  } catch(e) { return 'sess-' + Date.now(); }
+}
+
+async function createStockLock(variantId, quantity, expiresIn) {
+  var key = getCwApiKey();
+  if (!key) return;
+  // Invalida cache para forçar leitura fresca na próxima verificação
+  delete _stockLockCache[String(variantId)];
+  delete _stockLockCacheTime[String(variantId)];
+  try {
+    // Libera lock anterior da mesma sessão antes de criar novo
+    // Evita duplicação caso a API some ao invés de substituir
+    await fetch(CW_RELEASE_LOCK_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({
+        variant_id: String(variantId),
+        session_id: getCwSessionId()
+      })
+    });
+  } catch(e) {}
+  try {
+    await fetch(CW_CREATE_LOCK_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({
+        variant_id: String(variantId),
+        quantity: quantity,
+        session_id: getCwSessionId(),
+        expires_in: expiresIn || CART_RESERVE_MINUTES * 60
+      })
+    });
+  } catch(e) {}
+}
+
+async function releaseStockLock(variantId) {
+  var key = getCwApiKey();
+  if (!key) return;
+  // Invalida cache para forçar leitura fresca
+  delete _stockLockCache[String(variantId)];
+  delete _stockLockCacheTime[String(variantId)];
+  try {
+    await fetch(CW_RELEASE_LOCK_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({
+        variant_id: String(variantId),
+        session_id: getCwSessionId()
+      })
+    });
+  } catch(e) {}
+}
+
+async function releaseAllCartLocks() {
+  try {
+    var cart = await fetchCart();
+    if (!cart.items || cart.items.length === 0) return;
+    await Promise.all(cart.items.map(function(item) {
+      return releaseStockLock(item.variant_id);
+    }));
+  } catch(e) {}
+}
+
+// Cache curto (5s) para não spammar a API em cliques rápidos
+>>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
 var _stockLockCache = {};
 var _stockLockCacheTime = {};
 async function validateStockRealtime(handle, variantId, qtyWanted) {
@@ -147,8 +250,50 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
     var variant = product.variants.find(function(v) { return String(v.id) === String(variantId); });
     if (!variant) return { ok: true };
     if (!variant.available) return { ok: false, locked: false, reason: 'esgotado' };
+<<<<<<< HEAD
     return { ok: true };
   } catch(e) { return { ok: true }; }
+=======
+
+    // 2. Verifica reservas ativas no ConectWhats
+    var locks = await checkStockLocks([String(variantId)]);
+    var lock = locks[String(variantId)];
+    if (lock && lock.locked) {
+      // Desconta o que o próprio cliente já tem no carrinho + o que está tentando adicionar agora
+      var cartResp = await fetch('/cart.js');
+      var cart = await cartResp.json();
+      var alreadyInCart = cart.items ? cart.items.reduce(function(sum, item) {
+        return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
+      }, 0) : 0;
+
+      var shopifyQty = variant.inventory_quantity || 0;
+
+      // Shopify não expõe inventory_quantity na API pública (retorna 0)
+      // Nesse caso usa o variantInventory do Liquid (carregado no page load) se disponível
+      if (shopifyQty === 0 && typeof variantInventory !== 'undefined' && variantInventory[String(variantId)]) {
+        shopifyQty = variantInventory[String(variantId)].qty || 0;
+      }
+
+      // Se ainda 0 mas variant.available=true, o Shopify não controla estoque aqui — não bloqueia
+      if (shopifyQty === 0) {
+        return { ok: true, locked: false };
+      }
+
+      // lockedByOthers = total reservado no banco - o que o próprio cliente já tem reservado (alreadyInCart)
+      // NÃO inclui qtyWanted aqui — o lock do cliente é o que já está no carrinho antes desta adição
+      var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - alreadyInCart);
+      var realAvailable = shopifyQty - lockedByOthers;
+      console.log('[stock-debug] shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' qtyWanted=' + qtyWanted + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable);
+      if (realAvailable < qtyWanted) {
+        return { ok: false, locked: true, reason: 'reservado', available: Math.max(0, realAvailable) };
+      }
+    }
+
+    return { ok: true, locked: false };
+  } catch(e) {
+    return { ok: true, locked: false };
+  }
+>>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
 }
 async function updateCartItem(id, qty) {
   return (await fetch('/cart/change.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, quantity: qty}) })).json();
@@ -301,6 +446,21 @@ async function changeItemLine(line, qty) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ line: line, quantity: qty })
     });
+<<<<<<< HEAD
+=======
+    if (item) {
+      if (qty <= 0) {
+        await releaseStockLock(item.variant_id);
+      } else {
+        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplicação)
+        const cartAfterChange = await fetchCart();
+        const totalInCartNow = cartAfterChange.items.reduce(function(sum, i) {
+          return sum + (String(i.variant_id) === String(item.variant_id) ? i.quantity : 0);
+        }, 0);
+        await createStockLock(item.variant_id, totalInCartNow);
+      }
+    }
+>>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
     await renderCart();
   } finally {
     _cartInteracting = false;
@@ -446,7 +606,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const badge = document.getElementById('cart-count');
     if (badge && cart.item_count > 0) { badge.textContent = cart.item_count; badge.style.display = 'flex'; }
     if (cart.item_count > 0 && getCartReserveRemaining() > 0) {
+      // Timer ainda válido — retoma contagem
       renderCartTimer();
+    } else if (cart.item_count > 0 && getCartReserveRemaining() <= 0) {
+      // Carrinho tem itens mas timer expirou — limpa tudo
+      releaseAllCartLocks().finally(function() {
+        fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+          clearCartReserve(false);
+          if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+        });
+      });
     } else if (cart.item_count === 0) {
       clearCartReserve();
     }
@@ -500,6 +669,15 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.textContent = 'Adicionando...';
         const qtyToAdd = qty;
         await addToCart(variantId, qtyToAdd);
+<<<<<<< HEAD
+=======
+        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplicação)
+        const cartAfterAdd = await fetchCart();
+        const totalInCartNow = cartAfterAdd.items.reduce(function(sum, item) {
+          return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
+        }, 0);
+        await createStockLock(variantId, totalInCartNow);
+>>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
         btn.textContent = 'Adicionado ✓';
         setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
         openCart();

@@ -352,6 +352,12 @@
       }{% unless forloop.last %},{% endunless %}
     {% endfor %}
   };
+
+  // Carrega carrinho imediatamente para que getMaxQty desconte ownQty desde o início
+  fetch('/cart.js').then(function(r){ return r.json(); }).then(function(cart){
+    window._lastCartItems = cart.items || [];
+    changeQty(0);
+  }).catch(function(){ changeQty(0); });
   var currentPair = [0, 1];
 
   // --- Variant selection ---
@@ -382,6 +388,8 @@
       }
       addBtn.disabled = !realAvailable;
       addBtn.textContent = realAvailable ? 'Adicionar ao Carrinho' : (locked > 0 ? '🔒 Outro cliente reservou — aguarde' : 'Esgotado');
+      var estoqueAviso = document.getElementById('estoque-aviso');
+      if (estoqueAviso) estoqueAviso.remove();
 
       // Troca imagem principal se a variante tiver imagem própria
       if (variantImages[variant.id]) {
@@ -482,7 +490,6 @@
   function changeQty(delta) {
     var max = getMaxQty();
     var qtyRow = document.querySelector('.product-qty-row');
-    var addBtn = document.getElementById('add-to-cart-btn');
 
     if (max <= 0) {
       if (qtyRow) qtyRow.style.display = 'none';
@@ -492,8 +499,11 @@
       return;
     }
 
+    // Limita max a 99 para evitar valores absurdos quando sem controle de estoque
+    var effectiveMax = Math.min(max, 99);
+
     if (qtyRow) qtyRow.style.display = '';
-    qty = Math.min(max, Math.max(1, qty + delta));
+    qty = Math.min(effectiveMax, Math.max(1, qty + delta));
     var disp = document.getElementById('qty-display');
     var inp2 = document.getElementById('qty-input');
     if (disp) disp.textContent = qty;
@@ -501,20 +511,11 @@
     var btnMinus = document.querySelector('.product-qty-row .cart-qty button:first-child');
     var btnPlus = document.querySelector('.product-qty-row .cart-qty button:last-child');
     if (btnMinus) btnMinus.disabled = qty <= 1;
-    if (btnPlus) btnPlus.disabled = qty >= max;
+    if (btnPlus) btnPlus.disabled = qty >= effectiveMax;
   }
 
-  function changeQty(delta) {
-    var max = getMaxQty();
-    qty = Math.min(max, Math.max(1, qty + delta));
-    document.getElementById('qty-display').textContent = qty;
-    document.getElementById('qty-input').value = qty;
-    document.querySelector('.product-qty-row .cart-qty button:first-child').disabled = qty <= 1;
-    document.querySelector('.product-qty-row .cart-qty button:last-child').disabled = qty >= max;
-  }
-
-  // Inicializa botões de quantidade após declarar tudo
-  changeQty(0);
+  // Inicializa botões de quantidade após carregar o carrinho
+  // (changeQty(0) é chamado dentro do fetch abaixo)
 
   // --- Frete: funções definidas no topo do arquivo ---
 
@@ -583,13 +584,18 @@
   (function() {
     var carousel = document.getElementById('prod-img-carousel');
     if (!carousel) return;
-    var startX = 0;
+    var startX = 0, startY = 0;
     carousel.addEventListener('touchstart', function(e) {
       startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
     }, { passive: true });
     carousel.addEventListener('touchend', function(e) {
-      var diff = startX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 40) goToSlide(_slideIndex + (diff > 0 ? 1 : -1));
+      var diffX = startX - e.changedTouches[0].clientX;
+      var diffY = startY - e.changedTouches[0].clientY;
+      // Só considera swipe horizontal se movimento X for maior que Y e maior que 60px
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+        goToSlide(_slideIndex + (diffX > 0 ? 1 : -1));
+      }
     }, { passive: true });
     // Mouse drag (desktop preview)
     var mouseStartX = 0, isDragging = false;
@@ -597,7 +603,7 @@
     carousel.addEventListener('mouseup', function(e) {
       if (!isDragging) return; isDragging = false;
       var diff = mouseStartX - e.clientX;
-      if (Math.abs(diff) > 40) goToSlide(_slideIndex + (diff > 0 ? 1 : -1));
+      if (Math.abs(diff) > 60) goToSlide(_slideIndex + (diff > 0 ? 1 : -1));
     });
   })();
 
@@ -821,21 +827,37 @@
           if (inv && inv.management && inv.policy !== 'continue' && inv.qty > 0) {
             var lockedByOthers = Math.max(0, locked - ownQty);
             var realQty = inv.qty - lockedByOthers;
-            if (realQty <= 0) {
+            if (!currentVariant.available || realQty <= 0) {
               addBtn.disabled = true;
               addBtn.textContent = ownQty >= inv.qty
                 ? '🛒 Você já adicionou todo o estoque disponível'
-                : '🔒 Outro cliente reservou — aguarde';
+                : (lockedByOthers > 0 ? '🔒 Outro cliente reservou — aguarde' : 'Esgotado');
             } else if (lockedByOthers > 0) {
               addBtn.disabled = false;
-              addBtn.textContent = 'Adicionar ao Carrinho (apenas ' + realQty + ' disponível)';
+              addBtn.textContent = 'Adicionar ao Carrinho';
+              // Mostra aviso personalizado com quantidade já no carrinho
+              var estoqueAviso = document.getElementById('estoque-aviso');
+              if (!estoqueAviso) {
+                estoqueAviso = document.createElement('p');
+                estoqueAviso.id = 'estoque-aviso';
+                estoqueAviso.style.cssText = 'color:#C2410C;font-size:0.78rem;font-weight:600;margin-top:0.4rem;text-align:center;';
+                addBtn.parentNode.insertBefore(estoqueAviso, addBtn.nextSibling);
+              }
+              var noCarrinho = ownQty > 0
+                ? 'Você já reservou ' + ownQty + ' unidade(s) no carrinho.'
+                : '⚠️ Restam apenas ' + realQty + ' unidade(s) em estoque!';
+              estoqueAviso.textContent = noCarrinho;
             } else {
-              addBtn.disabled = !currentVariant.available;
-              addBtn.textContent = currentVariant.available ? 'Adicionar ao Carrinho' : 'Esgotado';
+              addBtn.disabled = false;
+              addBtn.textContent = 'Adicionar ao Carrinho';
+              var estoqueAviso = document.getElementById('estoque-aviso');
+              if (estoqueAviso) estoqueAviso.remove();
             }
           } else if (!currentVariant.available) {
             addBtn.disabled = true;
             addBtn.textContent = 'Esgotado';
+            var estoqueAviso = document.getElementById('estoque-aviso');
+            if (estoqueAviso) estoqueAviso.remove();
           }
         }
       }
