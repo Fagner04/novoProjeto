@@ -1,4 +1,4 @@
-/* ===== MUSAS CLUB - Theme JS ===== */
+﻿/* ===== MUSAS CLUB - Theme JS ===== */
 
 // ---- Mobile Menu ----
 function toggleMobileMenu() {
@@ -83,7 +83,6 @@ function clearCartReserve(releaseLocks) {
   if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
   var el = document.getElementById('cart-reserve-timer');
   if (el) el.style.display = 'none';
-  // releaseLocks ignorado — locks removidos
 }
 
 function getCartReserveRemaining() {
@@ -99,12 +98,12 @@ function renderCartTimer() {
 
   if (_cartReserveTimer) { clearInterval(_cartReserveTimer); _cartReserveTimer = null; }
 
-  var _expired = false; // flag para evitar execução dupla ao expirar
+  var _expired = false; // flag para evitar execu├º├úo dupla ao expirar
 
   function tick() {
     var ms = getCartReserveRemaining();
     if (ms <= 0) {
-      if (_expired) return; // já tratou a expiração
+      if (_expired) return; // j├í tratou a expira├º├úo
       _expired = true;
       clearCartReserve(false);
       fetch('/cart/clear.js', { method: 'POST' }).then(function() {
@@ -126,9 +125,9 @@ function renderCartTimer() {
     el.style.background = ms < 60000 ? 'linear-gradient(135deg,#FEF2F2,#FEE2E2)' : 'linear-gradient(135deg,#EFF6FF,#DBEAFE)';
     el.style.borderColor = ms < 60000 ? '#FCA5A5' : '#93C5FD';
     var icon = document.getElementById('cart-reserve-icon');
-    if (icon) icon.textContent = ms < 60000 ? '⚠️' : '⏱️';
+    if (icon) icon.textContent = ms < 60000 ? 'ÔÜá´©Å' : 'ÔÅ▒´©Å';
 
-    // Mini timer no header (só quando carrinho está fechado)
+    // Mini timer no header (s├│ quando carrinho est├í fechado)
     var headerTimer = document.getElementById('header-reserve-timer');
     var headerCountdown = document.getElementById('header-reserve-countdown');
     var cartDrawer = document.getElementById('cart-drawer');
@@ -148,15 +147,7 @@ function renderCartTimer() {
   _cartReserveTimer = setInterval(tick, 1000);
 }
 
-<<<<<<< HEAD
-// ===== STOCK LOCKS — desativado, gerenciado pelo checkout ConectWhats =====
-function getCwSessionId() { return ''; }
-async function createStockLock() {}
-async function releaseStockLock() {}
-async function releaseAllCartLocks() {}
-async function checkStockLocks() { return {}; }
-=======
-// ===== INTEGRAÇÃO CHECK-STOCK-LOCKS (ConectWhats) =====
+// ===== INTEGRA├ç├âO CHECK-STOCK-LOCKS (ConectWhats) =====
 var CW_STOCK_API         = (window.__cwStockAPI && window.__cwStockAPI.url) || '';
 var CW_CREATE_LOCK_API   = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'create-stock-lock') : '';
 var CW_RELEASE_LOCK_API  = (window.__cwStockAPI && window.__cwStockAPI.url) ? window.__cwStockAPI.url.replace('check-stock-locks', 'release-stock-lock') : '';
@@ -166,7 +157,7 @@ function getCwApiKey() {
   return (window.__cwStockAPI && window.__cwStockAPI.key) || CW_API_KEY || '';
 }
 
-// Gera ou recupera session_id único por visitante
+// Gera ou recupera session_id ├║nico por visitante
 function getCwSessionId() {
   var key = 'cw_session_id';
   try {
@@ -182,12 +173,12 @@ function getCwSessionId() {
 async function createStockLock(variantId, quantity, expiresIn) {
   var key = getCwApiKey();
   if (!key) return;
-  // Invalida cache para forçar leitura fresca na próxima verificação
+  // Invalida cache para for├ºar leitura fresca na pr├│xima verifica├º├úo
   delete _stockLockCache[String(variantId)];
   delete _stockLockCacheTime[String(variantId)];
   try {
-    // Libera lock anterior da mesma sessão antes de criar novo
-    // Evita duplicação caso a API some ao invés de substituir
+    // Libera lock anterior da mesma sess├úo antes de criar novo
+    // Evita duplica├º├úo caso a API some ao inv├®s de substituir
     await fetch(CW_RELEASE_LOCK_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': key },
@@ -214,7 +205,7 @@ async function createStockLock(variantId, quantity, expiresIn) {
 async function releaseStockLock(variantId) {
   var key = getCwApiKey();
   if (!key) return;
-  // Invalida cache para forçar leitura fresca
+  // Invalida cache para for├ºar leitura fresca
   delete _stockLockCache[String(variantId)];
   delete _stockLockCacheTime[String(variantId)];
   try {
@@ -239,27 +230,55 @@ async function releaseAllCartLocks() {
   } catch(e) {}
 }
 
-// Cache curto (5s) para não spammar a API em cliques rápidos
->>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
+// Cache curto (5s) para n├úo spammar a API em cliques r├ípidos
 var _stockLockCache = {};
 var _stockLockCacheTime = {};
+var STOCK_CACHE_TTL = 5000;
+
+async function checkStockLocks(variantIds) {
+  var now = Date.now();
+  var toFetch = variantIds.filter(function(id) {
+    return !_stockLockCacheTime[id] || (now - _stockLockCacheTime[id]) > STOCK_CACHE_TTL;
+  });
+
+  if (toFetch.length > 0) {
+    try {
+      var r = await fetch(CW_STOCK_API + '?variant_ids=' + toFetch.join(','), {
+        headers: { 'x-api-key': getCwApiKey() }
+      });
+      var data = await r.json();
+      if (data && data.locks) {
+        Object.keys(data.locks).forEach(function(id) {
+          _stockLockCache[id] = data.locks[id];
+          _stockLockCacheTime[id] = now;
+        });
+      }
+    } catch(e) {
+      // Em caso de erro na API, n├úo bloqueia o cliente
+      toFetch.forEach(function(id) {
+        _stockLockCache[id] = { locked: false, locked_quantity: 0 };
+        _stockLockCacheTime[id] = now;
+      });
+    }
+  }
+
+  return _stockLockCache;
+}
+
 async function validateStockRealtime(handle, variantId, qtyWanted) {
   try {
+    // 1. Verifica disponibilidade no Shopify
     var r = await fetch('/products/' + handle + '.js');
     var product = await r.json();
     var variant = product.variants.find(function(v) { return String(v.id) === String(variantId); });
-    if (!variant) return { ok: true };
+    if (!variant) return { ok: true, locked: false };
     if (!variant.available) return { ok: false, locked: false, reason: 'esgotado' };
-<<<<<<< HEAD
-    return { ok: true };
-  } catch(e) { return { ok: true }; }
-=======
 
     // 2. Verifica reservas ativas no ConectWhats
     var locks = await checkStockLocks([String(variantId)]);
     var lock = locks[String(variantId)];
     if (lock && lock.locked) {
-      // Desconta o que o próprio cliente já tem no carrinho + o que está tentando adicionar agora
+      // Desconta o que o pr├│prio cliente j├í tem no carrinho + o que est├í tentando adicionar agora
       var cartResp = await fetch('/cart.js');
       var cart = await cartResp.json();
       var alreadyInCart = cart.items ? cart.items.reduce(function(sum, item) {
@@ -268,19 +287,19 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
 
       var shopifyQty = variant.inventory_quantity || 0;
 
-      // Shopify não expõe inventory_quantity na API pública (retorna 0)
-      // Nesse caso usa o variantInventory do Liquid (carregado no page load) se disponível
+      // Shopify n├úo exp├Áe inventory_quantity na API p├║blica (retorna 0)
+      // Nesse caso usa o variantInventory do Liquid (carregado no page load) se dispon├¡vel
       if (shopifyQty === 0 && typeof variantInventory !== 'undefined' && variantInventory[String(variantId)]) {
         shopifyQty = variantInventory[String(variantId)].qty || 0;
       }
 
-      // Se ainda 0 mas variant.available=true, o Shopify não controla estoque aqui — não bloqueia
+      // Se ainda 0 mas variant.available=true, o Shopify n├úo controla estoque aqui ÔÇö n├úo bloqueia
       if (shopifyQty === 0) {
         return { ok: true, locked: false };
       }
 
-      // lockedByOthers = total reservado no banco - o que o próprio cliente já tem reservado (alreadyInCart)
-      // NÃO inclui qtyWanted aqui — o lock do cliente é o que já está no carrinho antes desta adição
+      // lockedByOthers = total reservado no banco - o que o pr├│prio cliente j├í tem reservado (alreadyInCart)
+      // N├âO inclui qtyWanted aqui ÔÇö o lock do cliente ├® o que j├í est├í no carrinho antes desta adi├º├úo
       var lockedByOthers = Math.max(0, (lock.locked_quantity || 0) - alreadyInCart);
       var realAvailable = shopifyQty - lockedByOthers;
       console.log('[stock-debug] shopifyQty=' + shopifyQty + ' locked=' + lock.locked_quantity + ' alreadyInCart=' + alreadyInCart + ' qtyWanted=' + qtyWanted + ' lockedByOthers=' + lockedByOthers + ' realAvailable=' + realAvailable);
@@ -293,7 +312,6 @@ async function validateStockRealtime(handle, variantId, qtyWanted) {
   } catch(e) {
     return { ok: true, locked: false };
   }
->>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
 }
 async function updateCartItem(id, qty) {
   return (await fetch('/cart/change.js', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, quantity: qty}) })).json();
@@ -314,7 +332,7 @@ async function renderCart() {
     return;
   }
   empty.style.display = 'none'; footer.style.display = 'block';
-  // Inicia timer se ainda não existe reserva ativa
+  // Inicia timer se ainda n├úo existe reserva ativa
   if (getCartReserveRemaining() <= 0) startCartReserve();
   else renderCartTimer();
   list.querySelectorAll('.cart-item').forEach(i => i.remove());
@@ -336,7 +354,7 @@ async function renderCart() {
     await Promise.all(uniqueHandles.map(function(h){ return getProductTags(h); }));
   }
 
-  // Agrupa total por handle de acessório
+  // Agrupa total por handle de acess├│rio
   var acessorioTotals = {};
   if (acCfg && acCfg.enabled) {
     cart.items.forEach(function(item) {
@@ -351,7 +369,7 @@ async function renderCart() {
     const lineIndex = index + 1;
     const wsPrice = wholesaleActive ? _wsCache[item.handle] : null;
 
-    // Verifica se é acessório
+    // Verifica se ├® acess├│rio
     var isAcessorio = acCfg && acCfg.enabled && acessorioTotals[item.handle] !== undefined;
     var acessorioAtingiu = false;
     var acessorioHtml = '';
@@ -365,27 +383,27 @@ async function renderCart() {
       var faltam = Math.max(0, minVal - total);
       acessorioAtingiu = faltam === 0;
 
-      // Badge na imagem sempre aparece (indica que é produto com mínimo)
+      // Badge na imagem sempre aparece (indica que ├® produto com m├¡nimo)
       badgeHtml = '<span style="position:absolute;bottom:0;left:0;background:' + (acessorioAtingiu ? '#16a34a' : '#F97316') + ';color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:0 4px 0 6px;white-space:nowrap;">'
         + 'Min. ' + formatMoney(minVal) + '</span>';
 
-      // Borda e aviso só aparecem quando NÃO atingiu o mínimo
+      // Borda e aviso s├│ aparecem quando N├âO atingiu o m├¡nimo
       if (!acessorioAtingiu) {
         itemBorder = 'border:1.5px solid #F97316;border-radius:0.75rem;';
         acessorioHtml = '<div style="margin-top:6px;">'
           + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
-          + '<span style="font-size:0.72rem;font-weight:600;color:#F97316;">🏷️ Valor mínimo deste produto</span>'
+          + '<span style="font-size:0.72rem;font-weight:600;color:#F97316;">­ƒÅÀ´©Å Valor m├¡nimo deste produto</span>'
           + '<span style="font-size:0.72rem;font-weight:700;color:#F97316;">Faltam ' + formatMoney(faltam) + '</span>'
           + '</div>'
           + '<div style="background:#fed7aa;border-radius:9999px;height:5px;overflow:hidden;">'
           + '<div style="height:100%;background:#F97316;border-radius:9999px;width:' + pct + '%;"></div>'
           + '</div>'
-          + '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do mínimo: preço de varejo aplicado</p>'
+          + '<p style="font-size:0.7rem;color:#C2410C;margin:0.25rem 0 0;">Abaixo do m├¡nimo: pre├ºo de varejo aplicado</p>'
           + '</div>';
       }
     }
 
-    // Se acessório e não atingiu mínimo → força preço de varejo
+    // Se acess├│rio e n├úo atingiu m├¡nimo ÔåÆ for├ºa pre├ºo de varejo
     var effectiveWsPrice = (isAcessorio && !acessorioAtingiu) ? null : wsPrice;
 
     var priceHtml;
@@ -403,15 +421,15 @@ async function renderCart() {
     const el = document.createElement('div');
     el.className = 'cart-item';
     if (itemBorder) el.style.cssText = itemBorder;
-    // Calcula estoque máximo para este item no carrinho
+    // Calcula estoque m├íximo para este item no carrinho
     var itemLockData = _stockLockCache[String(item.variant_id)];
     var itemLockedByOthers = (itemLockData && itemLockData.locked) ? Math.max(0, (itemLockData.locked_quantity || 0) - item.quantity) : 0;
-    // item.inventory_quantity vem 0 da API pública da Shopify — usa o cache de locks ou sem limite
+    // item.inventory_quantity vem 0 da API p├║blica da Shopify ÔÇö usa o cache de locks ou sem limite
     var itemInv = (item.inventory_quantity && item.inventory_quantity > 0) ? item.inventory_quantity : 9999;
-    // Se temos dado de lock, podemos inferir o estoque mínimo (locked_quantity + disponível)
+    // Se temos dado de lock, podemos inferir o estoque m├¡nimo (locked_quantity + dispon├¡vel)
     if (itemInv === 9999 && itemLockData && itemLockData.locked_quantity > 0) {
-      // Não sabemos o estoque total, mas sabemos que tem pelo menos locked_quantity disponível
-      // Permite aumentar se não há locks de outros
+      // N├úo sabemos o estoque total, mas sabemos que tem pelo menos locked_quantity dispon├¡vel
+      // Permite aumentar se n├úo h├í locks de outros
       itemInv = itemLockedByOthers > 0 ? item.quantity + Math.max(0, (itemLockData.locked_quantity || 0) - item.quantity) : 9999;
     }
     var itemMax = Math.max(item.quantity, itemInv - itemLockedByOthers);
@@ -423,7 +441,7 @@ async function renderCart() {
       + '</div>'
       + '<div class="cart-item-info">'
       + '<p class="cart-item-title">' + item.product_title + '</p>'
-      + '<p class="cart-item-variant">' + (item.variant_title !== 'Default Title' ? item.variant_title : '') + ' · <span style="font-weight:600;">' + item.quantity + 'x</span></p>'
+      + '<p class="cart-item-variant">' + (item.variant_title !== 'Default Title' ? item.variant_title : '') + ' ┬À <span style="font-weight:600;">' + item.quantity + 'x</span></p>'
       + priceHtml
       + acessorioHtml
       + '<div style="display:none;"></div></div>'
@@ -441,33 +459,44 @@ async function renderCart() {
 async function changeItemLine(line, qty) {
   _cartInteracting = true;
   try {
+    var cartBefore = await fetchCart();
+    var item = cartBefore.items[line - 1];
+
+    // Limita qty ao estoque real dispon├¡vel (Shopify - locks de outros)
+    if (item && qty > 0) {
+      var lockData = _stockLockCache[String(item.variant_id)];
+      var lockedByOthers = (lockData && lockData.locked) ? (lockData.locked_quantity || 0) : 0;
+      // Desconta apenas locks de outros (n├úo o pr├│prio item atual)
+      var currentQty = item.quantity;
+      var inv = null;
+      try {
+        var r = await fetch('/products/' + item.handle + '.js');
+        var p = await r.json();
+        var v = p.variants.find(function(v) { return String(v.id) === String(item.variant_id); });
+        if (v && v.inventory_management && v.inventory_policy !== 'continue') {
+          inv = v.inventory_quantity;
+        }
+      } catch(e) {}
+      if (inv !== null) {
+        // Estoque dispon├¡vel = total - locks de outros clientes
+        var maxAllowed = Math.max(0, inv - Math.max(0, lockedByOthers - currentQty));
+        qty = Math.min(qty, maxAllowed);
+        if (qty <= 0) { _cartInteracting = false; return; }
+      }
+    }
+
     await fetch('/cart/change.js', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ line: line, quantity: qty })
     });
-<<<<<<< HEAD
-=======
-    if (item) {
-      if (qty <= 0) {
-        await releaseStockLock(item.variant_id);
-      } else {
-        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplicação)
-        const cartAfterChange = await fetchCart();
-        const totalInCartNow = cartAfterChange.items.reduce(function(sum, i) {
-          return sum + (String(i.variant_id) === String(item.variant_id) ? i.quantity : 0);
-        }, 0);
-        await createStockLock(item.variant_id, totalInCartNow);
-      }
-    }
->>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
     await renderCart();
   } finally {
     _cartInteracting = false;
   }
 }
 
-// Cache de preços de atacado por handle (limpo a cada sessão, não entre renders)
+// Cache de pre├ºos de atacado por handle (limpo a cada sess├úo, n├úo entre renders)
 var _wsCache = {};
 
 async function getWholesalePrice(handle) {
@@ -475,11 +504,11 @@ async function getWholesalePrice(handle) {
   try {
     var r = await fetch('/products/' + handle + '?view=wholesale');
     var text = await r.text();
-    // extrai só o JSON (ignora whitespace/html ao redor)
+    // extrai s├│ o JSON (ignora whitespace/html ao redor)
     var match = text.match(/\{[\s\S]*\}/);
     if (!match) { _wsCache[handle] = null; return null; }
     var data = JSON.parse(match[0]);
-    // Normaliza para centavos: se < 1000 assume reais (ex: 159.90), senão já é centavos
+    // Normaliza para centavos: se < 1000 assume reais (ex: 159.90), sen├úo j├í ├® centavos
     var raw = data.wholesale_price;
     if (raw !== null && raw !== undefined) {
       _wsCache[handle] = raw < 1000 ? Math.round(raw * 100) : Math.round(raw);
@@ -506,7 +535,7 @@ async function renderWholesaleProgress(cart) {
   var wholesaleHtml = '';
 
   if (active && cart.items && cart.items.length > 0) {
-    // Busca preços de atacado para todos os itens únicos
+    // Busca pre├ºos de atacado para todos os itens ├║nicos
     var handles = [...new Set(cart.items.map(function(i){ return i.handle; }))];
     await Promise.all(handles.map(function(h){ return getWholesalePrice(h); }));
 
@@ -527,7 +556,7 @@ async function renderWholesaleProgress(cart) {
 
     var savings = origTotal - wsTotal;
 
-    // Atualiza o total exibido no rodapé do carrinho
+    // Atualiza o total exibido no rodap├® do carrinho
     var totalEl = document.getElementById('cart-total-price');
     if (totalEl && hasWs) {
       totalEl.innerHTML = '<s style="color:#aaa;font-size:13px;font-weight:400;">' + formatMoney(origTotal) + '</s> <span style="color:#15803D;font-weight:700;">' + formatMoney(wsTotal) + '</span>';
@@ -535,12 +564,12 @@ async function renderWholesaleProgress(cart) {
 
     wholesaleHtml =
       '<div style="display:flex;align-items:center;gap:6px;">' +
-        '<span style="font-size:18px;">🎉</span>' +
+        '<span style="font-size:18px;">­ƒÄë</span>' +
         '<div>' +
-          '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0;">🏷 Atacado Ativo!</p>' +
-          '<p style="font-size:11px;color:#166534;margin:2px 0 0;">✓ Você está economizando com preços de atacado!</p>' +
+          '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0;">­ƒÅÀ Atacado Ativo!</p>' +
+          '<p style="font-size:11px;color:#166534;margin:2px 0 0;">Ô£ô Voc├¬ est├í economizando com pre├ºos de atacado!</p>' +
         '</div>' +
-        '<span style="margin-left:auto;font-size:12px;font-weight:600;color:#15803D;">' + total + '/' + min + ' peças</span>' +
+        '<span style="margin-left:auto;font-size:12px;font-weight:600;color:#15803D;">' + total + '/' + min + ' pe├ºas</span>' +
       '</div>' +
       '<div style="width:100%;height:8px;background:#BBF7D0;border-radius:99px;overflow:hidden;margin-top:6px;">' +
         '<div style="width:100%;height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:99px;"></div>' +
@@ -553,13 +582,13 @@ async function renderWholesaleProgress(cart) {
 
     wholesaleHtml =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-        '<span style="font-size:12px;font-weight:600;color:#92400E;">🛒 Faltam <strong style="color:#C2410C;">' + remaining + '</strong> peça(s) para atacado!</span>' +
+        '<span style="font-size:12px;font-weight:600;color:#92400E;">­ƒøÆ Faltam <strong style="color:#C2410C;">' + remaining + '</strong> pe├ºa(s) para atacado!</span>' +
         '<span style="font-size:11px;color:#B45309;">' + total + '/' + min + '</span>' +
       '</div>' +
       '<div style="width:100%;height:8px;background:#FDE68A;border-radius:99px;overflow:hidden;">' +
         '<div style="width:' + progress + '%;height:100%;background:linear-gradient(90deg,#F59E0B,#D97706);border-radius:99px;transition:width 0.4s ease;"></div>' +
       '</div>' +
-      '<p style="font-size:10px;color:#92400E;margin:4px 0 0;text-align:center;">Adicione mais itens e pague preço de atacado 💰</p>';
+      '<p style="font-size:10px;color:#92400E;margin:4px 0 0;text-align:center;">Adicione mais itens e pague pre├ºo de atacado ­ƒÆ░</p>';
   }
 
   container.innerHTML = wholesaleHtml
@@ -567,7 +596,7 @@ async function renderWholesaleProgress(cart) {
     : '';
 }
 
-// mantém compatibilidade
+// mant├®m compatibilidade
 async function changeItemQty(id, qty) {
   _cartInteracting = true;
   try {
@@ -601,20 +630,18 @@ function toggleFav(btn, handle) {
 // ===== SCROLL EFFECTS (desktop only) =====
 document.addEventListener('DOMContentLoaded', function() {
 
-  // Init cart badge + retoma timer de reserva se ainda válido
+  // Init cart badge + retoma timer de reserva se ainda v├ílido
   fetchCart().then(cart => {
     const badge = document.getElementById('cart-count');
     if (badge && cart.item_count > 0) { badge.textContent = cart.item_count; badge.style.display = 'flex'; }
     if (cart.item_count > 0 && getCartReserveRemaining() > 0) {
-      // Timer ainda válido — retoma contagem
+      // Timer ainda v├ílido ÔÇö retoma contagem
       renderCartTimer();
     } else if (cart.item_count > 0 && getCartReserveRemaining() <= 0) {
-      // Carrinho tem itens mas timer expirou — limpa tudo
-      releaseAllCartLocks().finally(function() {
-        fetch('/cart/clear.js', { method: 'POST' }).then(function() {
-          clearCartReserve(false);
-          if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
-        });
+      // Carrinho tem itens mas timer expirou — limpa
+      fetch('/cart/clear.js', { method: 'POST' }).then(function() {
+        clearCartReserve(false);
+        if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
       });
     } else if (cart.item_count === 0) {
       clearCartReserve();
@@ -648,16 +675,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const qty = parseInt(document.getElementById('qty-input').value) || 1;
       btn.disabled = true; btn.textContent = 'Verificando estoque...';
       try {
-        // Valida estoque em tempo real (não usa valor estático da página)
+        // Valida estoque em tempo real (n├úo usa valor est├ítico da p├ígina)
         var handle = typeof productHandle !== 'undefined' ? productHandle : null;
         if (handle) {
           var stock = await validateStockRealtime(handle, variantId, qty);
           if (!stock.ok) {
             btn.disabled = false;
             if (stock.locked && stock.available > 0) {
-              btn.textContent = 'Apenas ' + stock.available + ' disponível(is)';
+              btn.textContent = 'Apenas ' + stock.available + ' dispon├¡vel(is)';
             } else if (stock.locked) {
-              btn.textContent = '🔒 Outro cliente reservou — aguarde';
+              btn.textContent = '­ƒöÆ Outro cliente reservou ÔÇö aguarde';
             } else {
               btn.textContent = 'Esgotado';
             }
@@ -667,17 +694,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         btn.textContent = 'Adicionando...';
-        const qtyToAdd = qty;
-        await addToCart(variantId, qtyToAdd);
-<<<<<<< HEAD
-=======
-        // Busca carrinho atualizado e registra lock com a quantidade REAL atual (evita duplicação)
-        const cartAfterAdd = await fetchCart();
-        const totalInCartNow = cartAfterAdd.items.reduce(function(sum, item) {
+        // Verifica quantidade j├í no carrinho
+        const cart = await fetchCart();
+        const inCart = cart.items.reduce(function(sum, item) {
           return sum + (String(item.variant_id) === String(variantId) ? item.quantity : 0);
         }, 0);
-        await createStockLock(variantId, totalInCartNow);
->>>>>>> 1ce81a2ebbcb6e52c7fe943215274e25c1b5b122
+        // canAdd = quanto ainda d├í pra adicionar (j├í desconta inCart e locks de outros)
+        const canAdd = typeof getMaxQty === 'function' ? getMaxQty() : 99;
+        if (canAdd <= 0) {
+          btn.disabled = false;
+          var lockData2 = _stockLockCache[String(variantId)];
+          var hasOtherLock = lockData2 && lockData2.locked && (lockData2.locked_quantity || 0) > inCart;
+          btn.textContent = hasOtherLock ? '­ƒöÆ Outro cliente reservou ÔÇö aguarde' : '­ƒøÆ Voc├¬ j├í adicionou todo o estoque dispon├¡vel';
+          setTimeout(() => { btn.textContent = 'Adicionar ao Carrinho'; btn.disabled = false; }, 3000);
+          openCart();
+          return;
+        }
+        const qtyToAdd = Math.min(qty, canAdd);
+        await addToCart(variantId, qtyToAdd);
         btn.textContent = 'Adicionado ✓';
         setTimeout(() => { btn.disabled = false; btn.textContent = 'Adicionar ao Carrinho'; }, 1500);
         openCart();
