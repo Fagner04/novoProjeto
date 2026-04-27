@@ -52,7 +52,7 @@
         "height_mode": "custom",
         "height_desktop": 830,
         "height_mobile": 590,
-        "promo_enabled": true,
+        "promo_enabled": false,
         "promo_badge": "✨ COLEÇÃO NOVA✨",
         "promo_title": "Atacado hoje 6 peças 24hs😍",
         "promo_text": "Atacado mínimo encera em breve ,aproveite a nova coleção Blusinhas da Poc!!",
@@ -68,6 +68,14 @@
     "collections_carousel_qrWhkd": {
       "type": "collections-carousel",
       "blocks": {
+        "collection_item_BkdQUy": {
+          "type": "collection_item",
+          "settings": {
+            "collection": "musas-brasil-1",
+            "label": "MUSAS BRASIL",
+            "image": "shopify://shop_images/C4E6A468-4AAC-4D90-B579-1F909DAB2425_e118a729-92b9-440e-99e0-1e9dd0bbf57f.jpg"
+          }
+        },
         "collection_item_nfiKxV": {
           "type": "collection_item",
           "settings": {
@@ -118,6 +126,7 @@
         }
       },
       "block_order": [
+        "collection_item_BkdQUy",
         "collection_item_nfiKxV",
         "collection_item_RJBU4G",
         "collection_item_6WHtpL",
